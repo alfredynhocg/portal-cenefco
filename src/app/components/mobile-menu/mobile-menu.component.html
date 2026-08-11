@@ -1,0 +1,41 @@
+<div class="mobile-header {{mobileHeaderClass}} d-block d-lg-none">
+    <div class="container-fluid">
+        <div class="col-12">
+            <div class="mobile-header-elements">
+                <div class="mobile-logo">
+                    <a routerLink="/"><img [src]="mobileLogo" alt="CENEFCO"></a>
+                </div>
+                <div class="mobile-nav-icon dots-menu" (click)="toggleMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mobile-sidebar {{mobileSidebarClass}}" [ngClass]="{ 'mobile-menu-active': isMenuOpen }">
+    <div class="logosicon-area">
+        <div class="logos">
+            <img [src]="mobileLogo" alt="CENEFCO">
+        </div>
+        <div class="menu-close" (click)="closeMenu()">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+    </div>
+    <div class="mobile-nav mobile-nav1">
+        <ul class="mobile-nav-list nav-list1">
+            @for (item of menuItems; track item.id) {
+                <app-mobile-nav-item [item]="item" (cerrarMenu)="closeMenu()"></app-mobile-nav-item>
+            }
+        </ul>
+
+        <div class="allmobilesection">
+            @if (isLoggedIn()) {
+                <a routerLink="/mi-cuenta" [class]="btnClass" (click)="closeMenu()">Mi cuenta <i class="fa-solid fa-user"></i></a>
+            } @else {
+                <a routerLink="/login" [class]="btnClass" (click)="closeMenu()">Iniciar sesión <i class="fa-solid fa-user"></i></a>
+            }
+            <a routerLink="/contactos" [class]="btnClass" (click)="closeMenu()">Contacto <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </div>
+</div>

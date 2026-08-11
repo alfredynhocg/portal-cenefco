@@ -1,0 +1,201 @@
+@if (estado === 'found' && resultado) {
+
+  <div class="cp-hero">
+    <img [src]="resultado.foto || resultado.imagen_banner_url || 'assets/img/all-images/header_default_cenefco.jpg'"
+         [alt]="resultado.curso" class="cp-hero-bg">
+    <div class="cp-hero-overlay"></div>
+    <div class="cp-hero-body">
+      <div class="container">
+        <div class="cp-hero-badges">
+          @if (resultado.tipo_nombre) {
+            <span class="cp-badge cp-badge-orange">
+              <i class="fa-solid fa-graduation-cap"></i> {{ resultado.tipo_nombre }}
+            </span>
+          }
+          @if (resultado.categoria_nombre) {
+            <span class="cp-badge cp-badge-glass">
+              <i class="fa-solid fa-layer-group"></i> {{ resultado.categoria_nombre }}
+            </span>
+          }
+        </div>
+        <h1 class="cp-hero-title">{{ resultado.curso }}</h1>
+        <div class="cp-hero-nav">
+          <a [routerLink]="['/cursos', slugCurso]" class="cp-back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Volver al curso
+          </a>
+          <app-breadcrumb [subTitle]="resultado.curso" title="Cursos" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cp-body">
+    <div class="container">
+      <div class="cp-layout">
+
+        <div class="cp-main">
+
+          <div class="cp-card">
+            <div class="cp-card-header">
+              <h2 class="cp-card-heading">Información del curso</h2>
+              <p class="cp-card-sub">Datos generales del programa académico</p>
+            </div>
+            <div class="cp-info-grid">
+              <div class="cp-info-item">
+                <span class="cp-info-label">NOMBRE DEL CURSO</span>
+                <span class="cp-info-value cp-info-value--bold">{{ resultado.curso }}</span>
+              </div>
+              @if (resultado.tipo_nombre) {
+                <div class="cp-info-item">
+                  <span class="cp-info-label">TIPO</span>
+                  <span class="cp-info-value">{{ resultado.tipo_nombre }}</span>
+                </div>
+              }
+              @if (resultado.categoria_nombre) {
+                <div class="cp-info-item">
+                  <span class="cp-info-label">CATEGORÍA</span>
+                  <span class="cp-info-value">{{ resultado.categoria_nombre }}</span>
+                </div>
+              }
+              <div class="cp-info-item">
+                <span class="cp-info-label">PARTICIPANTES</span>
+                <span class="cp-info-value cp-info-value--bold">{{ resultado.participantes.length }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cp-card">
+            <div class="cp-card-header">
+              <h2 class="cp-card-heading">
+                Participantes
+                <span class="cp-count-badge">{{ resultado.participantes.length }}</span>
+              </h2>
+              <p class="cp-card-sub">Listado de estudiantes registrados en este curso</p>
+            </div>
+
+            @if (resultado.participantes.length > 0) {
+              <div class="cp-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                  type="text"
+                  placeholder="Filtrar participante..."
+                  [(ngModel)]="busqueda"
+                  autocomplete="off">
+              </div>
+            }
+
+            @if (resultado.participantes.length === 0) {
+              <div class="cp-empty">
+                <i class="fa-solid fa-folder-open"></i>
+                <p>Todavía no hay estudiantes aprobados registrados para este curso.</p>
+              </div>
+            } @else if (participantesFiltrados.length === 0) {
+              <div class="cp-empty">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <p>No se encontró ningún participante con ese nombre.</p>
+              </div>
+            } @else {
+              <ol class="cp-list">
+                @for (nombre of participantesFiltrados; track nombre; let i = $index) {
+                  <li class="cp-list-item">
+                    <span class="cp-list-num">{{ i + 1 }}</span>
+                    <div class="cp-avatar">{{ iniciales(nombre) }}</div>
+                    <span class="cp-list-nombre">{{ nombre }}</span>
+                  </li>
+                }
+              </ol>
+            }
+          </div>
+
+        </div>
+
+        <aside class="cp-sidebar">
+
+          <div class="cp-sidebar-hero">
+            <div class="cp-sidebar-icon">
+              <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <h3 class="cp-sidebar-hero-title">Página del curso</h3>
+            <p class="cp-sidebar-hero-desc">
+              Accedé a la página completa de este curso en el sitio oficial del CENEFCO
+            </p>
+          </div>
+
+          <a [routerLink]="['/cursos', slugCurso]" class="cp-btn-primary">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver curso completo
+          </a>
+          <a routerLink="/cursos" class="cp-btn-secondary">
+            <i class="fa-solid fa-list"></i> Ver todos los cursos
+          </a>
+
+          <div class="cp-stats">
+            <div class="cp-stat">
+              <span class="cp-stat-value">{{ resultado.participantes.length }}</span>
+              <span class="cp-stat-label">PARTICIPANTES</span>
+            </div>
+            <div class="cp-stat-divider"></div>
+            <div class="cp-stat">
+              <span class="cp-stat-value cp-stat-value--teal">{{ gestion }}</span>
+              <span class="cp-stat-label">GESTIÓN</span>
+            </div>
+          </div>
+
+        </aside>
+
+      </div>
+    </div>
+  </div>
+
+}
+
+@if (estado === 'loading') {
+  <div class="cp-state-wrap">
+    <div class="container">
+      <div class="cp-state">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <p>Cargando listado de participantes...</p>
+      </div>
+    </div>
+  </div>
+}
+
+@if (estado === 'not_found') {
+  <div class="cp-state-wrap">
+    <div class="container">
+      <div class="cp-state-card">
+        <div class="cp-state-icon cp-state-icon--warning">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <h4>Curso no encontrado</h4>
+        <p>No pudimos encontrar el curso que estás buscando. Puede que el enlace esté desactualizado o el curso ya no esté disponible.</p>
+        <div class="cp-state-actions">
+          <a routerLink="/cursos" class="cp-btn-primary cp-state-btn-inline">
+            <i class="fa-solid fa-list"></i> Ver todos los cursos
+          </a>
+          <a routerLink="/" class="cp-btn-secondary cp-state-btn-inline">
+            <i class="fa-solid fa-house"></i> Volver al inicio
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (estado === 'error') {
+  <div class="cp-state-wrap">
+    <div class="container">
+      <div class="cp-state-card">
+        <div class="cp-state-icon cp-state-icon--danger">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <h4>No se pudo cargar el listado</h4>
+        <p>Ocurrió un problema al obtener la información. Por favor, intentá nuevamente en unos minutos.</p>
+        <div class="cp-state-actions">
+          <a routerLink="/" class="cp-btn-secondary cp-state-btn-inline">
+            <i class="fa-solid fa-house"></i> Volver al inicio
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+}

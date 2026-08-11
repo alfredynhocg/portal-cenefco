@@ -1,0 +1,46 @@
+@if (visible() && popup()) {
+  <div class="popup-overlay" (click)="close()">
+    <div class="popup-box {{ positionClass(popup()!.posicion) }}" (click)="$event.stopPropagation()">
+      <div class="popup-header">
+        <div class="popup-header-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+          </svg>
+        </div>
+        <h3 class="popup-header-title">{{ popup()!.titulo ?? 'Próximos Programas' }}</h3>
+        <button class="popup-close" (click)="close()" aria-label="Cerrar">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      @if (popup()!.imagen_url) {
+        <div class="popup-img">
+          <img [src]="popup()!.imagen_url | imageUrl" [alt]="popup()!.titulo ?? 'Popup'">
+        </div>
+      }
+
+      @if (popup()!.contenido) {
+        <div class="popup-body">
+          <div class="popup-content" [innerHTML]="popup()!.contenido"></div>
+        </div>
+      }
+
+      @if (popup()!.enlace_url) {
+        <div class="popup-footer">
+          <a [href]="popup()!.enlace_url" target="_blank" rel="noopener" class="popup-btn" (click)="close()">
+            {{ popup()!.enlace_texto || 'Ver todos los programas' }}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+}

@@ -1,0 +1,110 @@
+<div class="bo-hero">
+    <img src="assets/img/all-images/header_default_cenefco.jpg" alt="" class="bo-hero-bg">
+    <div class="bo-hero-overlay"></div>
+    <div class="bo-hero-body">
+        <div class="container">
+            <div class="bo-hero-badge">
+                <i class="fa-solid fa-newspaper"></i> Publicaciones
+            </div>
+            <h1 class="bo-hero-title">Boletines <span>Institucionales</span></h1>
+            <app-breadcrumb title="Boletines" />
+        </div>
+    </div>
+</div>
+
+<section class="bo-section">
+    <div class="container">
+
+        @if (cargando) {
+            <div class="row g-4">
+                @for (s of [1,2,3,4,5,6,7,8,9]; track s) {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="bo-skeleton">
+                            <div class="bo-skel-img"></div>
+                            <div class="bo-skel-body">
+                                <div class="bo-skel-line"></div>
+                                <div class="bo-skel-line"></div>
+                                <div class="bo-skel-line short"></div>
+                                <div class="bo-skel-line xs"></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!cargando && boletines.length > 0) {
+            <div class="row g-4">
+                @for (boletin of boletines; track boletin.id_boletin; let i = $index) {
+                    <div class="col-lg-4 col-md-6"
+                         data-aos="fade-up" [attr.data-aos-duration]="500 + (i % 3) * 100">
+                        <div class="bo-card">
+                            <div class="bo-card-img">
+                                <img [src]="(boletin.imagen_url | imageUrl) || 'assets/img/all-images/blog-img1.png'"
+                                     [alt]="boletin.titulo_boletin">
+                                <div class="bo-card-overlay"></div>
+
+                                <span class="bo-card-tag">
+                                    <i class="fa-solid fa-bookmark"></i> N° {{ boletin.num_boletin }}
+                                </span>
+
+                                @if (boletin.fecha_reg) {
+                                    <span class="bo-card-date">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                        {{ boletin.fecha_reg | date:'d MMM yyyy' }}
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="bo-card-body">
+                                <a [routerLink]="boletin.slug ? ['/boletines', boletin.slug] : null" class="bo-card-title">
+                                    {{ boletin.titulo_boletin }}
+                                </a>
+                                <p class="bo-card-desc">
+                                    {{ boletin.descripcion_boletin || 'Publicación institucional del CENEFCO.' }}
+                                </p>
+                                <div class="bo-card-footer">
+                                    <span class="bo-card-meta">
+                                        <i class="fa-solid fa-newspaper"></i> Boletín
+                                    </span>
+                                    @if (boletin.slug) {
+                                        <a [routerLink]="['/boletines', boletin.slug]" class="bo-card-btn">
+                                            Ver más <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!cargando && boletines.length === 0) {
+            <div class="bo-empty">
+                <i class="fa-solid fa-newspaper"></i>
+                <p>No hay boletines publicados en este momento.</p>
+            </div>
+        }
+
+        @if (!cargando && totalPages > 1) {
+            <div class="bo-pagination">
+                <button class="bo-page-btn" (click)="goToPage(pageIndex - 1)" [disabled]="pageIndex === 1">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                @for (p of pages; track p) {
+                    <button class="bo-page-btn" [class.active]="p === pageIndex" (click)="goToPage(p)">
+                        {{ p }}
+                    </button>
+                }
+                <button class="bo-page-btn" (click)="goToPage(pageIndex + 1)" [disabled]="pageIndex === totalPages">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <p class="bo-page-info">
+                Página {{ pageIndex }} de {{ totalPages }} — {{ total }} boletín{{ total !== 1 ? 'es' : '' }}
+            </p>
+        }
+    </div>
+</section>

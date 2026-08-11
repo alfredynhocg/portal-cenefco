@@ -1,0 +1,34 @@
+﻿<app-hero />
+<app-areas />
+<app-equipo-directivo />
+<app-mision-vision />
+<app-trivia-banner />
+<app-featured-courses id="cursos"/>
+<app-testimonial />
+<app-virtual-assistant id="asistente-virtual"/>
+
+@defer (on viewport) {
+  <app-photo-gallery />
+} @placeholder {
+  <div style="min-height: 200px"></div>
+}
+
+@defer (on viewport) {
+  <app-faqs />
+} @placeholder {
+  <div style="min-height: 200px"></div>
+}
+
+<app-contact />
+
+@defer (on viewport) {
+  <app-partner-institutions />
+} @placeholder {
+  <div style="min-height: 120px"></div>
+}
+
+@defer (on viewport) {
+  <app-latest-bulletins />
+} @placeholder {
+  <div style="min-height: 200px"></div>
+}

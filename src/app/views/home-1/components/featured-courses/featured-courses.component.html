@@ -1,0 +1,145 @@
+﻿<section class="cs-section">
+  <div class="cs-bg-blob cs-bg-blob--1"></div>
+    <div class="container" style="position:relative;z-index:1">
+      <div class="row justify-content-center mb-5">
+        <div class="col-lg-7 text-center">
+          <div class="cs-badge" data-aos="fade-up" data-aos-duration="500">
+            <i class="fa-solid fa-graduation-cap"></i> Oferta Académica
+          </div>
+          <h2 class="cs-title" data-aos="fade-up" data-aos-duration="700">
+            Programas diseñados para <span>tu éxito</span>
+          </h2>
+          <p class="cs-subtitle" data-aos="fade-up" data-aos-duration="900">
+            Formación continua de calidad con docentes especializados, modalidades flexibles
+            y certificación reconocida a nivel nacional.
+          </p>
+        </div>
+      </div>
+
+      @if (cargando) {
+        <div class="cs-carousel-wrap">
+          <div class="row g-4">
+            @for (_ of [1,2,3]; track $index) {
+              <div class="col-lg-4 col-md-6">
+                <div class="cs-skel-card">
+                  <div class="cs-skel-top"></div>
+                  <div class="cs-skel-body">
+                    <div class="cs-skel-line w-80"></div>
+                    <div class="cs-skel-line w-60"></div>
+                    <div class="cs-skel-line w-40" style="margin-top:8px"></div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      @if (!cargando && cursos.length > 0) {
+        <div class="cs-carousel-wrap" data-aos="fade-up" data-aos-duration="700">
+          <button class="cs-nav cs-nav-prev" (click)="scrollPrev()">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <div class="cs-scroll-track" #scrollTrack (scroll)="onScroll()" (touchstart)="onTouchStart()">
+            @for (curso of cursos; track curso.id_programa) {
+              <a [routerLink]="['/cursos', curso.slug]" class="cs-card">
+                <div class="cs-card-top" [style.background]="colorCard(curso)">
+                  @if (curso.foto || curso.imagen_banner_url) {
+                    <img class="cs-card-img"
+                        [src]="curso.foto || curso.imagen_banner_url"
+                        [alt]="curso.nombre_programa"
+                        loading="lazy">
+                    <div class="cs-card-img-overlay"></div>
+                  }
+                  <div class="cs-card-badges">
+                    @if (curso.tipo_nombre) {
+                      <span class="cs-card-badge cs-card-badge--tipo">{{ curso.tipo_nombre }}</span>
+                    }
+                    @if (curso.area_titulo) {
+                      <span class="cs-card-badge cs-card-badge--area">{{ curso.area_titulo }}</span>
+                    }
+                  </div>
+                  @if (!curso.foto && !curso.imagen_banner_url) {
+                    <div class="cs-card-icon-wrap">
+                      @if (curso.area_icono) {
+                        <i [class]="curso.area_icono"></i>
+                      } @else {
+                        <i class="fa-solid fa-book-open-reader"></i>
+                      }
+                    </div>
+                  }
+                </div>
+
+                <div class="cs-card-body">
+                  <h4 class="cs-card-title">{{ curso.nombre_programa }}</h4>
+                  <p class="cs-card-desc">
+                    {{ (curso.descripcion || curso.objetivo || 'Descubre cómo este programa puede potenciar tu desarrollo profesional y abrirte nuevas oportunidades.') | truncate:20:'words' }}
+                  </p>
+
+                  <div class="cs-card-meta">
+                    @if (curso.creditaje) {
+                      <span class="cs-meta-pill">
+                        <i class="fa-solid fa-clock"></i> {{ curso.creditaje }} h
+                      </span>
+                    }
+                    @if (curso.inicio_actividades) {
+                      <span class="cs-meta-pill">
+                        <i class="fa-solid fa-calendar-day"></i>
+                        Inicio: {{ curso.inicio_actividades | date:'dd MMM':'':'es' }}
+                      </span>
+                    }
+                    @if (curso.plan_nro_cuotas && curso.plan_nro_cuotas > 1) {
+                      <span class="cs-meta-pill">
+                        <i class="fa-solid fa-credit-card"></i> {{ curso.plan_nro_cuotas }} cuotas
+                      </span>
+                    }
+                  </div>
+                </div>
+
+                <div class="cs-card-footer">
+                  <div class="cs-card-price">
+                    @if (precio(curso)) {
+                      <span class="cs-card-price-label">Inversión</span>
+                      <span class="cs-card-price-value">{{ precio(curso) }}</span>
+                      @if (curso.plan_nro_cuotas && curso.plan_nro_cuotas > 1 && curso.plan_costo_por_cuota) {
+                        <span class="cs-card-price-cuotas">
+                          o {{ curso.plan_nro_cuotas }}×Bs.{{ curso.plan_costo_por_cuota | number:'1.0-0' }}
+                        </span>
+                      }
+                    } @else {
+                      <span class="cs-card-price-label">Inversión</span>
+                      <span class="cs-card-price-value" style="font-size:14px;color:#9ca3af;font-weight:600">Consultar</span>
+                    }
+                  </div>
+                  <span class="cs-card-link">
+                    Ver programa <i class="fa-solid fa-arrow-right"></i>
+                  </span>
+                </div>
+              </a>
+            }
+          </div>
+          <button class="cs-nav cs-nav-next" (click)="scrollNext()">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="cs-dots">
+          @for (curso of cursos; track curso.id_programa; let i = $index) {
+            <button
+              class="cs-dot"
+              [class.cs-dot-active]="dotActivo() === i"
+              (click)="irADot(i)"
+              [attr.aria-label]="'Ir a ' + curso.nombre_programa">
+            </button>
+          }
+        </div>
+      }
+
+      <div class="cs-cta" data-aos="fade-up" data-aos-duration="800">
+        <a routerLink="/cursos" class="ct-cta-btn">
+          Ver toda la oferta académica <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+    </div>
+</section>

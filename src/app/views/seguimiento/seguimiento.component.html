@@ -1,0 +1,298 @@
+<div class="vc-hero">
+    <img src="assets/img/bg/header-img1.jpg" alt="" class="vc-hero-bg">
+    <div class="vc-hero-overlay"></div>
+    <div class="vc-hero-pattern"></div>
+    <div class="vc-hero-body">
+        <div class="container">
+            <div class="vc-hero-inner">
+                <div class="vc-hero-text">
+                    <div class="vc-hero-badge">
+                        <i class="fa-solid fa-shield-check"></i> Sistema de verificación
+                    </div>
+                    <h1 class="vc-hero-title">
+                        Verificación de<br><span>Certificados</span>
+                    </h1>
+                    <p class="vc-hero-subtitle">
+                        Consultá la autenticidad de cualquier certificado emitido por el CENEFCO
+                        ingresando el código impreso en el documento.
+                    </p>
+                    <div class="vc-hero-pills">
+                        <span class="vc-hero-pill"><i class="fa-solid fa-lock"></i> Consulta segura</span>
+                        <span class="vc-hero-pill"><i class="fa-solid fa-bolt"></i> Resultado inmediato</span>
+                        <span class="vc-hero-pill"><i class="fa-solid fa-clock-rotate-left"></i> Disponible 24/7</span>
+                    </div>
+                    <div style="margin-top:22px;">
+                        <app-breadcrumb title="Verificar Certificado" />
+                    </div>
+                </div>
+
+                <div class="vc-hero-deco">
+                    <div class="vc-hero-deco-card">
+                        <div class="vc-deco-header">
+                            <div class="vc-deco-icon">
+                                <i class="fa-solid fa-certificate"></i>
+                            </div>
+                            <div>
+                                <h5>Código de verificación</h5>
+                                <p>Impreso en el certificado</p>
+                            </div>
+                        </div>
+                        <div class="vc-deco-format">
+                            <p>Dónde encontrarlo</p>
+                            <code>Parte inferior del documento</code>
+                        </div>
+                        <p class="vc-deco-example">ej: CENEFCO-2026-00123</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="vc-section">
+    <div class="container">
+        <div class="vc-layout">
+            <div>
+                <div class="vc-side-card">
+                    <div class="vc-side-head">
+                        <div class="vc-side-head-icon">
+                            <i class="fa-solid fa-list-ol"></i>
+                        </div>
+                        <div>
+                            <h4>¿Cómo verificar?</h4>
+                            <p>3 pasos sencillos</p>
+                        </div>
+                    </div>
+                    <div class="vc-side-body">
+                        <ul class="vc-steps">
+                            <li class="vc-step">
+                                <span class="vc-step-num">1</span>
+                                <span>Localizá el código de verificación impreso en tu certificado o diploma.</span>
+                            </li>
+                            <li class="vc-step">
+                                <span class="vc-step-num">2</span>
+                                <span>Ingresalo en el formulario tal como aparece en el documento.</span>
+                            </li>
+                            <li class="vc-step">
+                                <span class="vc-step-num">3</span>
+                                <span>El sistema mostrará los datos del documento si es auténtico.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="vc-side-card">
+                    <div class="vc-side-head">
+                        <div class="vc-side-head-icon">
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+                        <div>
+                            <h4>Información</h4>
+                            <p>Sobre la verificación</p>
+                        </div>
+                    </div>
+                    <div class="vc-side-body">
+                        <div class="vc-fmt-row">
+                            <div class="vc-fmt-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                            <div class="vc-fmt-text">
+                                <label>Qué se verifica</label>
+                                <span>Nombre, programa, condición y fechas del certificado emitido.</span>
+                            </div>
+                        </div>
+                        <div class="vc-fmt-row">
+                            <div class="vc-fmt-icon"><i class="fa-solid fa-shield"></i></div>
+                            <div class="vc-fmt-text">
+                                <label>Seguridad</label>
+                                <span>Cada código es único e irrepetible por documento emitido.</span>
+                            </div>
+                        </div>
+                        <div class="vc-fmt-row">
+                            <div class="vc-fmt-icon"><i class="fa-solid fa-envelope"></i></div>
+                            <div class="vc-fmt-text">
+                                <label>¿Dudas?</label>
+                                <span>Contactanos si tenés inconvenientes con la verificación.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div>
+                <div class="vc-main-card">
+                    @if (estado() !== 'found') {
+                        <div class="vc-card-top">
+                            <div class="vc-card-top-left">
+                                <div class="vc-card-top-icon">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </div>
+                                <div>
+                                    <h3>Consultar certificado</h3>
+                                    <p>Ingresá el código de verificación para comprobar la autenticidad</p>
+                                </div>
+                            </div>
+                            <div class="vc-card-top-secure">
+                                <i class="fa-solid fa-lock"></i> Conexión segura
+                            </div>
+                        </div>
+
+                        <div class="vc-card-body">
+                            <form [formGroup]="form" (ngSubmit)="consultar()">
+                                <div class="vc-field">
+                                    <label class="vc-label">
+                                        <span class="vc-label-req"></span>
+                                        Código de verificación del certificado
+                                    </label>
+                                    <div class="vc-input-wrap">
+                                        <i class="fa-solid fa-certificate vc-input-icon"></i>
+                                        <input
+                                            type="text"
+                                            class="vc-input"
+                                            [class.is-invalid]="formatoInvalido() || (codigoCtrl.touched && codigoCtrl.invalid)"
+                                            placeholder="Ej: CENEFCO-2026-00123"
+                                            formControlName="codigo"
+                                            autocomplete="off"
+                                            spellcheck="false"
+                                            style="text-transform: uppercase;"
+                                            (input)="formatoInvalido.set(false)"
+                                        >
+                                    </div>
+                                    @if (formatoInvalido()) {
+                                        <p class="vc-error-msg">
+                                            <i class="fa-solid fa-circle-exclamation"></i>
+                                            Código inválido. Ingresá el código tal como aparece en el documento.
+                                        </p>
+                                    } @else if (codigoCtrl.touched && codigoCtrl.invalid) {
+                                        <p class="vc-error-msg">
+                                            <i class="fa-solid fa-circle-exclamation"></i>
+                                            Ingresá el código de verificación del certificado.
+                                        </p>
+                                    }
+                                </div>
+
+                                @if (estado() === 'error') {
+                                    <div class="vc-alert vc-alert-danger">
+                                        <div class="vc-alert-icon">
+                                            <i class="fa-solid fa-circle-xmark"></i>
+                                        </div>
+                                        <span>{{ errorMsg() }}</span>
+                                    </div>
+                                }
+                                @if (estado() === 'not_found') {
+                                    <div class="vc-alert vc-alert-warning">
+                                        <div class="vc-alert-icon">
+                                            <i class="fa-solid fa-file-circle-question"></i>
+                                        </div>
+                                        <span>
+                                            No se encontró ningún certificado con ese código.
+                                            Verificá que esté escrito correctamente.
+                                        </span>
+                                    </div>
+                                }
+
+                                <button type="submit" class="vc-submit-btn" [disabled]="estado() === 'loading'">
+                                    @if (estado() === 'loading') {
+                                        <i class="fa-solid fa-circle-notch fa-spin"></i> Verificando...
+                                    } @else {
+                                        <i class="fa-solid fa-shield-check"></i> Verificar certificado
+                                    }
+                                </button>
+
+                                <div class="vc-trust-bar">
+                                    <span class="vc-trust-item"><i class="fa-solid fa-shield"></i> Datos protegidos</span>
+                                    <span class="vc-trust-item"><i class="fa-solid fa-server"></i> Registro oficial</span>
+                                    <span class="vc-trust-item"><i class="fa-solid fa-clock"></i> Tiempo real</span>
+                                </div>
+                            </form>
+                        </div>
+
+                    }
+
+                    @if (estado() === 'found' && resultado()) {
+                        <div class="vc-result-banner">
+                            <div class="vc-result-banner-left">
+                                <div class="vc-result-check">
+                                    <i class="fa-solid fa-check"></i>
+                                </div>
+                                <div>
+                                    <p class="vc-result-banner-title">Certificado auténtico</p>
+                                    <p class="vc-result-banner-sub">Documento verificado en el sistema oficial del CENEFCO</p>
+                                </div>
+                            </div>
+                            <span class="vc-result-state-badge">{{ resultado()!.estado }}</span>
+                        </div>
+
+                        <div class="vc-result-body">
+                            <div class="vc-cite-chip">
+                                <i class="fa-solid fa-certificate"></i>
+                                <span>{{ resultado()!.codigo_verificacion }}</span>
+                            </div>
+
+                            <div class="vc-result-grid">
+                                <div class="vc-rrow">
+                                    <span class="vc-rrow-label"><i class="fa-solid fa-user"></i> Nombre</span>
+                                    <span class="vc-rrow-value">{{ resultado()!.nombre_en_certificado }}</span>
+                                </div>
+
+                                <div class="vc-rrow">
+                                    <span class="vc-rrow-label"><i class="fa-solid fa-graduation-cap"></i> Programa</span>
+                                    <span class="vc-rrow-value">{{ resultado()!.programa_en_certificado }}</span>
+                                </div>
+
+                                <div class="vc-rrow">
+                                    <span class="vc-rrow-label"><i class="fa-solid fa-circle-check"></i> Condición</span>
+                                    <span class="vc-rrow-value" [class]="condicionClass(resultado()!.condicion)">
+                                        {{ resultado()!.condicion | titlecase }}
+                                    </span>
+                                </div>
+
+                                @if (resultado()!.nota_final !== null) {
+                                    <div class="vc-rrow">
+                                        <span class="vc-rrow-label"><i class="fa-solid fa-star-half-stroke"></i> Nota final</span>
+                                        <span class="vc-rrow-value">{{ resultado()!.nota_final }}</span>
+                                    </div>
+                                }
+
+                                @if (resultado()!.horas_academicas) {
+                                    <div class="vc-rrow">
+                                        <span class="vc-rrow-label"><i class="fa-solid fa-clock"></i> Horas académicas</span>
+                                        <span class="vc-rrow-value">{{ resultado()!.horas_academicas }} horas</span>
+                                    </div>
+                                }
+
+                                @if (resultado()!.fecha_inicio_curso) {
+                                    <div class="vc-rrow">
+                                        <span class="vc-rrow-label"><i class="fa-solid fa-calendar"></i> Período</span>
+                                        <span class="vc-rrow-value">
+                                            {{ resultado()!.fecha_inicio_curso | date:'d MMM yyyy' }}
+                                            @if (resultado()!.fecha_fin_curso) {
+                                                — {{ resultado()!.fecha_fin_curso | date:'d MMM yyyy' }}
+                                            }
+                                        </span>
+                                    </div>
+                                }
+
+                                @if (resultado()!.archivo_url) {
+                                    <div class="vc-rrow">
+                                        <span class="vc-rrow-label"><i class="fa-solid fa-file-pdf"></i> Certificado</span>
+                                        <span class="vc-rrow-value">
+                                            <a [href]="resultado()!.archivo_url | imageUrl" target="_blank" class="vc-download-link">
+                                                <i class="fa-solid fa-download"></i> Descargar PDF
+                                            </a>
+                                        </span>
+                                    </div>
+                                }
+
+                            </div>
+                            <button type="button" class="vc-nueva-btn" (click)="nueva()">
+                                <i class="fa-solid fa-rotate-left"></i> Realizar nueva verificación
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

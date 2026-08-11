@@ -1,0 +1,191 @@
+<div class="contact1-section-area sp1" [style.background-image]="'url(' + ui.imagenes.fondo + ')'" style="background-position: center; background-repeat: no-repeat; background-size: cover;">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6">
+        <div class="contact-header-area heading2">
+          <h5 data-aos="fade-left" data-aos-duration="800">{{ ui.subtitulo }}</h5>
+          <h2 class="tg-element-title">{{ ui.titulo }}</h2>
+          <p data-aos="fade-left" data-aos-duration="1000">{{ ui.descripcion }}</p>
+          <div class="space48"></div>
+          <div class="row">
+            <div class="col-lg-6 col-md-6">
+              <div class="contact-auhtor-side" data-aos="fade-left" data-aos-duration="1000">
+                <div class="icons-text">
+                  <div class="icons"><i class="fa-solid fa-phone"></i></div>
+                  <div class="text">
+                    <p>{{ ui.info.telefonoLabel }}</p>
+                    <a [href]="telefonoHref">{{ telefonoTexto || '—' }}</a>
+                  </div>
+                </div>
+                <div class="space48"></div>
+                <div class="icons-text">
+                  <div class="icons"><i class="fa-solid fa-location-dot"></i></div>
+                  <div class="text">
+                    <p>{{ ui.info.direccionLabel }}</p>
+                    <a href="#" (click)="$event.preventDefault()">{{ direccionTexto || '—' }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6">
+              <div class="space48 d-md-none"></div>
+              <div class="contact-auhtor-side" data-aos="fade-left" data-aos-duration="1200">
+                <div class="icons-text">
+                  <div class="icons"><i class="fa-solid fa-envelope"></i></div>
+                  <div class="text">
+                    <p>{{ ui.info.emailLabel }}</p>
+                    <a [href]="emailHref">{{ emailTexto || '—' }}</a>
+                  </div>
+                </div>
+                <div class="space48"></div>
+                <div class="icons-text">
+                  <div class="icons"><i class="fa-solid fa-clock"></i></div>
+                  <div class="text">
+                    <p>{{ ui.info.horarioLabel }}</p>
+                    <a href="#" (click)="$event.preventDefault()">{{ horarioTexto || '—' }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="contact-submit-boxarea">
+          @if (enviado) {
+            <div class="alert alert-success rounded-3 py-4 text-center">
+              <i class="fa-solid fa-circle-check fa-2x mb-2 d-block"></i>
+              <h5 class="mb-1">{{ ui.alertas.exitoTitulo }}</h5>
+              <p class="mb-0">{{ ui.alertas.exitoDescripcion }}</p>
+            </div>
+          }
+
+          @if (error) {
+            <div class="alert alert-danger rounded-3">
+              <i class="fa-solid fa-circle-exclamation me-2"></i>
+              {{ ui.alertas.errorTexto }}
+            </div>
+          }
+
+          @if (!enviado) {
+            <h4>{{ ui.form.titulo }}</h4>
+            <form [formGroup]="form" (ngSubmit)="submit()">
+              <div class="row">
+                <div class="col-lg-6 col-12">
+                  <div class="input-area">
+                    <p>{{ ui.form.nombreLabel }} <span class="text-danger">*</span></p>
+                    <input type="text" [placeholder]="ui.form.nombrePlaceholder"
+                           formControlName="nombre_remitente"
+                           [class.is-invalid]="f['nombre_remitente'].invalid && f['nombre_remitente'].touched">
+                    @if (f['nombre_remitente'].touched) {
+                      @if (f['nombre_remitente'].errors?.['required']) {
+                        <small class="text-danger">{{ ui.validacion.nombreRequerido }}</small>
+                      } @else if (f['nombre_remitente'].errors?.['minlength']) {
+                        <small class="text-danger">{{ ui.validacion.nombreMinLength }}</small>
+                      } @else if (f['nombre_remitente'].errors?.['pattern']) {
+                        <small class="text-danger">{{ ui.validacion.nombreInvalido }}</small>
+                      }
+                    }
+                  </div>
+                </div>
+
+                <div class="col-lg-6 col-12">
+                  <div class="input-area">
+                    <p>{{ ui.form.telefonoLabel }}</p>
+                    <input type="tel" [placeholder]="ui.form.telefonoPlaceholder"
+                           formControlName="telefono_remitente"
+                           [class.is-invalid]="f['telefono_remitente'].invalid && f['telefono_remitente'].touched">
+                    @if (f['telefono_remitente'].errors?.['pattern'] && f['telefono_remitente'].touched) {
+                      <small class="text-danger">{{ ui.validacion.telefonoInvalido }}</small>
+                    }
+                  </div>
+                </div>
+
+                <div class="col-lg-12">
+                  <div class="input-area">
+                    <p>{{ ui.form.emailLabel }} <span class="text-danger">*</span></p>
+                    <input type="email" [placeholder]="ui.form.emailPlaceholder"
+                           formControlName="email_remitente"
+                           [class.is-invalid]="f['email_remitente'].invalid && f['email_remitente'].touched">
+                    @if (f['email_remitente'].touched) {
+                      @if (f['email_remitente'].errors?.['required']) {
+                        <small class="text-danger">{{ ui.validacion.emailRequerido }}</small>
+                      } @else if (f['email_remitente'].errors?.['email']) {
+                        <small class="text-danger">{{ ui.validacion.emailInvalido }}</small>
+                      }
+                    }
+                  </div>
+                </div>
+
+                <div class="col-lg-12">
+                  <div class="input-area">
+                    <p>{{ ui.form.mensajeLabel }} <span class="text-danger">*</span></p>
+                    <textarea [placeholder]="ui.form.mensajePlaceholder" cols="30" rows="6"
+                              formControlName="mensaje"
+                              [class.is-invalid]="f['mensaje'].invalid && f['mensaje'].touched"></textarea>
+                    @if (f['mensaje'].touched) {
+                      @if (f['mensaje'].errors?.['required']) {
+                        <small class="text-danger">{{ ui.validacion.mensajeRequerido }}</small>
+                      } @else if (f['mensaje'].errors?.['minlength']) {
+                        <small class="text-danger">{{ ui.validacion.mensajeMinLength }}</small>
+                      }
+                    }
+                  </div>
+                </div>
+
+                <div class="col-lg-12">
+                  <div class="input-area">
+                    <p style="color: #fff;">Verificación <span class="text-danger">*</span></p>
+                    <div class="d-flex align-items-center gap-3 mb-2">
+                      @if (captchaLoading) {
+                        <div class="captcha-placeholder d-flex align-items-center justify-content-center">
+                          <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">Cargando...</span>
+                        </div>
+                      } @else if (captcha) {
+                        <img [src]="captcha.img" alt="Captcha" class="captcha-img">
+                      }
+                      <button type="button" class="captcha-refresh-btn" (click)="loadCaptcha()" title="Actualizar código" [disabled]="captchaLoading">
+                        <i class="fa-solid fa-rotate-right"></i>
+                      </button>
+                    </div>
+                    <input type="text" placeholder="Ingrese el código que ve en la imagen"
+                           formControlName="captcha_value"
+                           [class.is-invalid]="f['captcha_value'].invalid && f['captcha_value'].touched"
+                           autocomplete="off">
+                    @if (f['captcha_value'].errors?.['required'] && f['captcha_value'].touched) {
+                      <small class="text-danger">Ingrese el código de verificación.</small>
+                    }
+                  </div>
+                </div>
+
+                <div class="col-lg-12">
+                  <div class="input-area1">
+                    <input type="checkbox" formControlName="privacidad" id="privacidad-home">
+                    <label for="privacidad-home" style="color: #fff;">{{ ui.form.privacidadLabel }}</label>
+                  </div>
+                  @if (f['privacidad'].errors?.['required'] && f['privacidad'].touched) {
+                    <small class="text-danger d-block mt-1">{{ ui.validacion.privacidadRequerida }}</small>
+                  }
+                </div>
+
+                <div class="col-lg-12">
+                  <div class="input-area1">
+                    <button type="submit" class="header-btn1" [disabled]="enviando">
+                      @if (enviando) {
+                        {{ ui.form.btnEnviando }} <i class="fa-solid fa-spinner fa-spin"></i>
+                      } @else {
+                        {{ ui.form.btnEnviar }} <i class="fa-solid fa-arrow-right"></i>
+                      }
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

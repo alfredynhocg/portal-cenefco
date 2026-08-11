@@ -1,0 +1,335 @@
+﻿@if (cargando) {
+    <div class="cpd-loading">
+        <i class="fa-solid fa-circle-notch fa-spin"></i> Cargando...
+    </div>
+}
+
+@if (!cargando && curso) {
+
+<div class="cpd-hero">
+    @if (curso.imagen_path | imageUrl; as imgSrc) {
+        <img [src]="imgSrc" [alt]="curso.nombre" class="cpd-hero-bg">
+    } @else {
+        <img src="assets/img/bg/header-img1.jpg" alt="" class="cpd-hero-bg">
+    }
+    <div class="cpd-hero-overlay"></div>
+    <div class="cpd-hero-pattern"></div>
+    <div class="cpd-hero-body">
+        <div class="container">
+            <div class="cpd-hero-inner">
+                <div class="cpd-hero-text">
+                    <div class="cpd-hero-badge">
+                        <i class="fa-solid fa-graduation-cap"></i> Curso pasado
+                    </div>
+                    <h1 class="cpd-hero-title">{{ curso.nombre }}</h1>
+                    <div class="cpd-hero-chips">
+                        @if (curso.periodo) {
+                            <span class="cpd-hero-chip">
+                                <i class="fa-solid fa-calendar-alt"></i> {{ curso.periodo }}
+                            </span>
+                        }
+                        @if (curso.carga_horaria) {
+                            <span class="cpd-hero-chip">
+                                <i class="fa-solid fa-clock"></i> {{ curso.carga_horaria }} horas
+                            </span>
+                        }
+                        @if (curso.participantes_count > 0) {
+                            <span class="cpd-hero-chip">
+                                <i class="fa-solid fa-users"></i> {{ curso.participantes_count }} participantes
+                            </span>
+                        }
+                    </div>
+                    <app-breadcrumb [title]="curso.nombre" />
+                </div>
+
+                @if (curso.imagen_path | imageUrl; as imgSrc) {
+                    <div class="cpd-hero-img">
+                        <img [src]="imgSrc" [alt]="curso.nombre">
+                    </div>
+                } @else {
+                    <div class="cpd-hero-img">
+                        <div class="cpd-hero-img-placeholder">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (curso.logos && curso.logos.length > 0) {
+    <div class="cpd-logos-section">
+        <div class="container">
+            <p class="cpd-logos-label">Instituciones participantes</p>
+            <div class="cpd-logos-strip">
+                @for (logo of curso.logos; track logo.id) {
+                    <div class="cpd-logo-item" [title]="logo.nombre ?? ''">
+                        <img [src]="logo.path | imageUrl" [alt]="logo.nombre ?? 'Logo'">
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<section class="cpd-section">
+    <div class="container">
+
+        <a routerLink="/cursos-pasados" class="cpd-back-link">
+            <i class="fa-solid fa-arrow-left"></i> Volver al listado
+        </a>
+
+        <div class="cpd-layout">
+            <div class="cpd-left-col">
+                <div class="cpd-card">
+                    <div class="cpd-card-head">
+                        <h3>Información del curso</h3>
+                        <p>Datos generales del programa académico</p>
+                    </div>
+                    <div class="cpd-card-body">
+                        <div class="cpd-info-grid">
+
+                            <div class="cpd-info-item" style="grid-column: 1 / -1;">
+                                <div class="cpd-info-label">Nombre del curso</div>
+                                <div class="cpd-info-value" style="font-size:16px;">{{ curso.nombre }}</div>
+                            </div>
+
+                            <div class="cpd-info-item">
+                                <div class="cpd-info-label">Período</div>
+                                @if (curso.periodo) {
+                                    <span class="cpd-info-value badge-periodo">
+                                        <i class="fa-solid fa-calendar-alt"></i> {{ curso.periodo }}
+                                    </span>
+                                } @else {
+                                    <span class="cpd-info-value dash">—</span>
+                                }
+                            </div>
+
+                            <div class="cpd-info-item">
+                                <div class="cpd-info-label">Gestión</div>
+                                <div class="cpd-info-value">{{ curso.gestion ?? '—' }}</div>
+                            </div>
+
+                            <div class="cpd-info-item">
+                                <div class="cpd-info-label">Fecha de inicio</div>
+                                <div class="cpd-info-value">
+                                    {{ curso.fecha_inicio ? (curso.fecha_inicio | date:'d MMM yyyy') : '—' }}
+                                </div>
+                            </div>
+
+                            <div class="cpd-info-item">
+                                <div class="cpd-info-label">Carga horaria</div>
+                                @if (curso.carga_horaria) {
+                                    <span class="cpd-info-value badge-hours">
+                                        <i class="fa-solid fa-clock"></i> {{ curso.carga_horaria }} horas
+                                    </span>
+                                } @else {
+                                    <span class="cpd-info-value dash">—</span>
+                                }
+                            </div>
+
+                            <div class="cpd-info-item">
+                                <div class="cpd-info-label">Participantes</div>
+                                <div class="cpd-info-value">{{ curso.participantes_count }}</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cpd-card" style="margin-top: 24px;">
+                    <div class="cpd-card-head">
+                        <h3>
+                            Participantes
+                            <span class="cpd-part-count">{{ curso.participantes_count }}</span>
+                        </h3>
+                        <p>Listado de estudiantes registrados en este curso</p>
+                    </div>
+                    <div class="cpd-card-body" style="padding: 0;">
+                        @if (!curso.participantes || curso.participantes.length === 0) {
+                            <div class="cpd-part-empty">
+                                <i class="fa-solid fa-users"></i>
+                                <p>Sin participantes registrados</p>
+                            </div>
+                        } @else {
+                            <div class="cpd-part-search-wrap">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input
+                                    type="text"
+                                    class="cpd-part-search"
+                                    placeholder="Filtrar participante..."
+                                    (input)="onFilterParticipantes($event)"
+                                >
+                            </div>
+                            <div class="cpd-part-list">
+                                @for (p of participantesFiltrados; track p.id; let i = $index) {
+                                    <div class="cpd-part-row">
+                                        <span class="cpd-part-num">{{ i + 1 }}</span>
+                                        <span class="cpd-part-avatar">
+                                            {{ p.nombre_completo.charAt(0).toUpperCase() }}
+                                        </span>
+                                        <span class="cpd-part-name">{{ p.nombre_completo }}</span>
+                                    </div>
+                                }
+                                @empty {
+                                    <div class="cpd-part-empty">
+                                        <p>Sin coincidencias</p>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:28px;">
+                <div class="cpd-cta-card">
+                    <div class="cpd-cta-banner">
+                        <div class="cpd-cta-icon">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <h4>Página del curso</h4>
+                        <p>Accedé a la página completa de este curso en el sitio oficial del CENEFCO</p>
+                    </div>
+                    <div class="cpd-cta-body">
+                        <a [href]="curso.url" target="_blank" rel="noopener" class="cpd-btn-primary">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            Ver curso completo
+                        </a>
+                        <a routerLink="/cursos-pasados" class="cpd-btn-outline">
+                            <i class="fa-solid fa-list"></i>
+                            Ver todos los cursos
+                        </a>
+
+                        <div class="cpd-stat-row">
+                            @if (curso.carga_horaria) {
+                                <div class="cpd-stat">
+                                    <span class="cpd-stat-num">{{ curso.carga_horaria }}</span>
+                                    <span class="cpd-stat-lbl">Horas</span>
+                                </div>
+                            }
+                            <div class="cpd-stat">
+                                <span class="cpd-stat-num">{{ curso.participantes_count }}</span>
+                                <span class="cpd-stat-lbl">Participantes</span>
+                            </div>
+                            @if (curso.gestion) {
+                                <div class="cpd-stat">
+                                    <span class="cpd-stat-num">{{ curso.gestion }}</span>
+                                    <span class="cpd-stat-lbl">Gestión</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="cpd-sidebar-label">Asistente CENEFCO</p>
+                    <div class="wa-phone-wrap">
+                        <div class="wa-float-badge wa-float-badge--top">
+                            <i class="fa-solid fa-certificate"></i> Certificados
+                        </div>
+                        <div class="wa-float-badge wa-float-badge--bot">
+                            <i class="fa-brands fa-whatsapp"></i> Consultas
+                        </div>
+
+                        <div class="wa-phone">
+                            <div class="wa-phone-vol"></div>
+
+                            <div class="wa-top-chrome">
+                                <div class="wa-dynamic-island">
+                                    <div class="wa-di-camera"></div>
+                                    <div class="wa-di-pill"></div>
+                                </div>
+                                <div class="wa-status-bar">
+                                    <span class="wa-status-time">9:41</span>
+                                    <div class="wa-status-icons">
+                                        <i class="fa-solid fa-signal"></i>
+                                        <i class="fa-solid fa-wifi"></i>
+                                        <div class="wa-battery-body"><div class="wa-battery-fill"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="wa-screen">
+                                <div class="wa-topbar">
+                                    <i class="fa-solid fa-chevron-left wa-back"></i>
+                                    <div class="wa-avatar">
+                                        <i class="fa-solid fa-graduation-cap"></i>
+                                    </div>
+                                    <div class="wa-contact-info">
+                                        <div class="wa-contact-name">CENEFCO Bot</div>
+                                        <div class="wa-contact-status">en línea</div>
+                                    </div>
+                                    <div class="wa-topbar-actions">
+                                        <i class="fa-solid fa-video"></i>
+                                        <i class="fa-solid fa-phone"></i>
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </div>
+                                </div>
+
+                                <div class="wa-transition-wrap">
+                                    @if (showGif) {
+                                        <div class="wa-gif-screen" [class.fading]="gifFading">
+                                            <div class="wa-gif-logo-wrap">
+                                                <img src="assets/img/logo/cenefco-bot.gif" alt="CENEFCO Bot">
+                                            </div>
+                                            <span class="wa-gif-title">CENEFCO Bot</span>
+                                            <span class="wa-gif-sub">Iniciando asistente…</span>
+                                            <div class="wa-gif-progress">
+                                                <div class="wa-gif-progress-bar running"></div>
+                                            </div>
+                                        </div>
+                                    }
+
+                                    <div class="wa-body" [class.visible]="!showGif">
+                                        <div class="wa-messages">
+                                            <div class="wa-date-chip">
+                                                <span>Hoy</span>
+                                            </div>
+
+                                            @for (msg of visibleMsgs; track msg.time + msg.text) {
+                                                <div class="wa-msg" [class.left]="!msg.right" [class.right]="msg.right">
+                                                    {{ msg.text }}
+                                                    <div class="wa-msg-meta">
+                                                        <span class="wa-msg-time">{{ msg.time }}</span>
+                                                        @if (msg.right) {
+                                                            <span class="wa-msg-ticks">
+                                                                <i class="fa-solid fa-check-double"></i>
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            @if (showTyping) {
+                                                <div class="wa-typing">
+                                                    <div class="wa-typing-dots">
+                                                        <span></span><span></span><span></span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="wa-inputbar">
+                                    <div class="wa-inputbar-field">
+                                        <span style="font-size:12px;">😊</span>
+                                        <span>Escribir mensaje…</span>
+                                        <i class="fa-solid fa-paperclip" style="color:#aaa;font-size:11px;"></i>
+                                    </div>
+                                    <div class="wa-inputbar-send">
+                                        <i class="fa-solid fa-microphone" style="font-size:11px;"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+}

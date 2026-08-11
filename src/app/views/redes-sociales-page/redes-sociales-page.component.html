@@ -1,0 +1,52 @@
+<div class="rs-hero">
+    <img src="assets/img/all-images/header_default_cenefco.jpg" alt="" class="rs-hero-bg">
+    <div class="rs-hero-overlay"></div>
+    <div class="rs-hero-body">
+        <div class="container">
+            <div class="rs-hero-badge">
+                <i class="fa-solid fa-share-nodes"></i> Conéctate con nosotros
+            </div>
+            <h1 class="rs-hero-title">Nuestras <span>Redes Sociales</span></h1>
+            <app-breadcrumb title="Redes Sociales" />
+        </div>
+    </div>
+</div>
+
+<section class="rs-section">
+    <div class="container">
+
+        @if (cargando()) {
+            <div class="rs-grid rs-skel">
+                @for (i of [1,2,3,4]; track i) {
+                    <div class="rs-card">
+                        <div class="rs-skel-block" style="width:52px;height:52px;border-radius:14px"></div>
+                        <div style="flex:1">
+                            <div class="rs-skel-block" style="width:70%;height:14px;margin-bottom:8px"></div>
+                            <div class="rs-skel-block" style="width:50%;height:11px"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        } @else if (redesSociales().length > 0) {
+            <div class="rs-grid">
+                @for (red of redesSociales(); track red.id) {
+                    <a [href]="red.url" target="_blank" rel="noopener noreferrer" class="rs-card">
+                        <div class="rs-icon-wrap">
+                            <i [class]="red.icono_clase || 'fa-solid fa-link'"></i>
+                        </div>
+                        <div class="rs-card-info">
+                            <p class="rs-card-nombre">{{ red.red }}</p>
+                            <p class="rs-card-desc">{{ red.nombre_display || red.url }}</p>
+                        </div>
+                    </a>
+                }
+            </div>
+        } @else {
+            <div class="rs-empty">
+                <i class="fa-solid fa-share-nodes"></i>
+                <p>No hay redes sociales disponibles en este momento.</p>
+            </div>
+        }
+
+    </div>
+</section>

@@ -1,0 +1,112 @@
+<div class="hero1-section-area about-bg-area">
+    <img [src]="CONSTANTS.imagenes.header" alt="" class="header-img1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 m-auto">
+                <div class="hero-heading-area heading1 text-center">
+                    <h1>{{ noticia?.titulo ?? CONSTANTS.breadcrumb.subTitleFallback }}</h1>
+                    <app-breadcrumb [subTitle]="noticia?.titulo ?? ''" [title]="CONSTANTS.breadcrumb.title" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="blog-leftside-section-area sp8">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 m-auto">
+                @if (cargando) {
+                <div class="text-center" style="padding: 60px 0;">
+                    <p>{{ CONSTANTS.detalles.loading }}</p>
+                </div>
+                }
+
+                @if (!cargando && !noticia) {
+                <div class="text-center" style="padding: 60px 0;">
+                    <p>{{ CONSTANTS.detalles.notFound }}</p>
+                    <a routerLink="/noticias" class="header-btn1" style="margin-top:16px;display:inline-block;">
+                        {{ CONSTANTS.detalles.btnBack }} <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                }
+
+                @if (noticia) {
+                <div class="blog-leftside-area heading2 blog-singleside">
+
+                    @if (noticia.imagen_principal_url | imageUrl; as imgSrc) {
+                    <div class="blog-left-heading heading2">
+                        <div class="img1" style="height:clamp(200px,45vw,360px);overflow:hidden;border-radius:4px;">
+                            <img [src]="imgSrc" [alt]="noticia.titulo"
+                                style="width:100%;height:100%;object-fit:cover;">
+                        </div>
+                    </div>
+                    <div class="space32"></div>
+                    }
+
+                    <div class="left-heading2 heading2">
+                        <h2>{{ noticia.titulo }}</h2>
+                    </div>
+                    <div class="space24"></div>
+
+                    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:24px;">
+                        @if (noticia.fecha_publicacion) {
+                        <span style="display:flex;align-items:center;gap:6px;font-size:15px;color:#555;">
+                            <i class="fa-solid fa-calendar-days" style="color:var(--ztc-text-text-2)"></i>
+                            {{ noticia.fecha_publicacion | date:'d MMMM, yyyy' }}
+                        </span>
+                        }
+                        @if (noticia.categoria) {
+                        <span style="display:flex;align-items:center;gap:6px;font-size:15px;color:#555;">
+                            <i class="fa-solid fa-tag" style="color:var(--ztc-text-text-2)"></i>
+                            {{ noticia.categoria.nombre }}
+                        </span>
+                        }
+                        @if (noticia.destacada) {
+                        <span style="display:flex;align-items:center;gap:6px;font-size:15px;color:#555;">
+                            <i class="fa-solid fa-star" style="color:var(--ztc-text-text-2)"></i>
+                            {{ CONSTANTS.detalles.destacada }}
+                        </span>
+                        }
+                    </div>
+
+                    @if (noticia.entradilla) {
+                    <div class="left-heading2 heading2">
+                        <p><strong>{{ noticia.entradilla }}</strong></p>
+                    </div>
+                    <div class="space24"></div>
+                    }
+
+                    @if (noticia.cuerpo) {
+                    <div class="left-heading2 heading2" [innerHTML]="noticia.cuerpo"></div>
+                    }
+
+                    <div class="space48"></div>
+
+                    <div class="tags-share-area">
+                        <div class="share">
+                            <h4>{{ CONSTANTS.detalles.shareTitle }}</h4>
+                            <ul>
+                                <li><a [href]="shareUrls.linkedin" target="_blank" rel="noopener noreferrer"><i
+                                            class="fa-brands fa-linkedin-in"></i></a></li>
+                                <li><a [href]="shareUrls.whatsapp" target="_blank" rel="noopener noreferrer"><i
+                                            class="fa-brands fa-whatsapp"></i></a></li>
+                                <li><a [href]="shareUrls.twitter" target="_blank" rel="noopener noreferrer"><i
+                                            class="fa-brands fa-x-twitter"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="space32"></div>
+                    <a routerLink="/noticias" class="header-btn1"
+                        style="display:inline-flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-arrow-left"></i> {{ CONSTANTS.detalles.btnBack }}
+                    </a>
+                    <div class="space80"></div>
+
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

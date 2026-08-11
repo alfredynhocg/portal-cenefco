@@ -1,0 +1,24 @@
+<li [ngClass]="{ 'has-sub hash-has-sub': item.isOpen }">
+    @if (isExternal(item.url)) {
+        <a [href]="item.url" [target]="item.abrir_nueva_ventana ? '_blank' : '_self'" (click)="toggleSubMenu(item); onLinkClick()">
+            {{ item.etiqueta }}
+        </a>
+    } @else {
+        <a [routerLink]="item.url || '/'" (click)="toggleSubMenu(item); onLinkClick()">
+            {{ item.etiqueta }}
+        </a>
+    }
+
+    @if (item.children && item.children.length > 0) {
+        <span class="submenu-button" [ngClass]="{ 'submenu-opened': item.isOpen }"
+            (click)="toggleSubMenu(item, $event)">
+            <em></em>
+        </span>
+
+        <ul *ngIf="item.isOpen" class="sub-menu" [ngStyle]="{ 'display': item.isOpen ? 'block' : 'none' }">
+            @for (child of item.children; track child.id) {
+                <app-mobile-nav-item [item]="child" (cerrarMenu)="cerrarMenu.emit()"></app-mobile-nav-item>
+            }
+        </ul>
+    }
+</li>

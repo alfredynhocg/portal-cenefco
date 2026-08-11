@@ -1,0 +1,269 @@
+@if (cargando) {
+    <div class="bd-skel-hero">
+        <div class="container" style="padding-top:48px; padding-bottom:36px;">
+            <div class="bd-skel-bar w40" style="margin-bottom:20px;"></div>
+            <div class="bd-skel-bar w80"></div>
+            <div class="bd-skel-bar w60"></div>
+        </div>
+    </div>
+    <section class="bd-section">
+        <div class="container">
+            <div class="bd-layout">
+                <div>
+                    <div class="bd-skel-block"></div>
+                    <div class="bd-skel-block"></div>
+                </div>
+                <div>
+                    <div class="bd-skel-block" style="height:200px;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+@else if (noEncontrado || !pub) {
+    <section class="bd-section" style="padding-top:60px;">
+        <div class="container">
+            <div class="bd-not-found">
+                <i class="fa-solid fa-file-circle-xmark"></i>
+                <h3>Publicación no encontrada</h3>
+                <p>El documento que buscas no existe o ha sido eliminado.</p>
+                <a routerLink="/biblioteca">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a la Biblioteca
+                </a>
+            </div>
+        </div>
+    </section>
+}
+
+@else {
+    <section class="bd-hero">
+        <img class="bd-hero-bg" src="assets/img/all-images/header_default_cenefco.jpg" alt="" aria-hidden="true"
+             onerror="this.src='assets/img/all-images/header_default_cenefco.jpg';">
+        <div class="bd-hero-overlay"></div>
+        <div class="container bd-hero-body">
+            <a routerLink="/biblioteca" class="bd-hero-back">
+                <i class="fa-solid fa-arrow-left"></i> Volver a la Biblioteca
+            </a>
+            <div class="bd-hero-pill" [class]="getTipoPillClass(pub.tipo)">
+                <i [class]="getTipoIcon(pub.tipo)"></i>
+                {{ pub.tipo_label ?? pub.tipo }}
+            </div>
+            <h1 class="bd-hero-title">{{ pub.titulo }}</h1>
+            <div class="bd-hero-meta">
+                @if (pub.autor) {
+                    <span class="bd-hero-meta-item">
+                        <i class="fa-solid fa-user-pen"></i> {{ pub.autor }}
+                    </span>
+                }
+                @if (pub.anio) {
+                    <span class="bd-hero-meta-item">
+                        <i class="fa-solid fa-calendar-days"></i> {{ pub.anio }}
+                    </span>
+                }
+                @if (pub.area) {
+                    <span class="bd-hero-meta-item">
+                        <i class="fa-solid fa-tag"></i> {{ pub.area }}
+                    </span>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="bd-section">
+        <div class="container">
+            <div class="bd-layout">
+                <div>
+                    @if (pub.resumen) {
+                        <div class="bd-card" data-aos="fade-up" data-aos-duration="600">
+                            <div class="bd-card-header">
+                                <div class="bd-card-icon"><i class="fa-solid fa-align-left"></i></div>
+                                <h3 class="bd-card-title">Resumen</h3>
+                            </div>
+                            <div class="bd-card-body">
+                                <p class="bd-card-text">{{ pub.resumen }}</p>
+                            </div>
+                        </div>
+                    }
+
+                    @if (pub.palabras_clave) {
+                        <div class="bd-card" data-aos="fade-up" data-aos-duration="650">
+                            <div class="bd-card-header">
+                                <div class="bd-card-icon"><i class="fa-solid fa-tags"></i></div>
+                                <h3 class="bd-card-title">Palabras Clave</h3>
+                            </div>
+                            <div class="bd-card-body" style="display:flex;flex-wrap:wrap;gap:8px;">
+                                @for (kw of pub.palabras_clave.split(','); track kw) {
+                                    <span style="display:inline-flex;align-items:center;gap:4px;padding:5px 13px;border-radius:20px;background:rgba(18,138,162,.07);color:#128AA2;font-size:13px;font-weight:600;">
+                                        <i class="fa-solid fa-hashtag" style="font-size:10px;color:#FC8900;"></i>
+                                        {{ kw.trim() }}
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="bd-card" data-aos="fade-up" data-aos-duration="700">
+                        <div class="bd-card-header">
+                            <div class="bd-card-icon"><i class="fa-solid fa-list-check"></i></div>
+                            <h3 class="bd-card-title">Ficha Técnica</h3>
+                        </div>
+                        <div class="bd-card-body">
+                            <div class="bd-ficha">
+                                <div class="bd-ficha-row">
+                                    <div class="bd-ficha-icon"><i class="fa-solid fa-bookmark"></i></div>
+                                    <div class="bd-ficha-content">
+                                        <p class="bd-ficha-label">Tipo de publicación</p>
+                                        <span class="bd-tipo-badge" [class]="getTipoBadgeClass(pub.tipo)">
+                                            <i [class]="getTipoIcon(pub.tipo)"></i>
+                                            {{ pub.tipo_label ?? pub.tipo }}
+                                        </span>
+                                    </div>
+                                </div>
+                                @if (pub.autor) {
+                                    <div class="bd-ficha-row">
+                                        <div class="bd-ficha-icon"><i class="fa-solid fa-user-pen"></i></div>
+                                        <div class="bd-ficha-content">
+                                            <p class="bd-ficha-label">Autor / Institución</p>
+                                            <p class="bd-ficha-value">{{ pub.autor }}</p>
+                                        </div>
+                                    </div>
+                                }
+                                @if (pub.anio) {
+                                    <div class="bd-ficha-row">
+                                        <div class="bd-ficha-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                                        <div class="bd-ficha-content">
+                                            <p class="bd-ficha-label">Año de publicación</p>
+                                            <p class="bd-ficha-value">{{ pub.anio }}</p>
+                                        </div>
+                                    </div>
+                                }
+                                @if (pub.area) {
+                                    <div class="bd-ficha-row">
+                                        <div class="bd-ficha-icon"><i class="fa-solid fa-tag"></i></div>
+                                        <div class="bd-ficha-content">
+                                            <p class="bd-ficha-label">Área temática</p>
+                                            <p class="bd-ficha-value">{{ pub.area }}</p>
+                                        </div>
+                                    </div>
+                                }
+                                @if (pub.issn) {
+                                    <div class="bd-ficha-row">
+                                        <div class="bd-ficha-icon"><i class="fa-solid fa-barcode"></i></div>
+                                        <div class="bd-ficha-content">
+                                            <p class="bd-ficha-label">ISSN</p>
+                                            <p class="bd-ficha-value">{{ pub.issn }}</p>
+                                        </div>
+                                    </div>
+                                }
+                                @if (pub.volumen) {
+                                    <div class="bd-ficha-row">
+                                        <div class="bd-ficha-icon"><i class="fa-solid fa-layer-group"></i></div>
+                                        <div class="bd-ficha-content">
+                                            <p class="bd-ficha-label">Volumen / Número</p>
+                                            <p class="bd-ficha-value">Vol. {{ pub.volumen }}{{ pub.numero ? ' — N.º ' + pub.numero : '' }}</p>
+                                        </div>
+                                    </div>
+                                }
+                                @if (pub.paginas) {
+                                    <div class="bd-ficha-row">
+                                        <div class="bd-ficha-icon"><i class="fa-solid fa-file-lines"></i></div>
+                                        <div class="bd-ficha-content">
+                                            <p class="bd-ficha-label">Páginas</p>
+                                            <p class="bd-ficha-value">{{ pub.paginas }}</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bd-card" data-aos="fade-up" data-aos-duration="750">
+                        <div class="bd-card-header">
+                            <div class="bd-card-icon"><i class="fa-solid fa-share-nodes"></i></div>
+                            <h3 class="bd-card-title">Compartir</h3>
+                        </div>
+                        <div class="bd-card-body">
+                            <div class="bd-share">
+                                <span class="bd-share-label">Comparte esta publicación</span>
+                                <div class="bd-share-btns">
+                                    <a [href]="shareUrl('facebook')" target="_blank" rel="noopener" class="bd-share-btn bd-share-fb" title="Compartir en Facebook">
+                                        <i class="fa-brands fa-facebook-f"></i>
+                                    </a>
+                                    <a [href]="shareUrl('whatsapp')" target="_blank" rel="noopener" class="bd-share-btn bd-share-wa" title="Compartir en WhatsApp">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                    </a>
+                                    <a [href]="shareUrl('linkedin')" target="_blank" rel="noopener" class="bd-share-btn bd-share-li" title="Compartir en LinkedIn">
+                                        <i class="fa-brands fa-linkedin-in"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <aside class="bd-sidebar">
+                    <div class="bd-sidebar-sticky">
+                        <div class="bd-action-card">
+                            <div class="bd-action-head">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                <span>Documento</span>
+                            </div>
+                            <div class="bd-action-body">
+                                @if (pub.archivo_url) {
+                                    <a [href]="pub.archivo_url" target="_blank" rel="noopener noreferrer"
+                                       class="bd-btn-primary">
+                                        <i class="fa-solid fa-download"></i> Descargar PDF
+                                    </a>
+                                    <a [href]="pub.archivo_url" target="_blank" rel="noopener noreferrer"
+                                       class="bd-btn-secondary">
+                                        <i class="fa-solid fa-eye"></i> Ver en línea
+                                    </a>
+                                } @else {
+                                    <div class="bd-btn-disabled">
+                                        <i class="fa-solid fa-file-slash"></i> Archivo no disponible
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="bd-action-card">
+                            <div class="bd-action-head">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span>Información</span>
+                            </div>
+                            <div class="bd-action-body" style="gap:14px;">
+                                @if (pub.autor) {
+                                    <div style="display:flex;flex-direction:column;gap:2px;">
+                                        <span style="font-size:11px;font-weight:700;color:rgba(18,138,162,.4);text-transform:uppercase;letter-spacing:.4px;">Autor</span>
+                                        <span style="font-size:13.5px;font-weight:600;color:#128AA2;">{{ pub.autor }}</span>
+                                    </div>
+                                }
+                                @if (pub.anio) {
+                                    <div style="display:flex;flex-direction:column;gap:2px;">
+                                        <span style="font-size:11px;font-weight:700;color:rgba(18,138,162,.4);text-transform:uppercase;letter-spacing:.4px;">Año</span>
+                                        <span style="font-size:13.5px;font-weight:600;color:#128AA2;">{{ pub.anio }}</span>
+                                    </div>
+                                }
+                                @if (pub.area) {
+                                    <div style="display:flex;flex-direction:column;gap:2px;">
+                                        <span style="font-size:11px;font-weight:700;color:rgba(18,138,162,.4);text-transform:uppercase;letter-spacing:.4px;">Área</span>
+                                        <span style="font-size:13.5px;font-weight:600;color:#128AA2;">{{ pub.area }}</span>
+                                    </div>
+                                }
+                                <div style="padding-top:6px;border-top:1px solid rgba(18,138,162,.07);">
+                                    <a routerLink="/biblioteca" class="bd-btn-secondary" style="font-size:13px;">
+                                        <i class="fa-solid fa-arrow-left"></i> Ver más publicaciones
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </section>
+}

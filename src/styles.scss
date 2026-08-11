@@ -1,0 +1,87 @@
+@use "bootstrap/scss/bootstrap.scss";
+@use "aos/dist/aos.css";
+@use "@fortawesome/fontawesome-free/css/all.min.css";
+@use "assets/css/plugins/mobile.css";
+@use "slick-carousel/slick/slick.css";
+@use "slick-carousel/slick/slick-theme.css";
+@use 'ngx-owl-carousel-o/lib/styles/scss/owl.carousel' as owl-carousel;
+@use 'ngx-owl-carousel-o/lib/styles/scss/owl.theme.default' as owl-theme;
+@use './assets/scss/main.scss';
+
+@keyframes ldSpin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes logo-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.18); opacity: 0.55; }
+}
+.logo-pulse { animation: logo-pulse 1.8s ease-in-out infinite; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.curso-card-item {
+    animation: fadeInUp 0.4s ease both;
+    @for $i from 1 through 12 {
+        &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 0.07}s; }
+    }
+}
+
+.cursos-animating .curso-card-item { animation: none; opacity: 0; }
+
+.service-auhtor-boxarea .img1 { position: relative; }
+
+
+.pagination-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    transition: all .3s;
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+    font-weight: 500;
+
+    @media (max-width: 480px) {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+}
+
+.img-responsive-cover {
+    width: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.text-break-word {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+@media (max-width: 480px) {
+    .insc-modal-body,
+    .insc-modal-header,
+    .gm-header {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+
+    .insc-curso-nombre {
+        font-size: 12px;
+    }
+
+    .gm-nav {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 14px !important;
+    }
+}

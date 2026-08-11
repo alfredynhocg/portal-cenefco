@@ -1,0 +1,77 @@
+<div class="al-hero">
+    <img src="assets/img/all-images/header_default_cenefco.jpg" alt="" class="al-hero-bg">
+    <div class="al-hero-overlay"></div>
+    <div class="al-hero-body">
+        <div class="container">
+            <div class="al-hero-badge">
+                <i class="fa-solid fa-layer-group"></i> Oferta Académica
+            </div>
+            <h1 class="al-hero-title">Áreas de <span>Conocimiento</span></h1>
+            <app-breadcrumb subTitle="Áreas" title="Formación Continua" />
+        </div>
+    </div>
+</div>
+
+<section class="al-section">
+    <div class="container">
+        <div class="al-section-header">
+            <p><i class="fa-solid fa-graduation-cap"></i> &nbsp; CENEFCO</p>
+            <h2>Explora nuestras <span>áreas de formación</span></h2>
+        </div>
+
+        @if (cargando) {
+            <div class="al-grid">
+                @for (s of [1,2,3,4,5,6]; track s) {
+                    <div class="al-skeleton">
+                        <div class="al-skel-top"></div>
+                        <div class="al-skel-body">
+                            <div class="al-skel-icon"></div>
+                            <div class="al-skel-line"></div>
+                            <div class="al-skel-line"></div>
+                            <div class="al-skel-line short"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        } @else if (areas.length === 0) {
+            <div class="al-empty">
+                <i class="fa-solid fa-layer-group"></i>
+                <p>No hay áreas disponibles por el momento.</p>
+            </div>
+        } @else {
+            <div class="al-grid">
+                @for (area of areas; track area.id) {
+                    <a [routerLink]="['/', area.slug]" class="al-card">
+                        <div class="al-card-top" [style.background]="area.color || '#128AA2'"></div>
+                        <div class="al-card-body">
+                            @if (area.logo_url | imageUrl) {
+                                <img [src]="area.logo_url | imageUrl" [alt]="area.logo_alt || area.titulo"
+                                    class="al-card-logo">
+                            } @else {
+                                <div class="al-card-icon" [style.background]="area.color || '#128AA2'">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                </div>
+                            }
+                            <h3 class="al-card-title">{{ area.titulo }}</h3>
+                            @if (area.descripcion) {
+                                <p class="al-card-desc">{{ area.descripcion | truncate:100 }}</p>
+                            }
+                        </div>
+
+                        <div class="al-card-footer">
+                            @if (area.total_cursos !== undefined) {
+                                <span class="al-card-count">
+                                    <span>{{ area.total_cursos }}</span>
+                                    {{ area.total_cursos === 1 ? 'curso' : 'cursos' }}
+                                </span>
+                            }
+                            <span class="al-card-link">
+                                Ver cursos <i class="fa-solid fa-arrow-right"></i>
+                            </span>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</section>

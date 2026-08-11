@@ -1,0 +1,148 @@
+<div class="cl-hero">
+    <img src="assets/img/all-images/header_default_cenefco.jpg" alt="" class="cl-hero-bg">
+    <div class="cl-hero-overlay"></div>
+    <div class="cl-hero-body">
+        <div class="container">
+            <div class="cl-hero-badge">
+                <i class="fa-solid fa-graduation-cap"></i> Formación Continua
+            </div>
+            <h1 class="cl-hero-title">Oferta <span>Académica</span></h1>
+            <app-breadcrumb subTitle="Cursos" title="Formación Continua" />
+        </div>
+    </div>
+</div>
+
+<section class="cl-section">
+    <div class="container">
+
+        <div class="cl-search-wrap">
+            <input
+                class="cl-search-input"
+                type="text"
+                placeholder="Buscar curso por nombre..."
+                [value]="busqueda"
+                (input)="onBusqueda($event)"
+            >
+            @if (busqueda) {
+                <button type="button" class="cl-search-clear" (click)="limpiarBusqueda()">&times;</button>
+            }
+            <i class="fa-solid fa-magnifying-glass cl-search-icon"></i>
+        </div>
+
+        @if (categorias.length > 0) {
+            <div class="cl-filters">
+                <a href="#" class="cl-filter-btn"
+                   [class.active]="categoriaActiva === null"
+                   (click)="$event.preventDefault(); filtrarCategoria(null)">
+                    <i class="fa-solid fa-border-all"></i> Todos
+                </a>
+                @for (cat of categorias; track cat.nombre) {
+                    <a href="#" class="cl-filter-btn"
+                       [class.active]="categoriaActiva === cat.nombre"
+                       (click)="$event.preventDefault(); filtrarCategoria(cat.nombre)">
+                        {{ cat.nombre }}
+                    </a>
+                }
+            </div>
+        }
+
+        @if (!cargando && labelResultados) {
+            <p class="cl-results-label">{{ labelResultados }}</p>
+        }
+
+        <div class="row g-4" [class.cl-animating]="animating">
+            @if (cargando) {
+                @for (s of [1,2,3,4,5,6]; track s) {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="cl-skeleton">
+                            <div class="cl-skel-img"></div>
+                            <div class="cl-skel-body">
+                                <div class="cl-skel-line"></div>
+                                <div class="cl-skel-line"></div>
+                                <div class="cl-skel-line short"></div>
+                                <div class="cl-skel-line xs" style="margin-top:18px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            } @else if (cursosPagina.length === 0) {
+                <div class="col-12">
+                    <div class="cl-empty">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <p>No se encontraron cursos{{ busqueda ? ' para "' + busqueda + '"' : '' }}.</p>
+                    </div>
+                </div>
+            } @else {
+                @for (curso of cursosPagina; track curso.id_programa) {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="cl-card">
+                            <div class="cl-card-img">
+                                <img [src]="curso.foto || curso.imagen_banner_url || 'assets/img/all-images/header_default_cenefco.jpg'"
+                                     [alt]="curso.nombre_programa">
+                                <div class="cl-card-overlay"></div>
+                                @if (curso.categoria_nombre) {
+                                    <span class="cl-card-tag">{{ curso.categoria_nombre }}</span>
+                                }
+                                @if (curso.tipo_nombre) {
+                                    <span class="cl-card-type">
+                                        <i class="fa-solid fa-layer-group"></i> {{ curso.tipo_nombre }}
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="cl-card-body">
+                                <a [routerLink]="['/cursos', curso.slug]" class="cl-card-title">
+                                    {{ curso.nombre_programa }}
+                                </a>
+                                <p class="cl-card-desc">{{ (curso.descripcion || 'Descubre más sobre este curso y cómo puede potenciar tu desarrollo profesional.') | truncate:18:'words' }}</p>
+
+                                <div class="cl-card-footer">
+                                    <span class="cl-card-meta" *ngIf="curso.creditaje">
+                                        <i class="fa-solid fa-award"></i> {{ curso.creditaje }} créditos
+                                    </span>
+                                    <span class="cl-card-meta" *ngIf="!curso.creditaje">
+                                        <i class="fa-solid fa-graduation-cap"></i> CENEFCO
+                                    </span>
+                                    <a [routerLink]="['/cursos', curso.slug]" class="cl-card-btn">
+                                        Ver más <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
+                                </div>
+
+                                @if (PAGOS_HABILITADOS && (curso.plan_costo || curso.inversion)) {
+                                    @if (!carritoService.estaEnCarrito(curso.id_programa)) {
+                                        <button type="button" class="cl-card-carrito-btn"
+                                                (click)="agregarAlCarrito(curso)">
+                                            <i class="fa-solid fa-cart-plus"></i> Agregar al carrito
+                                        </button>
+                                    } @else {
+                                        <a routerLink="/carrito" class="cl-card-carrito-btn cl-card-carrito-btn--en">
+                                            <i class="fa-solid fa-check"></i> En tu carrito
+                                        </a>
+                                    }
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        @if (totalPages > 1) {
+            <div class="cl-pagination">
+                <button class="cl-page-btn" (click)="irPagina(pageIndex - 1)" [disabled]="pageIndex === 1">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                @for (p of pages; track p) {
+                    <button class="cl-page-btn" [class.active]="p === pageIndex" (click)="irPagina(p)">
+                        {{ p }}
+                    </button>
+                }
+                <button class="cl-page-btn" (click)="irPagina(pageIndex + 1)" [disabled]="pageIndex === totalPages">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        }
+
+    </div>
+</section>

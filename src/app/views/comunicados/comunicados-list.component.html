@@ -1,0 +1,111 @@
+<div class="hero1-section-area about-bg-area">
+    <img [src]="CONSTANTS.imagenes.header" alt="" class="header-img1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 m-auto">
+                <div class="hero-heading-area heading1 text-center">
+                    <h1>{{ CONSTANTS.breadcrumb.title }}</h1>
+                    <app-breadcrumb [title]="CONSTANTS.breadcrumb.title" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="blog1-section-area sp1">
+    <div class="container">
+        @if (cargando) {
+        <div class="text-center" style="padding: 60px 0; color: #888;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;"></i>
+            <p style="margin-top:12px;">{{ CONSTANTS.lista.loading }}</p>
+        </div>
+        } @else {
+        <div class="row">
+            @for (comunicado of comunicados; track comunicado.id) {
+            <div class="col-lg-4 col-md-6">
+                <div class="blog-auhtor-boxarea">
+                    <div class="img1" style="height:220px;overflow:hidden;border-radius:4px 4px 0 0;">
+                        @if (comunicado.imagen_url | imageUrl; as imgSrc) {
+                        <img [src]="imgSrc" [alt]="comunicado.titulo" style="width:100%;height:100%;object-fit:cover;">
+                        } @else {
+                        <img [src]="CONSTANTS.imagenes.fallback" [alt]="comunicado.titulo"
+                            style="width:100%;height:100%;object-fit:cover;">
+                        }
+                    </div>
+                    <div class="blog-position">
+                        <a [routerLink]="['/comunicados', comunicado.slug]" class="heading">{{ comunicado.titulo }}</a>
+                        <div class="blog-content-area">
+                            <ul>
+                                <li>
+                                    <a href="#" (click)="$event.preventDefault()">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                        {{ comunicado.fecha_publicacion | date:'d MMM, yyyy' }}
+                                    </a>
+                                </li>
+                                @if (comunicado.destacado) {
+                                <li>
+                                    <a href="#" (click)="$event.preventDefault()">
+                                        <i class="fa-solid fa-star"></i> {{ CONSTANTS.detalles.destacado }}
+                                    </a>
+                                </li>
+                                }
+                            </ul>
+                            <p>{{ comunicado.resumen }}</p>
+                            <a [routerLink]="['/comunicados', comunicado.slug]" class="learnmore">
+                                {{ CONSTANTS.lista.btnLeerMas }} <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+
+            @if (comunicados.length === 0) {
+            <div class="col-12 text-center" style="padding: 60px 0;">
+                <p>{{ CONSTANTS.lista.noData }}</p>
+            </div>
+            }
+        </div>
+
+        @if (totalPages > 1) {
+        <div class="row">
+            <div class="col-12">
+                <div class="pagination-area"
+                    style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:40px;flex-wrap:wrap;">
+
+                    <button (click)="goToPage(pageIndex - 1)" [disabled]="pageIndex === 1"
+                        class="pagination-btn"
+                        [style.opacity]="pageIndex === 1 ? '0.4' : '1'"
+                        [style.cursor]="pageIndex === 1 ? 'not-allowed' : 'pointer'">
+                        <i class="fa-solid fa-chevron-left" style="font-size:12px;"></i>
+                    </button>
+
+                    @for (page of pages; track page) {
+                    <button (click)="goToPage(page)"
+                        [style.background]="page === pageIndex ? 'var(--ztc-text-text-2)' : '#fff'"
+                        [style.color]="page === pageIndex ? '#fff' : '#333'"
+                        [style.borderColor]="page === pageIndex ? 'var(--ztc-text-text-2)' : '#ddd'"
+                        class="pagination-btn">
+                        {{ page }}
+                    </button>
+                    }
+
+                    <button (click)="goToPage(pageIndex + 1)" [disabled]="pageIndex === totalPages"
+                        class="pagination-btn"
+                        [style.opacity]="pageIndex === totalPages ? '0.4' : '1'"
+                        [style.cursor]="pageIndex === totalPages ? 'not-allowed' : 'pointer'">
+                        <i class="fa-solid fa-chevron-right" style="font-size:12px;"></i>
+                    </button>
+
+                </div>
+
+                <p style="text-align:center;margin-top:16px;font-size:14px;color:#888;">
+                    {{ CONSTANTS.lista.pagination.prefix }} {{ pageIndex }} {{ CONSTANTS.lista.pagination.separator }}
+                    {{ totalPages }} — {{ total }} {{ CONSTANTS.lista.pagination.suffix }}
+                </p>
+            </div>
+        </div>
+        }
+        }
+    </div>
+</div>

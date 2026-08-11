@@ -1,0 +1,73 @@
+<div class="cvd-hero">
+    <div class="cvd-hero-overlay"></div>
+    <div class="cvd-hero-pattern"></div>
+    <div class="cvd-hero-body">
+        <div class="container">
+            <app-breadcrumb title="Convenios" subTitle="Detalle" />
+            <h1 class="cvd-hero-title">{{ convenio?.nombre || 'Detalle del convenio' }}</h1>
+        </div>
+    </div>
+</div>
+
+<section class="cvd-section">
+    <div class="container">
+        <a routerLink="/convenios" class="cvd-back">
+            <i class="fa-solid fa-arrow-left"></i> Volver a convenios
+        </a>
+
+        @if (cargando) {
+            <div class="cvd-card">
+                <div class="cvd-skel-top"></div>
+                <div class="cvd-card-body">
+                    <div class="cvd-skel-line" style="width: 60%;"></div>
+                    <div class="cvd-skel-line" style="width: 90%;"></div>
+                    <div class="cvd-skel-line" style="width: 80%;"></div>
+                </div>
+            </div>
+        }
+
+        @if (!cargando && convenio) {
+            <div class="cvd-card">
+                <div class="cvd-card-top">
+                    <div class="cvd-logo-wrap">
+                        @if (convenio.logo_url) {
+                            <img [src]="convenio.logo_url" [alt]="convenio.nombre">
+                        } @else {
+                            <div class="cvd-logo-placeholder">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </div>
+                        }
+                    </div>
+                    <div>
+                        <p class="cvd-name">{{ convenio.nombre }}</p>
+                        @if (convenio.institucion) {
+                            <p class="cvd-inst">{{ convenio.institucion }}</p>
+                        }
+                        @if (convenio.tipo) {
+                            <span class="cvd-badge"><i class="fa-solid fa-tag"></i> {{ convenio.tipo }}</span>
+                        }
+                    </div>
+                </div>
+
+                <div class="cvd-card-body">
+                    @if (convenio.descripcion) {
+                        <p class="cvd-descripcion">{{ convenio.descripcion }}</p>
+                    }
+
+                    @if (convenio.documento_url) {
+                        <a [href]="'/storage/' + convenio.documento_url" target="_blank" rel="noopener" class="cvd-doc-btn">
+                            <i class="fa-solid fa-file-arrow-down"></i> Ver documento del convenio
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (!cargando && noEncontrado) {
+            <div class="cvd-empty">
+                <i class="fa-solid fa-handshake-slash"></i>
+                <p>No se encontró información de este convenio.</p>
+            </div>
+        }
+    </div>
+</section>

@@ -1,0 +1,169 @@
+﻿<div class="hero1-section-area about-bg-area">
+    <img src="assets/img/bg/header-img1.jpg" alt="" class="header-img1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 m-auto">
+                <div class="hero-heading-area heading1 text-center">
+                    <h1>Detalle de Inscripción #{{ idIns }}</h1>
+                    <app-breadcrumb [title]="'Detalle de Inscripción #' + idIns" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="mp-section">
+  <div class="mp-container">
+
+    <div class="mp-header">
+      <p class="mp-header__sub">Consulta el estado de tus cuotas y realiza pagos en línea.</p>
+    </div>
+
+    @if (!inscripcion() && !cargando()) {
+      <div class="mp-search-card">
+        <form (ngSubmit)="cargar()" class="mp-search-form">
+          <div class="mp-search-fields">
+            <div class="mp-field">
+              <label class="mp-label" for="ci-det">Número de CI *</label>
+              <input
+                id="ci-det"
+                class="mp-input"
+                type="text"
+                placeholder="Ej: 12345678"
+                [ngModel]="ci()" (ngModelChange)="ci.set($event)"
+                name="ci"
+                required
+                maxlength="20"
+              />
+            </div>
+            <div class="mp-field mp-field--sm">
+              <label class="mp-label" for="exp-det">Expedido <span class="mp-optional">(opc.)</span></label>
+              <input
+                id="exp-det"
+                class="mp-input"
+                type="text"
+                placeholder="LP, CB..."
+                [ngModel]="expedido()" (ngModelChange)="expedido.set($event)"
+                name="expedido"
+                maxlength="5"
+              />
+            </div>
+            <div class="mp-field mp-field--btn">
+              <button type="submit" class="mp-btn-buscar" [disabled]="!ci().trim()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Consultar
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    }
+
+    @if (error()) {
+      <div class="mp-empty-state" style="color: var(--color-danger, #dc2626)">
+        <p>{{ error() }}</p>
+        <a routerLink="/mi-cuenta" class="mp-btn-pagar" style="margin-top: 12px; display: inline-block;">
+          Volver a Mis Pagos
+        </a>
+      </div>
+    }
+
+    @if (cargando()) {
+      <div class="mp-empty-state">
+        <span class="mp-spinner"></span>
+        <p style="margin-top: 8px">Cargando inscripción...</p>
+      </div>
+    }
+
+    @if (inscripcion(); as ins) {
+      <div class="mp-card">
+
+        <div class="mp-card-header">
+          <div class="mp-card-header__left">
+            <div class="mp-card-header__prog">{{ ins.nombre_programa || 'Programa' }}</div>
+            <div class="mp-card-header__meta">
+              @if (ins.periodo) { Período {{ ins.periodo }} }
+              @if (ins.gestion) { · Gestión {{ ins.gestion }} }
+              @if (ins.fecha_ins) { · Inscrito el {{ ins.fecha_ins }} }
+            </div>
+          </div>
+          <div class="mp-card-header__right">
+            <span [class]="badgeClass(ins.estado_pago)">{{ badgeLabel(ins.estado_pago) }}</span>
+          </div>
+        </div>
+
+        <div class="mp-card-body">
+          <div class="mp-prog-bar">
+            <div class="mp-prog-bar__fill" [style.width.%]="porcentaje(ins)"></div>
+          </div>
+          <div class="mp-cuotas-grid" style="margin-top: 14px">
+            <div class="mp-cuota-cell">
+              <span class="mp-cuota-cell__label">Total plan</span>
+              <span class="mp-cuota-cell__value">Bs. {{ ins.total_plan | number:'1.2-2' }}</span>
+            </div>
+            <div class="mp-cuota-cell mp-cuota-cell--ok">
+              <span class="mp-cuota-cell__label">Pagado</span>
+              <span class="mp-cuota-cell__value">Bs. {{ ins.total_pagado | number:'1.2-2' }}</span>
+            </div>
+            <div class="mp-cuota-cell mp-cuota-cell--warn">
+              <span class="mp-cuota-cell__label">Saldo</span>
+              <span class="mp-cuota-cell__value">Bs. {{ ins.saldo | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (ins.cuotas && ins.cuotas.length > 0) {
+          <div class="mp-card-body" style="border-top: 1px solid #e8f0f5; padding-top: 18px;">
+            <h4 class="mp-ins-title" style="font-size: 0.9rem; font-weight: 700; color: var(--mp-primary, #128AA2); margin-bottom: 14px;">
+              Cuotas del plan
+            </h4>
+            <div class="mp-cuotas-list">
+              @for (cuota of ins.cuotas; track cuota.id_fechapago) {
+                <div class="mp-cuota-row" [class.mp-cuota-row--pagada]="cuota.pagado">
+                  <div class="mp-cuota-row__info">
+                    <span class="mp-cuota-row__nro">Cuota {{ cuota.nro_pago || '—' }}</span>
+                    <span class="mp-cuota-row__monto">Bs. {{ cuota.monto_a_pagar | number:'1.2-2' }}</span>
+                    @if (cuota.pagado && cuota.fecha_pago) {
+                      <span class="mp-cuota-row__fecha">Pagado el {{ cuota.fecha_pago }}</span>
+                    }
+                  </div>
+                  <div class="mp-cuota-row__accion">
+                    @if (cuota.pagado) {
+                      <span class="mp-badge mp-badge--pagado">✓ Pagado</span>
+                    } @else {
+                      <button
+                        class="mp-btn-pagar"
+                        [disabled]="pagoEnCurso() !== null"
+                        (click)="pagarCuota(cuota)">
+                        @if (pagoEnCurso() === cuota.id_fechapago) {
+                          <span class="mp-spinner"></span> Redirigiendo...
+                        } @else {
+                          Pagar esta cuota
+                        }
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        } @else {
+          <div class="mp-card-body" style="border-top: 1px solid #e8f0f5; color: #6b7280; font-size: 0.875rem;">
+            Esta inscripción no tiene cuotas registradas en el plan.
+          </div>
+        }
+
+        <div class="mp-card-body" style="border-top: 1px solid #e8f0f5; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+          <a [href]="'/api/v1/ventas/' + ins.id_ins + '/pdf'" target="_blank" class="mp-btn-pagar mp-btn-pagar--outline">
+            Descargar comprobante PDF
+          </a>
+          <a routerLink="/mi-cuenta" class="mp-card-detail__link">
+            ← Volver a Mis Pagos
+          </a>
+        </div>
+
+      </div>
+    }
+
+  </div>
+</section>

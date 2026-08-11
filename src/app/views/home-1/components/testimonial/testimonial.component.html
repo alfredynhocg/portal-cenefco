@@ -1,0 +1,119 @@
+﻿<section class="ct-section">
+
+  <div class="ct-blob ct-blob--1"></div>
+  <div class="ct-blob ct-blob--2"></div>
+
+  <div class="container" style="position:relative;z-index:1">
+
+    <div class="row justify-content-center mb-5">
+      <div class="col-lg-7 text-center">
+        <div class="ct-badge" data-aos="fade-up" data-aos-duration="500">
+          <i class="fa-solid fa-comments"></i> Testimonios
+        </div>
+        <h2 class="ct-title" data-aos="fade-up" data-aos-duration="700">
+          Lo que dicen nuestros <span>estudiantes</span>
+        </h2>
+        <p class="ct-subtitle" data-aos="fade-up" data-aos-duration="900">
+          Experiencias reales de profesionales que transformaron su carrera
+          con nuestros programas de formación continua.
+        </p>
+
+        @if (!cargando && testimonials.length > 0) {
+          <div class="ct-rating-summary" data-aos="fade-up" data-aos-duration="1000">
+            <div class="ct-rating-stars">
+              @for (_ of [1,2,3,4,5]; track $index) {
+                <i class="fa-solid fa-star"></i>
+              }
+            </div>
+            <span class="ct-rating-text">
+              <strong>{{ promedioCalificacion() }}</strong> / 5 &nbsp;·&nbsp;
+              <strong>{{ testimonials.length }}</strong> reseñas verificadas
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (cargando) {
+      <div class="row g-4">
+        @for (_ of [1,2,3]; track $index) {
+          <div class="col-lg-4 col-md-6">
+            <div class="ct-skel-card">
+              <div class="ct-skel-block ct-skel-stars"></div>
+              <div class="ct-skel-block ct-skel-line w-full"></div>
+              <div class="ct-skel-block ct-skel-line w-80"></div>
+              <div class="ct-skel-block ct-skel-line w-60"></div>
+              <div class="ct-skel-author">
+                <div class="ct-skel-avatar"></div>
+                <div class="ct-skel-info">
+                  <div class="ct-skel-block ct-skel-line w-80"></div>
+                  <div class="ct-skel-block ct-skel-line w-60"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <ng-template #testimonialCard let-t>
+      <div class="ct-card">
+
+        <span class="ct-card-quote">&ldquo;</span>
+
+        <div class="ct-stars">
+          @for (star of getStars(t.calificacion); track $index) {
+            <i class="fa-solid fa-star" [class.ct-star-empty]="star === 'empty'"></i>
+          }
+        </div>
+
+        <p class="ct-message">&ldquo;{{ t.message }}&rdquo;</p>
+
+        <div class="ct-author">
+          <div class="ct-avatar">
+            @if (t.authorImg) {
+              <img [src]="t.authorImg" [alt]="t.name" loading="lazy">
+            } @else {
+              <div class="ct-avatar-initial">{{ t.inicial }}</div>
+            }
+          </div>
+          <div class="ct-author-info">
+            <span class="ct-author-name">{{ t.name }}</span>
+            @if (t.role) {
+              <span class="ct-author-role">{{ t.role }}</span>
+            }
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    @if (!cargando && testimonials.length > 0) {
+      <div class="ct-carousel-wrap" data-aos="fade-up" data-aos-duration="700">
+        @defer (on idle) {
+          <owl-carousel-o [options]="carouselOptions" class="ct-carousel">
+            @for (t of testimonials; track t.name + t.message) {
+              <ng-template carouselSlide>
+                <ng-container [ngTemplateOutlet]="testimonialCard" [ngTemplateOutletContext]="{ $implicit: t }" />
+              </ng-template>
+            }
+          </owl-carousel-o>
+        } @placeholder {
+          <div class="row g-4">
+            @for (t of testimonials.slice(0, 3); track t.name + t.message) {
+              <div class="col-lg-4 col-md-6">
+                <ng-container [ngTemplateOutlet]="testimonialCard" [ngTemplateOutletContext]="{ $implicit: t }" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <div class="ct-cta" data-aos="fade-up" data-aos-duration="800">
+      <a routerLink="/testimonios" class="ct-cta-btn">
+        Ver todos los testimonios <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+
+  </div>
+</section>

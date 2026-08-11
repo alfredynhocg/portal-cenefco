@@ -1,0 +1,176 @@
+<section class="cc-section sp1">
+    <div class="container" style="position: relative; z-index: 1;">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <div class="cc-badge" data-aos="fade-up" data-aos-duration="500">
+                    <i class="fa-solid fa-headset"></i> Contacto
+                </div>
+                <h2 class="cc-title" data-aos="fade-up" data-aos-duration="700">
+                    {{ config().nombre || 'CENEFCO' }} — Estamos para ayudarte
+                </h2>
+                <p class="cc-subtitle" data-aos="fade-up" data-aos-duration="900">
+                    {{ config().slogan || '¿Tenés dudas sobre nuestros programas? Escribinos o llamanos.' }}
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-5 align-items-start">
+            <div class="col-lg-5">
+                <div class="cc-info-grid" data-aos="fade-right" data-aos-duration="700">
+                    <div class="cc-info-card">
+                        <div class="cc-info-icon">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div class="cc-info-text">
+                            <p class="cc-info-label">Teléfono</p>
+                            <a [href]="telHref" class="cc-info-value">
+                                {{ config().telefono || '—' }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="cc-info-card">
+                        <div class="cc-info-icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div class="cc-info-text">
+                            <p class="cc-info-label">Dirección</p>
+                            <span class="cc-info-value">{{ direccionTexto }}</span>
+                        </div>
+                    </div>
+
+                    <div class="cc-info-card">
+                        <div class="cc-info-icon">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div class="cc-info-text">
+                            <p class="cc-info-label">Email</p>
+                            <a [href]="emailHref" class="cc-info-value">
+                                {{ config().email_contacto || '—' }}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="cc-info-card">
+                        <div class="cc-info-icon">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div class="cc-info-text">
+                            <p class="cc-info-label">Horario de atención</p>
+                            <span class="cc-info-value">{{ config().horario_atencion || '—' }}</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-lg-7" data-aos="fade-left" data-aos-duration="700">
+                <div class="cc-form-card">
+
+                    <h3 class="cc-form-title">Envíanos un mensaje</h3>
+                    <p class="cc-form-subtitle">Completá el formulario y nos pondremos en contacto a la brevedad.</p>
+
+                    @if (success) {
+                        <div class="cc-alert cc-alert-success">
+                            <i class="fa-solid fa-circle-check"></i>
+                            ¡Mensaje enviado correctamente! Te responderemos pronto.
+                        </div>
+                    }
+                    @if (errorMsg) {
+                        <div class="cc-alert cc-alert-error">
+                            <i class="fa-solid fa-circle-exclamation"></i>
+                            {{ errorMsg }}
+                        </div>
+                    }
+
+                    <form (ngSubmit)="enviar()" #contactForm="ngForm" novalidate>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="cc-field">
+                                    <label>Nombre <span style="color:#FC8900">*</span></label>
+                                    <input type="text" [(ngModel)]="form.nombre" name="nombre"
+                                           placeholder="Tu nombre completo" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="cc-field">
+                                    <label>Teléfono</label>
+                                    <input type="tel" [(ngModel)]="form.telefono" name="telefono"
+                                           placeholder="Tu número de teléfono">
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="cc-field">
+                                    <label>Email <span style="color:#FC8900">*</span></label>
+                                    <input type="email" [(ngModel)]="form.email" name="email"
+                                           placeholder="Tu correo electrónico" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="cc-field">
+                                    <label>Asunto <span style="color:#FC8900">*</span></label>
+                                    <input type="text" [(ngModel)]="form.asunto" name="asunto"
+                                           placeholder="Motivo de tu consulta" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="cc-field">
+                                    <label>Mensaje <span style="color:#FC8900">*</span></label>
+                                    <textarea [(ngModel)]="form.mensaje" name="mensaje"
+                                              placeholder="Describí tu consulta con detalle..." required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="cc-field">
+                                    <label>Verificación <span style="color:#FC8900">*</span></label>
+                                    <div class="d-flex align-items-center gap-3 mb-2">
+                                        @if (captchaLoading) {
+                                            <div class="captcha-placeholder d-flex align-items-center justify-content-center">
+                                                <span style="color:#999; font-size:0.85rem;">Cargando...</span>
+                                            </div>
+                                        } @else if (captcha) {
+                                            <img [src]="captcha.img" alt="Captcha" class="captcha-img">
+                                        }
+                                        <button type="button" class="captcha-refresh-btn" (click)="loadCaptcha()" title="Actualizar código" [disabled]="captchaLoading">
+                                            <i class="fa-solid fa-rotate-right"></i>
+                                        </button>
+                                    </div>
+                                    <input type="text" [(ngModel)]="form.captcha_value" name="captcha_value"
+                                           placeholder="Ingrese el código que ve en la imagen" autocomplete="off" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="cc-check">
+                                    <input type="checkbox" [(ngModel)]="form.acepto" name="acepto" id="cc-acepto">
+                                    <label for="cc-acepto" style="font-size:13px; color:#666; line-height:1.5; cursor:pointer; font-weight:400; text-transform:none; letter-spacing:0; margin-bottom:0;">
+                                        Acepto la política de privacidad del sitio
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="cc-submit-btn"
+                                        [disabled]="sending || !form.nombre || !form.email || !form.asunto || !form.mensaje || !form.acepto || !form.captcha_value">
+                                    @if (sending) {
+                                        <i class="fa-solid fa-spinner fa-spin"></i> Enviando...
+                                    } @else {
+                                        Enviar mensaje <i class="fa-solid fa-arrow-right"></i>
+                                    }
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>

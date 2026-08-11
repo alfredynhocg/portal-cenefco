@@ -1,0 +1,163 @@
+<div class="cp-hero">
+    <img src="assets/img/bg/header-img1.jpg" alt="" class="cp-hero-bg">
+    <div class="cp-hero-overlay"></div>
+    <div class="cp-hero-body">
+        <div class="container">
+            <div class="cp-hero-badge">
+                <i class="fa-solid fa-graduation-cap"></i> Historial académico
+            </div>
+            <h1 class="cp-hero-title">Cursos <span>Pasados</span></h1>
+            <app-breadcrumb title="Cursos Pasados" />
+        </div>
+    </div>
+</div>
+
+<section class="cp-section">
+    <div class="container">
+        <div class="cp-search-bar">
+            <div class="cp-search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                    type="text"
+                    class="cp-search-input"
+                    placeholder="Buscar curso..."
+                    (input)="onSearch($event)"
+                >
+            </div>
+        </div>
+
+        @if (cargando) {
+            <div class="row g-4">
+                @for (s of [1,2,3,4,5,6,7,8,9,10,11,12]; track s) {
+                    <div class="col-lg-3 col-md-6">
+                        <div class="cp-skeleton">
+                            <div class="cp-skel-img"></div>
+                            <div class="cp-skel-body">
+                                <div class="cp-skel-line"></div>
+                                <div class="cp-skel-line short"></div>
+                                <div class="cp-skel-line xs"></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!cargando && cursos.length > 0) {
+            <div class="row g-4">
+                @for (curso of cursos; track curso.id; let i = $index) {
+                    <div class="col-lg-3 col-md-6"
+                         data-aos="fade-up" [attr.data-aos-duration]="400 + (i % 4) * 80">
+                        <a [routerLink]="['/cursos-pasados', curso.slug]" class="cp-card">
+
+                            <div class="cp-card-img">
+                                @if (curso.imagen_path | imageUrl; as imgSrc) {
+                                    <img [src]="imgSrc" [alt]="curso.nombre">
+                                } @else {
+                                    <div class="cp-card-img-placeholder">
+                                        <i class="fa-solid fa-graduation-cap"></i>
+                                    </div>
+                                }
+                                <div class="cp-card-overlay"></div>
+
+                                @if (curso.periodo) {
+                                    <span class="cp-card-tag">
+                                        <i class="fa-solid fa-calendar-alt"></i> {{ curso.periodo }}
+                                    </span>
+                                }
+                                @if (curso.carga_horaria) {
+                                    <span class="cp-card-hours">
+                                        <i class="fa-solid fa-clock"></i> {{ curso.carga_horaria }}h
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="cp-card-body">
+                                <div class="cp-card-title">{{ curso.nombre }}</div>
+
+                                <div class="cp-card-meta-row">
+                                    @if (curso.gestion) {
+                                        <span class="cp-meta-chip cp-meta-chip--periodo">
+                                            <i class="fa-solid fa-calendar"></i> {{ curso.gestion }}
+                                        </span>
+                                    }
+                                    @if (curso.participantes_count > 0) {
+                                        <span class="cp-meta-chip cp-meta-chip--part">
+                                            <i class="fa-solid fa-users"></i> {{ curso.participantes_count }}
+                                        </span>
+                                    }
+                                </div>
+
+                                <div class="cp-card-footer">
+                                    <span class="cp-card-btn">
+                                        Ver detalle <i class="fa-solid fa-arrow-right"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!cargando && cursos.length === 0) {
+            <div class="cp-empty">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <p>No se encontraron cursos{{ query ? ' para "' + query + '"' : '' }}.</p>
+            </div>
+        }
+
+        @if (!cargando && totalPages > 1) {
+            <div class="cp-pagination-wrap">
+                <div class="cp-pagination-info">
+                    <span>Mostrando <strong>{{ fromResult }}–{{ toResult }}</strong> de <strong>{{ total }}</strong> cursos</span>
+                    <span class="cp-pag-sep"></span>
+                    <span>Página <strong>{{ pageIndex }}</strong> de <strong>{{ totalPages }}</strong></span>
+                </div>
+
+                <div class="cp-pagination">
+                    <button class="cp-page-btn cp-page-arrow"
+                            (click)="goToPage(1)"
+                            [disabled]="pageIndex === 1"
+                            title="Primera página">
+                        <i class="fa-solid fa-angles-left"></i>
+                    </button>
+                    <button class="cp-page-btn cp-page-arrow"
+                            (click)="goToPage(pageIndex - 1)"
+                            [disabled]="pageIndex === 1"
+                            title="Página anterior">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    @for (item of pageItems; track $index) {
+                        @if (item === -1) {
+                            <span class="cp-page-dots">···</span>
+                        } @else {
+                            <button class="cp-page-btn"
+                                    [class.active]="item === pageIndex"
+                                    (click)="goToPage(item)">
+                                {{ item }}
+                            </button>
+                        }
+                    }
+
+                    <button class="cp-page-btn cp-page-arrow"
+                            (click)="goToPage(pageIndex + 1)"
+                            [disabled]="pageIndex === totalPages"
+                            title="Página siguiente">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <button class="cp-page-btn cp-page-arrow"
+                            (click)="goToPage(totalPages)"
+                            [disabled]="pageIndex === totalPages"
+                            title="Última página">
+                        <i class="fa-solid fa-angles-right"></i>
+                    </button>
+                </div>
+
+            </div>
+        }
+
+    </div>
+</section>

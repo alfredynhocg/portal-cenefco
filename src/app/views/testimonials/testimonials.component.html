@@ -1,0 +1,60 @@
+﻿<div class="hero1-section-area about-bg-area">
+    <img [src]="CONSTANTS.imagenes.header" alt="" class="header-img1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7 m-auto">
+                <div class="hero-heading-area heading1 text-center">
+                    <h1>{{ CONSTANTS.breadcrumb.title }}</h1>
+                    <app-breadcrumb [title]="CONSTANTS.breadcrumb.title" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="testimonials-inner-section-area sp1">
+    <div class="container">
+        <div class="row">
+
+            <ng-container *ngIf="useApi">
+                <div *ngFor="let t of testimonios" class="col-lg-4 col-md-6">
+                    <div class="testimonial-inner-boxarea">
+                        <div class="img1">
+                            <img [src]="getFotoUrl(t.foto_url)" [alt]="t.foto_alt || t.nombre">
+                        </div>
+                        <div class="content-area">
+                            <ul class="d-flex align-items-center justify-content-center flex-wrap gap-1">
+                                <li *ngFor="let s of getStars(t.calificacion)"><i class="fa-solid fa-star"></i></li>
+                            </ul>
+                            <p>{{ t.testimonio }}</p>
+                            <div class="text">
+                                <span>{{ t.nombre }}</span>
+                                <p>{{ t.cargo }}<ng-container *ngIf="t.empresa"> — {{ t.empresa }}</ng-container></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+            <ng-container *ngIf="!useApi">
+                <div *ngFor="let testimonial of CONSTANTS.data" class="col-lg-4 col-md-6">
+                    <div class="testimonial-inner-boxarea">
+                        <div class="img1">
+                            <img [src]="testimonial.image" alt="">
+                        </div>
+                        <div class="content-area">
+                            <ul class="d-flex align-items-center justify-content-center flex-wrap gap-1">
+                                <li *ngFor="let item of [].constructor(5)"><i class="fa-solid fa-star"></i></li>
+                            </ul>
+                            <p>{{ testimonial.description }}</p>
+                            <div class="text">
+                                <span>{{ testimonial.name }}</span>
+                                <p>{{ testimonial.role }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

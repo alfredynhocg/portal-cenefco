@@ -1,0 +1,193 @@
+@if (visible) {
+  <div class="cd-pago-overlay" (click)="resetYCerrar()"></div>
+
+  <div class="cd-pago-modal" role="dialog" aria-modal="true">
+
+    <div class="cd-pago-modal__header">
+      <div>
+        <p class="cd-pago-modal__curso">{{ curso.nombre_programa }}</p>
+        <div class="cd-pago-modal__steps">
+          <span [class.active]="paso >= 1" [class.done]="paso > 1">1. Tus datos</span>
+          <span class="sep">›</span>
+          <span [class.active]="paso >= 2" [class.done]="paso > 2">2. Plan</span>
+          <span class="sep">›</span>
+          <span [class.active]="paso >= 3">3. Confirmar</span>
+        </div>
+      </div>
+      <button type="button" class="cd-pago-modal__close" (click)="resetYCerrar()" aria-label="Cerrar">×</button>
+    </div>
+
+    @if (paso === 1) {
+      <div class="cd-pago-modal__body">
+        <h3 class="cd-pago-modal__step-title">Tus datos personales</h3>
+
+        @if (errorPaso1) {
+          <div class="cd-pago-modal__error">{{ errorPaso1 }}</div>
+        }
+
+        <div class="cd-form-row">
+          <div class="cd-form-group">
+            <label>CI <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="ci" (blur)="onCiBlur()"
+              placeholder="Cédula de identidad" class="cd-input" />
+            @if (buscandoCi) {
+              <small class="cd-hint">Buscando datos...</small>
+            }
+          </div>
+          <div class="cd-form-group">
+            <label>Expedido</label>
+            <select [(ngModel)]="expedido" class="cd-input">
+              <option value="LP">La Paz</option>
+              <option value="CB">Cochabamba</option>
+              <option value="SC">Santa Cruz</option>
+              <option value="OR">Oruro</option>
+              <option value="PT">Potosí</option>
+              <option value="CH">Chuquisaca</option>
+              <option value="TJ">Tarija</option>
+              <option value="BN">Beni</option>
+              <option value="PD">Pando</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cd-form-row">
+          <div class="cd-form-group">
+            <label>Nombre <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="nombre" placeholder="Tu nombre" class="cd-input" />
+          </div>
+          <div class="cd-form-group">
+            <label>Apellido paterno <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="appaterno" placeholder="Apellido" class="cd-input" />
+          </div>
+        </div>
+
+        <div class="cd-form-group">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" [(ngModel)]="email" placeholder="tu@email.com" class="cd-input" />
+        </div>
+
+        <div class="cd-form-group">
+          <label>Teléfono / WhatsApp</label>
+          <input type="tel" [(ngModel)]="telefono" placeholder="Opcional" class="cd-input" />
+        </div>
+      </div>
+
+      <div class="cd-pago-modal__footer">
+        <button type="button" class="cd-btn cd-btn--outline" (click)="resetYCerrar()">Cancelar</button>
+        <button type="button" class="cd-btn cd-btn--primary" (click)="irPaso2()">Siguiente →</button>
+      </div>
+    }
+
+    @if (paso === 2) {
+      <div class="cd-pago-modal__body">
+        <h3 class="cd-pago-modal__step-title">Elige tu forma de pago</h3>
+
+        @if (tieneCuotas) {
+          <div class="cd-cuotas-list">
+            @for (cuota of curso.cuotas; track cuota.id_fechapago) {
+              <label class="cd-cuota-option" [class.selected]="cuotaSeleccionada?.id_fechapago === cuota.id_fechapago">
+                <input type="radio" name="cuota"
+                  [value]="cuota"
+                  [(ngModel)]="cuotaSeleccionada" />
+                <div class="cd-cuota-info">
+                  <span class="cd-cuota-label">{{ cuota.nro_pago ?? 'Cuota' }} — {{ cuota.tipo_tramite ?? '' }}</span>
+                  @if (cuota.fecha_inicio) {
+                    <span class="cd-cuota-fecha">Vigente hasta: {{ cuota.fecha_fin | slice:0:10 }}</span>
+                  }
+                </div>
+                <span class="cd-cuota-monto">Bs. {{ cuota.monto_a_pagar | number:'1.2-2' }}</span>
+              </label>
+            }
+          </div>
+
+          @if (curso.plan_costo) {
+            <div class="cd-pago-unico">
+              <label class="cd-cuota-option" [class.selected]="!cuotaSeleccionada">
+                <input type="radio" name="cuota" [value]="null" [(ngModel)]="cuotaSeleccionada" />
+                <div class="cd-cuota-info">
+                  <span class="cd-cuota-label">Pago único completo</span>
+                  <span class="cd-cuota-fecha">Todas las cuotas juntas</span>
+                </div>
+                <span class="cd-cuota-monto">Bs. {{ curso.plan_costo | number:'1.2-2' }}</span>
+              </label>
+            </div>
+          }
+        } @else if (curso.plan_costo) {
+          <div class="cd-monto-unico">
+            <p class="cd-monto-label">Inversión total</p>
+            <p class="cd-monto-valor">Bs. {{ curso.plan_costo | number:'1.2-2' }}</p>
+          </div>
+        } @else {
+          <div class="cd-monto-unico">
+            <p class="cd-hint">El monto de inversión será confirmado por nuestros asesores.</p>
+          </div>
+        }
+      </div>
+
+      <div class="cd-pago-modal__footer">
+        <button type="button" class="cd-btn cd-btn--outline" (click)="volver()">← Atrás</button>
+        <button type="button" class="cd-btn cd-btn--primary" (click)="irPaso3()"
+          [disabled]="!montoAPagar">
+          Confirmar →
+        </button>
+      </div>
+    }
+
+    @if (paso === 3) {
+      <div class="cd-pago-modal__body">
+        <h3 class="cd-pago-modal__step-title">Resumen de tu pedido</h3>
+
+        <div class="cd-resumen">
+          <div class="cd-resumen__row">
+            <span>Curso</span>
+            <strong>{{ curso.nombre_programa }}</strong>
+          </div>
+          <div class="cd-resumen__row">
+            <span>Estudiante</span>
+            <strong>{{ nombre }} {{ appaterno }}</strong>
+          </div>
+          <div class="cd-resumen__row">
+            <span>CI</span>
+            <strong>{{ ci }} {{ expedido }}</strong>
+          </div>
+          <div class="cd-resumen__row">
+            <span>Email</span>
+            <strong>{{ email }}</strong>
+          </div>
+          @if (cuotaSeleccionada) {
+            <div class="cd-resumen__row">
+              <span>Cuota</span>
+              <strong>{{ cuotaSeleccionada.nro_pago ?? 'Cuota' }}</strong>
+            </div>
+          }
+          <div class="cd-resumen__row cd-resumen__total">
+            <span>Pagas hoy</span>
+            <strong class="cd-monto-highlight">Bs. {{ montoAPagar | number:'1.2-2' }}</strong>
+          </div>
+        </div>
+
+        @if (errorPago) {
+          <div class="cd-pago-modal__error mt-3">{{ errorPago }}</div>
+        }
+
+        <p class="cd-hint mt-3">
+          Al hacer clic en "Pagar con PagosYa" serás redirigido a la pasarela de pago segura.
+        </p>
+      </div>
+
+      <div class="cd-pago-modal__footer">
+        <button type="button" class="cd-btn cd-btn--outline" (click)="volver()" [disabled]="enviando">
+          ← Atrás
+        </button>
+        <button type="button" class="cd-btn cd-btn--pagosya" (click)="confirmarPago()" [disabled]="enviando || !montoAPagar">
+          @if (enviando) {
+            <span class="cd-spinner"></span> Procesando...
+          } @else {
+            Pagar con PagosYa
+          }
+        </button>
+      </div>
+    }
+
+  </div>
+}

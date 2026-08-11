@@ -1,0 +1,165 @@
+﻿@if (cargando) {
+    <div class="ad-hero">
+        <div class="ad-hero-overlay"></div>
+        <div class="ad-hero-body">
+            <div class="container">
+                <div style="height:70px;width:70px;border-radius:16px;background:rgba(255,255,255,0.15);margin-bottom:16px"></div>
+                <div style="height:14px;width:200px;background:rgba(255,255,255,0.15);border-radius:8px;margin-bottom:12px"></div>
+                <div style="height:28px;width:340px;background:rgba(255,255,255,0.2);border-radius:8px"></div>
+            </div>
+        </div>
+    </div>
+
+    <section class="ad-section">
+        <div class="container">
+            <div class="ad-grid">
+                @for (s of [1,2,3,4,5,6]; track s) {
+                    <div class="ad-skeleton">
+                        <div class="ad-skel-img"></div>
+                        <div class="ad-skel-body">
+                            <div class="ad-skel-line"></div>
+                            <div class="ad-skel-line"></div>
+                            <div class="ad-skel-line short"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+} @else if (area) {
+    <div class="ad-hero" [style.background]="area.color || '#128AA2'">
+        <img src="assets/img/all-images/header_default_cenefco.jpg" alt="" class="ad-hero-bg">
+        <div class="ad-hero-overlay" [style.background]="'linear-gradient(160deg,' + (area.color || '#128AA2') + 'aa 0%,' + (area.color || '#128AA2') + 'f0 100%)'"></div>
+        <div class="ad-hero-body">
+            <div class="container">
+                <div class="ad-hero-inner">
+                    @if (area.logo_url | imageUrl) {
+                        <img [src]="area.logo_url | imageUrl" [alt]="area.logo_alt || area.titulo" class="ad-hero-logo">
+                    } @else {
+                        <div class="ad-hero-icon">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                    }
+                    <div class="ad-hero-text">
+                        <h1>{{ area.titulo }}</h1>
+                        @if (area.descripcion) {
+                            <p>{{ area.descripcion }}</p>
+                        }
+                    </div>
+                </div>
+                <div style="margin-top:20px">
+                    <app-breadcrumb [subTitle]="area.titulo" title="Áreas" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (area.galeria && area.galeria.length > 0) {
+        <div class="ad-galeria">
+            <div class="ad-galeria-track-wrap">
+                <div class="ad-galeria-track">
+                    @for (img of galeriaLoop; track $index) {
+                        <img [src]="img | imageUrl" [alt]="area.titulo"
+                            class="ad-galeria-img"
+                            (click)="abrirLightbox(img)">
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (lightboxImg) {
+            <div class="ad-lightbox" (click)="cerrarLightbox()">
+                <button class="ad-lightbox-close" (click)="cerrarLightbox()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <img [src]="lightboxImg" [alt]="area.titulo" (click)="$event.stopPropagation()">
+            </div>
+        }
+    }
+
+    <section class="ad-section">
+        <div class="container">
+            <a routerLink="/areas" class="ad-back">
+                <i class="fa-solid fa-arrow-left"></i> Todas las áreas
+            </a>
+
+            <div class="ad-section-header">
+                <h2>Cursos en esta área</h2>
+                <p>{{ cursosFiltrados.length }} {{ cursosFiltrados.length === 1 ? 'programa disponible' : 'programas disponibles' }}</p>
+            </div>
+
+            <div class="ad-search-wrap">
+                <i class="fa-solid fa-magnifying-glass ad-search-icon"></i>
+                <input
+                    type="text"
+                    class="ad-search-input"
+                    placeholder="Buscar curso por nombre..."
+                    [value]="busqueda"
+                    (input)="onBusqueda($event)"
+                >
+                @if (busqueda) {
+                    <button class="ad-search-clear" (click)="limpiarBusqueda()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                }
+            </div>
+
+            @if (cursosFiltrados.length === 0) {
+                <div class="ad-empty">
+                    <i class="fa-solid fa-book-open"></i>
+                    <p>{{ busqueda ? 'No se encontraron cursos para "' + busqueda + '".' : 'No hay cursos disponibles en esta área por el momento.' }}</p>
+                </div>
+            } @else {
+                <div class="ad-grid">
+                    @for (curso of cursosFiltrados; track curso.id_programa) {
+                        <a [routerLink]="['/cursos', curso.slug]" class="ad-card">
+                            <div class="ad-card-img">
+                                <img [src]="(curso.foto || curso.imagen_banner_url) | imageUrl"
+                                    [alt]="curso.nombre_programa"
+                                    (error)="$any($event.target).src='assets/img/all-images/curso_default_cenefco.jpg'">
+                                <div class="ad-card-img-overlay"></div>
+                                @if (curso.categoria_nombre) {
+                                    <span class="ad-card-tag">{{ curso.categoria_nombre }}</span>
+                                }
+                            </div>
+
+                            <div class="ad-card-body">
+                                <h3 class="ad-card-title">{{ curso.nombre_programa }}</h3>
+                                @if (curso.descripcion) {
+                                    <p class="ad-card-desc">{{ curso.descripcion | truncate:110 }}</p>
+                                }
+                            </div>
+
+                            <div class="ad-card-footer">
+                                <span class="ad-card-meta">
+                                    @if (curso.creditaje) {
+                                        <i class="fa-solid fa-award"></i> {{ curso.creditaje }} créditos
+                                    } @else {
+                                        <i class="fa-solid fa-graduation-cap"></i> CENEFCO
+                                    }
+                                </span>
+                                <span class="ad-card-btn">
+                                    Ver más <i class="fa-solid fa-arrow-right"></i>
+                                </span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </section>
+
+} @else {
+    <section class="ad-section">
+        <div class="container">
+            <div class="ad-empty">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>Área no encontrada.</p>
+                <a routerLink="/areas" class="ad-back" style="justify-content:center;margin-top:16px">
+                    <i class="fa-solid fa-arrow-left"></i> Volver a áreas
+                </a>
+            </div>
+        </div>
+    </section>
+}

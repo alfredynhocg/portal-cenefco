@@ -1,0 +1,173 @@
+@if (isOpen()) {
+  <div class="seg-overlay" (click)="close()"></div>
+
+  <div class="seg-modal" role="dialog" aria-modal="true" aria-label="Consulta de trámite">
+
+    <div class="seg-modal-header">
+      <div class="seg-modal-title">
+        <div class="seg-icon-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <div>
+          <h4>Consulta de Trámite</h4>
+          <p>Ingresa tu número de CITE para conocer el estado de tu correspondencia.</p>
+        </div>
+      </div>
+      <button class="seg-btn-close" (click)="close()" aria-label="Cerrar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="seg-modal-body">
+
+      @if (estado() !== 'found') {
+        <form [formGroup]="form" (ngSubmit)="consultar()">
+          <div class="seg-input-group">
+            <input
+              type="text"
+              formControlName="cite"
+              placeholder="Ej: HRE-00002-2026"
+              [class.is-invalid]="formatoInvalido() || (citeCtrl.touched && citeCtrl.invalid)"
+              autocomplete="off"
+              spellcheck="false"
+              (input)="formatoInvalido.set(false)"
+            >
+          </div>
+
+          @if (formatoInvalido()) {
+            <div class="seg-alert warning">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Formato inválido. Debe ser como <strong>HRE-00002-2026</strong> (letras-número-año).
+            </div>
+          } @else if (citeCtrl.touched && citeCtrl.invalid) {
+            <p class="seg-field-error">Ingresa el número de CITE.</p>
+          }
+
+          <div class="seg-captcha-row">
+            @if (captchaLoading()) {
+              <div class="seg-captcha-placeholder">Cargando...</div>
+            } @else if (captcha()) {
+              <img [src]="captcha()!.img" alt="Captcha" class="seg-captcha-img">
+            }
+            <button type="button" class="seg-captcha-refresh" (click)="loadCaptcha()" [disabled]="captchaLoading()" title="Actualizar código">
+              <i class="fa-solid fa-rotate-right"></i>
+            </button>
+          </div>
+          <input
+            type="text"
+            class="seg-captcha-input"
+            formControlName="captcha_value"
+            placeholder="Ingrese el código de la imagen"
+            [class.is-invalid]="captchaCtrl.touched && captchaCtrl.invalid"
+            autocomplete="off"
+          >
+          @if (captchaCtrl.touched && captchaCtrl.invalid) {
+            <p class="seg-field-error">Ingresa el código de verificación.</p>
+          }
+
+          <div style="margin-top: 14px;">
+            <button type="submit" class="seg-btn-buscar" [disabled]="estado() === 'loading'">
+              @if (estado() === 'loading') {
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Consultando...
+              } @else {
+                <i class="fa-solid fa-search"></i> Buscar trámite
+              }
+            </button>
+          </div>
+        </form>
+
+      }
+
+      @if (estado() === 'loading') {
+        <div class="seg-loading">
+          <div class="seg-spinner"></div>
+          <p>Consultando...</p>
+        </div>
+      }
+
+      @if (estado() === 'error') {
+        <div class="seg-alert danger">
+          <i class="fa-solid fa-plug-circle-xmark"></i>
+          {{ errorMsg() }}
+        </div>
+      }
+
+      @if (estado() === 'not_found') {
+        <div class="seg-empty">
+          <i class="fa-solid fa-file-circle-question"></i>
+          <h5>CITE no encontrado</h5>
+          <p>Verifica que el código esté escrito correctamente.</p>
+          <button class="seg-btn-nueva" (click)="nueva()">
+            <i class="fa-solid fa-rotate-left"></i> Intentar de nuevo
+          </button>
+        </div>
+      }
+
+      @if (estado() === 'found' && resultado()) {
+        <div class="seg-result">
+          <div class="seg-result-header">
+            <div class="seg-cite">{{ resultado()!.cite }}</div>
+            <span class="seg-estado-badge">{{ resultado()!.estado }}</span>
+          </div>
+          <div class="seg-result-grid">
+
+            <div class="seg-row">
+              <span class="seg-label"><i class="fa-solid fa-file-lines"></i> Asunto</span>
+              <span class="seg-value">{{ resultado()!.asunto }}</span>
+            </div>
+
+            <div class="seg-row">
+              <span class="seg-label"><i class="fa-solid fa-user"></i> Remitente</span>
+              <span class="seg-value">
+                {{ resultado()!.remitente }}
+                @if (resultado()!.remitente_ci) {
+                  <small class="seg-sub">CI: {{ resultado()!.remitente_ci }}</small>
+                }
+              </span>
+            </div>
+
+            <div class="seg-row">
+              <span class="seg-label"><i class="fa-solid fa-tag"></i> Tipo</span>
+              <span class="seg-value">{{ resultado()!.tipo_correspondencia }}</span>
+            </div>
+
+            <div class="seg-row">
+              <span class="seg-label"><i class="fa-solid fa-bolt"></i> Urgencia</span>
+              <span class="seg-value" [class]="urgenciaClass(resultado()!.urgencia)">{{ resultado()!.urgencia }}</span>
+            </div>
+
+            <div class="seg-row">
+              <span class="seg-label"><i class="fa-solid fa-building"></i> Nodo actual</span>
+              <span class="seg-value">{{ resultado()!.nodo_actual }}</span>
+            </div>
+
+            <div class="seg-row">
+              <span class="seg-label"><i class="fa-solid fa-calendar"></i> Registrado</span>
+              <span class="seg-value">{{ resultado()!.fecha_registro }}</span>
+            </div>
+
+            @if (resultado()!.fecha_vencimiento) {
+              <div class="seg-row">
+                <span class="seg-label"><i class="fa-solid fa-clock"></i> Vencimiento</span>
+                <span class="seg-value seg-vencimiento">{{ resultado()!.fecha_vencimiento }}</span>
+              </div>
+            }
+
+            @if (resultado()!.descripcion) {
+              <div class="seg-row seg-row-full">
+                <span class="seg-label"><i class="fa-solid fa-comment"></i> Descripción</span>
+                <span class="seg-value">{{ resultado()!.descripcion }}</span>
+              </div>
+            }
+
+          </div>
+
+          <button class="seg-btn-nueva" (click)="nueva()">
+            <i class="fa-solid fa-rotate-left"></i> Nueva consulta
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+}

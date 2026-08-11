@@ -1,0 +1,13 @@
+<nav class="bc-nav">
+    <a routerLink="/" class="bc-item bc-home">
+        <i class="fa-solid fa-house"></i> Home
+    </a>
+    <span class="bc-sep"><i class="fa-solid fa-chevron-right"></i></span>
+    @if (subTitle) {
+        <a routerLink="." class="bc-item">{{ title }}</a>
+        <span class="bc-sep"><i class="fa-solid fa-chevron-right"></i></span>
+        <span class="bc-current">{{ subTitle }}</span>
+    } @else {
+        <span class="bc-current">{{ title }}</span>
+    }
+</nav>

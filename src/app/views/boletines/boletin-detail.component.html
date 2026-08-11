@@ -1,0 +1,70 @@
+<div class="bd-hero">
+    <div class="bd-hero-overlay"></div>
+    <div class="bd-hero-body">
+        <div class="container">
+            <h1 class="bd-hero-title">{{ boletin?.titulo_boletin ?? CONSTANTS.breadcrumb.subTitleFallback }}</h1>
+            <app-breadcrumb [subTitle]="boletin?.titulo_boletin ?? ''" [title]="CONSTANTS.breadcrumb.title" />
+        </div>
+    </div>
+</div>
+
+<section class="bd-section">
+    <div class="container">
+
+        @if (cargando) {
+            <div class="bd-article">
+                <div class="bd-body">
+                    <p class="bd-loading">{{ CONSTANTS.detalles.loading }}</p>
+                </div>
+            </div>
+        }
+
+        @if (!cargando && !boletin) {
+            <div class="bd-article">
+                <div class="bd-body bd-notfound">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <p>{{ CONSTANTS.detalles.notFound }}</p>
+                    <a routerLink="/boletines" class="bd-back">
+                        <i class="fa-solid fa-arrow-left"></i> {{ CONSTANTS.detalles.btnBack }}
+                    </a>
+                </div>
+            </div>
+        }
+
+        @if (boletin) {
+            <article class="bd-article">
+
+                @if (boletin.imagen_url | imageUrl; as imgSrc) {
+                    <div class="bd-cover">
+                        <img [src]="imgSrc" [alt]="boletin.titulo_boletin">
+                    </div>
+                }
+
+                <div class="bd-body">
+
+                    <div class="bd-meta">
+                        <span class="bd-tag"><i class="fa-solid fa-bookmark"></i> N° {{ boletin.num_boletin }}</span>
+                        @if (boletin.fecha_reg) {
+                            <span class="bd-meta-item">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                {{ boletin.fecha_reg | date:'d MMMM, yyyy' }}
+                            </span>
+                        }
+                    </div>
+
+                    <h2 class="bd-title">{{ boletin.titulo_boletin }}</h2>
+
+                    @if (boletin.descripcion_boletin) {
+                        <p class="bd-content">{{ boletin.descripcion_boletin }}</p>
+                    }
+
+                    <a routerLink="/boletines" class="bd-back">
+                        <i class="fa-solid fa-arrow-left"></i> {{ CONSTANTS.detalles.btnBack }}
+                    </a>
+
+                </div>
+            </article>
+        }
+
+    </div>
+</section>

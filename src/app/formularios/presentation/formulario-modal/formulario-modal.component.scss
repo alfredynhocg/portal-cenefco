@@ -1,0 +1,236 @@
+.insc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 1040;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+
+  &.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.insc-modal {
+  position: fixed;
+  top: calc(80px + (100vh - 80px) / 2);
+  left: 50%;
+  transform: translate(-100vw, -50%);
+  width: 520px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 100px);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(18, 138, 162, 0.25);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+
+  &.visible {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+
+  @media (max-width: 576px) {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    transform: translateY(100%) !important;
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 16px 16px 0 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+
+    &.visible {
+      transform: translateY(0) !important;
+    }
+  }
+}
+
+.insc-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #128AA2 0%, #0e7a91 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+.insc-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  overflow: hidden;
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.insc-close {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: background 0.2s;
+  flex-shrink: 0;
+
+  &:hover { background: rgba(255, 255, 255, 0.3); }
+}
+
+.insc-modal-body {
+  overflow-y: auto;
+  padding: 24px;
+  flex: 1;
+
+  &::-webkit-scrollbar { width: 5px; }
+  &::-webkit-scrollbar-track { background: #f0f8fc; }
+  &::-webkit-scrollbar-thumb { background: #a9d8e8; border-radius: 4px; }
+}
+
+.insc-curso-nombre {
+  font-size: 13px;
+  color: #128AA2;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  background: rgba(18, 138, 162, 0.07);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insc-field {
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #1e293b;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="date"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    color: #1e293b;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus {
+      border-color: #128AA2;
+      box-shadow: 0 0 0 3px rgba(18, 138, 162, 0.12);
+    }
+
+    &.insc-invalid {
+      border-color: #ef4444;
+
+      &:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12); }
+    }
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  small {
+    color: #64748b;
+    display: block;
+    margin-top: 4px;
+    font-size: 0.8rem;
+  }
+}
+
+.req {
+  color: #ef4444;
+  margin-left: 3px;
+}
+
+.insc-error-msg {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  color: #ef4444;
+}
+
+.insc-alert-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.88rem;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insc-form-actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 8px;
+  flex-wrap: wrap;
+}
+
+.insc-submit-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 12px 20px;
+  background: #128AA2;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &:hover:not(:disabled) { background: #0e7a91; transform: translateY(-1px); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.insc-whatsapp-btn {
+  padding: 12px 20px;
+  background: transparent;
+  border: 1.5px solid #e2e8f0;
+  color: #64748b;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+
+  &:hover { border-color: #128AA2; color: #128AA2; }
+}

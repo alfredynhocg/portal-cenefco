@@ -1,0 +1,121 @@
+<div class="hero1-section-area about-bg-area">
+    <img [src]="CONSTANTS.imagenes.header" alt="" class="header-img1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 m-auto">
+                <div class="hero-heading-area heading1 text-center">
+                    <h1>{{ CONSTANTS.breadcrumb.title }}</h1>
+                    <app-breadcrumb [title]="CONSTANTS.breadcrumb.title" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="blog1-section-area sp1">
+    <div class="container">
+        @if (cargando) {
+            <div class="text-center" style="padding: 60px 0; color: #888;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;"></i>
+                <p style="margin-top:12px;">{{ CONSTANTS.lista.loading }}</p>
+            </div>
+        } @else {
+            <div class="row">
+                @for (evento of eventos; track evento.id) {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="blog-auhtor-boxarea">
+                            <div class="img1" style="background: linear-gradient(135deg, #c1272d 0%, #8b0000 100%); display:flex; align-items:center; justify-content:center; min-height:160px;">
+                                <i class="fa-solid fa-calendar-check" style="font-size:48px; color:rgba(255,255,255,0.6);"></i>
+                            </div>
+                            <div class="blog-position">
+                                <a [routerLink]="['/eventos', evento.id]" class="heading">{{ evento.titulo }}</a>
+                                <div class="blog-content-area">
+                                    <span [class]="estadoClass(evento.estado)" style="margin-bottom:10px; display:inline-block;">{{ estadoLabel(evento.estado) }}</span>
+                                    <ul>
+                                        @if (evento.fecha_inicio) {
+                                            <li>
+                                                <a href="#" (click)="$event.preventDefault()">
+                                                    <i class="fa-solid fa-calendar-days"></i>
+                                                    {{ evento.fecha_inicio | date:'d MMM, yyyy' }}
+                                                </a>
+                                            </li>
+                                        }
+                                        @if (evento.tipo_nombre) {
+                                            <li>
+                                                <a href="#" (click)="$event.preventDefault()">
+                                                    <i class="fa-solid fa-tag"></i>
+                                                    {{ evento.tipo_nombre }}
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                    @if (evento.lugar) {
+                                        <p class="evento-meta">
+                                            <i class="fa-solid fa-location-dot"></i> {{ evento.lugar }}
+                                        </p>
+                                    }
+                                    @if (evento.descripcion) {
+                                        <p>{{ evento.descripcion | slice:0:120 }}{{ evento.descripcion.length > 120 ? '...' : '' }}</p>
+                                    }
+                                    <a [routerLink]="['/eventos', evento.id]" class="learnmore">
+                                        {{ CONSTANTS.lista.btnVerDetalle }} <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (eventos.length === 0) {
+                    <div class="col-12 text-center" style="padding: 60px 0;">
+                        <p>{{ CONSTANTS.lista.noData }}</p>
+                    </div>
+                }
+            </div>
+
+            @if (totalPages > 1) {
+                <div class="row">
+                    <div class="col-12">
+                        <div class="pagination-area" style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:40px;flex-wrap:wrap;">
+
+                            <button
+                                (click)="goToPage(pageIndex - 1)"
+                                [disabled]="pageIndex === 1"
+                                class="pagination-btn"
+                                [style.opacity]="pageIndex === 1 ? '0.4' : '1'"
+                                [style.cursor]="pageIndex === 1 ? 'not-allowed' : 'pointer'">
+                                <i class="fa-solid fa-chevron-left" style="font-size:12px;"></i>
+                            </button>
+
+                            @for (page of pages; track page) {
+                                <button
+                                    (click)="goToPage(page)"
+                                    [style.background]="page === pageIndex ? 'var(--ztc-text-text-2)' : '#fff'"
+                                    [style.color]="page === pageIndex ? '#fff' : '#333'"
+                                    [style.borderColor]="page === pageIndex ? 'var(--ztc-text-text-2)' : '#ddd'"
+                                    class="pagination-btn">
+                                    {{ page }}
+                                </button>
+                            }
+
+                            <button
+                                (click)="goToPage(pageIndex + 1)"
+                                [disabled]="pageIndex === totalPages"
+                                class="pagination-btn"
+                                [style.opacity]="pageIndex === totalPages ? '0.4' : '1'"
+                                [style.cursor]="pageIndex === totalPages ? 'not-allowed' : 'pointer'">
+                                <i class="fa-solid fa-chevron-right" style="font-size:12px;"></i>
+                            </button>
+
+                        </div>
+
+                        <p style="text-align:center;margin-top:16px;font-size:14px;color:#888;">
+                            {{ CONSTANTS.lista.pagination.prefix }} {{ pageIndex }} {{ CONSTANTS.lista.pagination.separator }} {{ totalPages }} — {{ total }} {{ CONSTANTS.lista.pagination.suffix }}
+                        </p>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+</div>

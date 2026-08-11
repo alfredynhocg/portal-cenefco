@@ -1,0 +1,204 @@
+<div class="insc-overlay" (click)="close()" [class.visible]="visible"></div>
+
+<div class="insc-modal" [class.visible]="visible" role="dialog" aria-modal="true">
+
+  <div class="insc-modal-header">
+    <div class="insc-modal-title">
+      <img src="assets/img/logo/icono-curso.png" alt="" style="width:32px;height:32px;object-fit:contain;">
+      <span>{{ formulario?.nombre ?? 'Formulario de Inscripción' }}</span>
+    </div>
+    <button type="button" class="insc-close" (click)="close()" aria-label="Cerrar">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  @if (submitted()) {
+    <div class="insc-modal-body" style="display:flex;flex-direction:column;align-items:center;padding:3rem 2rem;text-align:center;">
+      <i class="fa-solid fa-circle-check" style="font-size:4rem;color:#22c55e;margin-bottom:1rem;"></i>
+      <h3 style="font-weight:700;margin-bottom:.5rem;">¡Inscripción enviada!</h3>
+      <p style="color:#64748b;margin-bottom:1.5rem;">Tu solicitud de inscripción a <strong>{{ cursoNombre }}</strong> fue registrada correctamente.</p>
+      @if (urlWhatsapp) {
+        <a [href]="urlWhatsapp" target="_blank" rel="noopener" class="insc-submit-btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;">
+          <i class="fa-brands fa-whatsapp"></i> Contactar por WhatsApp
+        </a>
+      }
+      <button type="button" (click)="close()" class="insc-whatsapp-btn" style="margin-top:1rem;">
+        Cerrar
+      </button>
+    </div>
+  } @else if (yaInscrito()) {
+    <div class="insc-modal-body" style="display:flex;flex-direction:column;align-items:center;padding:3rem 2rem;text-align:center;">
+      <i class="fa-solid fa-circle-exclamation" style="font-size:4rem;color:#f59e0b;margin-bottom:1rem;"></i>
+      <h3 style="font-weight:700;margin-bottom:.5rem;color:#92400e;">Ya estás inscrito</h3>
+      <p style="color:#64748b;margin-bottom:1.5rem;">
+        Tu cédula de identidad ya tiene una inscripción activa en
+        <strong>{{ cursoNombre }}</strong>.<br>
+        <small>Si crees que esto es un error, contáctanos.</small>
+      </p>
+      @if (urlWhatsapp) {
+        <a [href]="urlWhatsapp" target="_blank" rel="noopener" class="insc-submit-btn"
+           style="text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;background:#25d366;">
+          <i class="fa-brands fa-whatsapp"></i> Consultar por WhatsApp
+        </a>
+      }
+      <button type="button" (click)="close()" class="insc-whatsapp-btn" style="margin-top:1rem;">
+        Cerrar
+      </button>
+    </div>
+  } @else {
+
+    <div class="insc-modal-body">
+
+      @if (cursoNombre) {
+        <p class="insc-curso-nombre">
+          <i class="fa-solid fa-book-open"></i> {{ cursoNombre }}
+        </p>
+      }
+
+      @if (cargandoError) {
+        <div style="text-align:center;padding:2rem;color:#ef4444;">
+          <i class="fa-solid fa-circle-exclamation" style="font-size:2rem;"></i>
+          <p style="margin-top:1rem;">No se pudo cargar el formulario.<br><small>Intente cerrar y volver a abrir.</small></p>
+        </div>
+      } @else if (!formulario) {
+        <div style="text-align:center;padding:2rem;color:#64748b;">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;"></i>
+          <p style="margin-top:1rem;">Cargando formulario...</p>
+        </div>
+      } @else {
+
+        @if (autocompleted()) {
+          <div style="display:flex;align-items:center;gap:.5rem;padding:.6rem .9rem;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:.5rem;margin-bottom:1rem;font-size:.85rem;color:#166534;">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Datos completados automáticamente según tu CI. Revisa y corrige si es necesario.</span>
+          </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+          @for (campo of campos; track campo.nombre_campo) {
+            <div class="insc-field" style="margin-bottom:1.25rem;">
+              <label style="display:block;margin-bottom:.4rem;font-weight:600;font-size:.9rem;">
+                {{ campo.etiqueta }}
+                @if (campo.requerido) { <span class="req">*</span> }
+              </label>
+
+              @switch (campo.tipo) {
+                @case ('textarea') {
+                  <textarea [formControlName]="campo.nombre_campo"
+                            [placeholder]="campo.placeholder ?? ''"
+                            rows="3"
+                            [class.insc-invalid]="form.get(campo.nombre_campo)?.invalid && form.get(campo.nombre_campo)?.touched"></textarea>
+                }
+                @case ('select') {
+                  <select [formControlName]="campo.nombre_campo"
+                          [class.insc-invalid]="form.get(campo.nombre_campo)?.invalid && form.get(campo.nombre_campo)?.touched">
+                    <option value="">— Seleccionar —</option>
+                    @for (op of (campo.opciones ?? []); track op) {
+                      <option [value]="op">{{ op }}</option>
+                    }
+                  </select>
+                }
+                @case ('checkbox') {
+                  <label style="display:flex;align-items:center;gap:.5rem;font-weight:normal;cursor:pointer;">
+                    <input type="checkbox" [formControlName]="campo.nombre_campo" />
+                    {{ campo.ayuda }}
+                  </label>
+                }
+                @case ('file') {
+                  <div>
+                    <input type="file" (change)="onFileChange($event, campo)"
+                           style="display:block;padding:.4rem;" />
+                    @if (uploadingFields[campo.nombre_campo]) {
+                      <span style="font-size:.85rem;color:#64748b;">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Subiendo...
+                      </span>
+                    }
+                    @if (fileUrls[campo.nombre_campo]) {
+                      <span style="font-size:.85rem;color:#22c55e;">
+                        <i class="fa-solid fa-circle-check"></i> Archivo subido
+                      </span>
+                    }
+                  </div>
+                }
+                @default {
+                  <div style="position:relative;">
+                    <input [type]="campo.tipo"
+                           [formControlName]="campo.nombre_campo"
+                           [placeholder]="campo.placeholder ?? ''"
+                           [attr.min]="campo.validacion?.min ?? null"
+                           [attr.max]="campo.validacion?.max ?? null"
+                           [attr.minlength]="campo.validacion?.min_length ?? null"
+                           [attr.maxlength]="campo.validacion?.max_length ?? null"
+                           [attr.pattern]="campo.validacion?.patron ?? null"
+                           [class.insc-invalid]="form.get(campo.nombre_campo)?.invalid && form.get(campo.nombre_campo)?.touched"
+                           (input)="esCampoCi(campo) ? onCiInput($event) : null" />
+                  </div>
+                }
+              }
+
+              @if (campo.ayuda && campo.tipo !== 'checkbox') {
+                <small style="color:#64748b;display:block;margin-top:.25rem;">{{ campo.ayuda }}</small>
+              }
+              @if (mensajeError(campo)) {
+                <span class="insc-error-msg">{{ mensajeError(campo) }}</span>
+              }
+            </div>
+          }
+
+          <div class="insc-field" style="margin-bottom:1.25rem;">
+            <label style="display:block;margin-bottom:.4rem;font-weight:600;font-size:.9rem;">
+              Verificación <span class="req">*</span>
+            </label>
+            <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem;">
+              @if (captchaLoading()) {
+                <div style="height:50px;width:200px;border-radius:.5rem;border:1px solid #ddd;background:#f8f9fa;display:flex;align-items:center;justify-content:center;">
+                  <span style="color:#64748b;font-size:.85rem;">Cargando...</span>
+                </div>
+              } @else if (captcha()) {
+                <img [src]="captcha()!.img" alt="Captcha" style="height:50px;border-radius:.5rem;border:1px solid #ddd;">
+              }
+              <button type="button" (click)="loadCaptcha()" [disabled]="captchaLoading()"
+                      style="background:none;border:none;font-size:1.1rem;cursor:pointer;color:#64748b;padding:.25rem .5rem;">
+                <i class="fa-solid fa-rotate-right"></i>
+              </button>
+            </div>
+            <input type="text" placeholder="Ingrese el código que ve en la imagen"
+                   [value]="captchaValue()"
+                   (input)="captchaValue.set($any($event.target).value)"
+                   autocomplete="off" />
+          </div>
+
+          @if (errorMsg()) {
+            <div class="insc-alert-error">
+              <i class="fa-solid fa-triangle-exclamation"></i> {{ errorMsg() }}
+            </div>
+          }
+
+          <div class="insc-form-actions">
+            <button type="submit" class="insc-submit-btn" [disabled]="submitting() || isUploading()">
+              @if (submitting()) {
+                <i class="fa-solid fa-spinner fa-spin"></i> Enviando...
+              } @else {
+                Enviar inscripción
+              }
+            </button>
+            <button type="button" class="insc-whatsapp-btn" (click)="close()">Cancelar</button>
+          </div>
+
+        </form>
+      }
+    </div>
+  }
+</div>
+
+<app-cert-modal
+  [visible]="certModalVisible()"
+  [config]="certConfig()"
+  [programaId]="programaId"
+  [usuarioCi]="certUsuarioCi()"
+  [usuarioNombre]="certUsuarioNombre()"
+  [usuarioEmail]="certUsuarioEmail()"
+  [inscripcionId]="certInscripcionId()"
+  (closed)="onCertModalClosed()"
+/>

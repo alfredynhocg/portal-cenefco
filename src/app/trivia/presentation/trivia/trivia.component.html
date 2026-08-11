@@ -1,0 +1,605 @@
+<div class="tv-cortina"
+     [class.tv-cortina--cerrando]="cortina() === 'cerrando'"
+     [class.tv-cortina--cerrada]="cortina() === 'cerrada'"
+     [class.tv-cortina--abriendo]="cortina() === 'abriendo'"
+     [class.tv-cortina--oculta]="cortina() === 'oculta'"
+     aria-hidden="true">
+  <img src="assets/img/logo/logo-sm.png" alt="" class="tv-cortina__logo">
+</div>
+
+<div class="tv-hero">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 m-auto">
+        <div class="tv-hero__content text-center">
+          <span class="tv-hero__kicker">Juego interactivo</span>
+          <h1 class="tv-hero__titulo">Trivia CENEFCO</h1>
+          <p class="tv-hero__subtitulo">Gira la ruleta, pon a prueba lo que sabes y suma la mayor cantidad de puntos posible.</p>
+
+          <div class="tv-hero__stats">
+            <span class="tv-hero__stat"><tv-icon name="pregunta" [size]="14" color="#eda100" /> {{ categorias().length || '—' }} categorías</span>
+            <span class="tv-hero__stat"><tv-icon name="reloj" [size]="14" color="#1baf7a" /> Preguntas contrarreloj</span>
+            <span class="tv-hero__stat"><tv-icon name="trofeo" [size]="14" color="#eb6834" /> Ranking en vivo</span>
+          </div>
+
+          <app-breadcrumb title="Trivia" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="tv-section">
+
+  @if (confeti().length) {
+    <div class="tv-confeti">
+      @for (pieza of confeti(); track $index) {
+        <span class="tv-confeti__pieza"
+              [style.left.%]="pieza.left"
+              [style.background]="pieza.color"
+              [style.animation-delay.s]="pieza.delay"
+              [style.animation-duration.s]="pieza.duracion"
+              [style.transform]="'rotate(' + pieza.rotacion + 'deg)'"></span>
+      }
+    </div>
+  }
+
+  @if (fase() !== 'cargando' && fase() !== 'necesita-login') {
+    <button type="button" class="tv-sonido-toggle" (click)="toggleSonido()"
+            [attr.aria-label]="sonidoHabilitado() ? 'Silenciar sonido' : 'Activar sonido'"
+            [attr.aria-pressed]="!sonidoHabilitado()">
+      <tv-icon [name]="sonidoHabilitado() ? 'sonido' : 'sonido-mute'" [size]="17" [strokeWidth]="2" [color]="sonidoHabilitado() ? '#2a78d6' : null" />
+    </button>
+  }
+
+  <div class="tv-container">
+
+    @if (fase() === 'cargando') {
+      <div class="tv-estado">
+        <div class="tv-spinner"></div>
+        <p>Cargando el juego...</p>
+      </div>
+    }
+
+    @if (fase() === 'necesita-login') {
+      <div class="tv-acceso">
+        <div class="tv-acceso__marca">
+          <tv-icon name="candado" [size]="28" [strokeWidth]="1.75" color="#4a3aa7" [badge]="true" [badgeSize]="60" />
+        </div>
+        <h3>Inicia sesión para jugar</h3>
+        <p>Crea una cuenta gratis o ingresa con la que ya tienes para acumular puntaje y competir en el ranking.</p>
+        <div class="tv-acceso__acciones">
+          <a routerLink="/login" class="tv-btn tv-btn--primary">Iniciar sesión</a>
+          <a routerLink="/registro" class="tv-btn tv-btn--outline">Crear cuenta</a>
+        </div>
+      </div>
+    }
+
+    @if (fase() === 'sin-categorias') {
+      <div class="tv-acceso">
+        <div class="tv-acceso__marca">
+          <tv-icon name="pregunta" [size]="28" [strokeWidth]="1.75" color="#eda100" [badge]="true" [badgeSize]="60" />
+        </div>
+        <h3>Todavía no hay categorías disponibles</h3>
+        <p>{{ error() ?? 'Vuelve a intentarlo más tarde.' }}</p>
+      </div>
+    }
+
+    @if (fase() === 'rueda' || fase() === 'girando') {
+      <div class="tv-rueda-wrap">
+        <div class="tv-acciones-flotantes">
+          <button type="button" class="tv-btn-ranking" (click)="verRanking()">
+            <tv-icon name="trofeo" [size]="15" color="#eb6834" /> Ver ranking
+          </button>
+          <button type="button" class="tv-btn-ranking tv-btn-ranking--premios" (click)="verPremios()">
+            <tv-icon name="regalo" [size]="15" color="#e87ba4" /> Canjear puntos
+          </button>
+          <button type="button" class="tv-btn-ranking tv-btn-ranking--duelo" (click)="verDuelo()">
+            <tv-icon name="espadas" [size]="15" color="#e34948" /> Duelo 1v1
+          </button>
+        </div>
+
+        <p class="tv-rueda-titulo">
+          @if (fase() === 'girando') { Girando la ruleta... } @else { Gira la ruleta y elige tu categoría }
+        </p>
+
+        <div class="tv-rueda-stage">
+          <div class="tv-rueda-halo"></div>
+          <div class="tv-rueda" [class.tv-rueda--girando]="fase() === 'girando'">
+            <div class="tv-rueda__puntero"></div>
+            <div class="tv-rueda__aro"></div>
+
+            <div class="tv-rueda__disco"
+                 [style.background]="gradienteRueda()"
+                 [style.transform]="'rotate(' + rotacionRueda() + 'deg)'">
+              @for (categoria of categorias(); track categoria.id; let i = $index) {
+                <div class="tv-rueda__etiqueta" [style.transform]="'rotate(' + anguloEtiqueta(i) + 'deg)'">
+                  <span class="tv-rueda__etiqueta-icono"><tv-icon [name]="iconoCategoria(categoria.nombre)" [size]="15" [strokeWidth]="2" /></span>
+                  <span>{{ categoria.nombre }}</span>
+                </div>
+              }
+            </div>
+
+            <button type="button" class="tv-rueda__boton" (click)="girar()" [disabled]="fase() === 'girando'">
+              @if (fase() === 'girando') {
+                <span class="tv-rueda__boton-spinner"></span>
+              } @else {
+                Girar
+              }
+            </button>
+          </div>
+        </div>
+
+        @if (error()) {
+          <p class="tv-error">{{ error() }}</p>
+        }
+
+        @if (fase() === 'rueda') {
+          <div class="tv-como-jugar">
+            <div class="tv-como-jugar__paso">
+              <span class="tv-como-jugar__numero">1</span>
+              <tv-icon name="giro" [size]="22" [strokeWidth]="1.6" color="#2a78d6" [badge]="true" [badgeSize]="48" />
+              <p>Gira la ruleta y descubre tu categoría</p>
+            </div>
+            <div class="tv-como-jugar__paso">
+              <span class="tv-como-jugar__numero">2</span>
+              <tv-icon name="reloj" [size]="22" [strokeWidth]="1.6" color="#1baf7a" [badge]="true" [badgeSize]="48" />
+              <p>Responde antes de que se acabe el tiempo</p>
+            </div>
+            <div class="tv-como-jugar__paso">
+              <span class="tv-como-jugar__numero">3</span>
+              <tv-icon name="trofeo" [size]="22" [strokeWidth]="1.6" color="#eb6834" [badge]="true" [badgeSize]="48" />
+              <p>Suma puntos y sube en el ranking</p>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    @if (fase() === 'jugando') {
+      @if (categoriaSeleccionada(); as categoria) {
+        @if (preguntaActual(); as pregunta) {
+          <div class="tv-juego">
+
+            <div class="tv-juego__hud">
+              <span class="tv-juego__categoria" [style.background]="categoria.color ?? colorCategoria(categoria.nombre)">
+                <tv-icon [name]="iconoCategoria(categoria.nombre)" [size]="14" [strokeWidth]="2.2" color="#fff" />
+                {{ categoria.nombre }}
+              </span>
+
+              <div class="tv-juego__vidas" [class.tv-juego__vidas--shake]="vidaPerdida()">
+                @for (i of [0, 1, 2]; track i) {
+                  <tv-icon
+                    [name]="i >= (partida()?.vidas ?? 0) ? 'corazon-vacio' : 'corazon'"
+                    [size]="18" [strokeWidth]="2"
+                    [color]="i >= (partida()?.vidas ?? 0) ? null : '#e34948'"
+                    class="tv-vida" [class.tv-vida--vacia]="i >= (partida()?.vidas ?? 0)" />
+                }
+              </div>
+
+              <span class="tv-juego__puntaje" [class.tv-juego__puntaje--pop]="puntajeSubio()">
+                {{ partida()?.puntaje ?? 0 }} pts
+              </span>
+            </div>
+
+            <div class="tv-juego__temporizador" [class.tv-juego__temporizador--urgente]="tiempoRestante() <= 5">
+              <div class="tv-juego__temporizador-barra" [style.width.%]="(tiempoRestante() / pregunta.tiempo_limite_segundos) * 100"></div>
+            </div>
+
+            <div class="tv-juego__tarjeta" [style.--tv-cat-color]="categoria.color ?? colorCategoria(categoria.nombre)">
+              @if (pregunta.imagen_url) {
+                <img [src]="pregunta.imagen_url" alt="" class="tv-juego__imagen">
+              }
+
+              <h3 class="tv-juego__enunciado">{{ pregunta.enunciado }}</h3>
+
+              <div class="tv-juego__opciones">
+                @for (opcion of pregunta.opciones; track opcion.id; let i = $index) {
+                  <button
+                    type="button"
+                    class="tv-opcion"
+                    [class.tv-opcion--seleccionada]="opcionSeleccionada() === opcion.id"
+                    [class.tv-opcion--correcta]="opcionSeleccionada() === opcion.id && feedback() === 'correcta'"
+                    [class.tv-opcion--incorrecta]="opcionSeleccionada() === opcion.id && feedback() === 'incorrecta'"
+                    [disabled]="opcionSeleccionada() !== null"
+                    (click)="responder(opcion.id)">
+                    <span class="tv-opcion__letra">{{ LETRAS[i] }}</span>
+                    <span class="tv-opcion__texto">{{ opcion.texto }}</span>
+                    @if (opcionSeleccionada() === opcion.id) {
+                      <span class="tv-opcion__marca">
+                        <tv-icon [name]="feedback() === 'correcta' ? 'check' : 'cruz'" [size]="17" [strokeWidth]="3" />
+                      </span>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+
+            @if (error()) {
+              <p class="tv-error">{{ error() }}</p>
+            }
+          </div>
+        }
+      }
+    }
+
+    @if (fase() === 'resultado') {
+      <div class="tv-resultado" [class.tv-resultado--ganador]="partida()?.estado_jugador === 'ganador'">
+        @if (partida()?.estado_jugador === 'ganador') {
+          <div class="tv-resultado__rayos"></div>
+        }
+
+        <div class="tv-resultado__marca" [style.--tv-icon-color]="partida()?.estado_jugador === 'ganador' ? '#eb6834' : '#e34948'">
+          <tv-icon
+            [name]="partida()?.estado_jugador === 'ganador' ? 'trofeo' : 'corazon-vacio'"
+            [size]="partida()?.estado_jugador === 'ganador' ? 46 : 26" [strokeWidth]="1.5"
+            [color]="partida()?.estado_jugador === 'ganador' ? '#eb6834' : '#e34948'"
+            [badge]="true" [badgeSize]="partida()?.estado_jugador === 'ganador' ? 96 : 60" />
+        </div>
+
+        @if (partida()?.estado_jugador === 'ganador') {
+          <span class="tv-resultado__eyebrow">¡Victoria!</span>
+          <h3>Completaste la categoría</h3>
+          <p class="tv-resultado__texto">Respondiste todas las preguntas disponibles. Gran trabajo.</p>
+        } @else {
+          <h3>Se acabaron tus vidas</h3>
+          <p class="tv-resultado__texto">No te preocupes, puedes volver a intentarlo cuando quieras.</p>
+        }
+
+        <div class="tv-resultado__puntaje">
+          <span class="tv-resultado__puntaje-label">Puntaje final</span>
+          <span class="tv-resultado__puntaje-valor">{{ partida()?.puntaje ?? 0 }}</span>
+        </div>
+
+        <div class="tv-resultado__acciones">
+          @if (partida()?.estado_jugador === 'ganador') {
+            <button type="button" class="tv-btn tv-btn--dorado" (click)="verPremios()">
+              <tv-icon name="regalo" [size]="16" color="#fff" /> Canjear puntos
+            </button>
+            <button type="button" class="tv-btn tv-btn--outline" (click)="jugarDeNuevo()">Jugar de nuevo</button>
+          } @else {
+            <button type="button" class="tv-btn tv-btn--primary" (click)="jugarDeNuevo()">Jugar de nuevo</button>
+            <button type="button" class="tv-btn tv-btn--outline" (click)="verPremios()">
+              <tv-icon name="regalo" [size]="15" /> Canjear puntos
+            </button>
+          }
+          <button type="button" class="tv-btn tv-btn--outline" (click)="verRanking()">Ver ranking</button>
+          <button type="button" class="tv-btn tv-btn--outline" (click)="verDuelo()">
+            <tv-icon name="espadas" [size]="15" /> Duelo 1v1
+          </button>
+          <a routerLink="/" class="tv-btn tv-btn--outline">Volver al inicio</a>
+        </div>
+      </div>
+    }
+
+    @if (fase() === 'ranking') {
+      <div class="tv-ranking">
+        <div class="tv-ranking__header">
+          <h3><tv-icon name="trofeo" [size]="18" [strokeWidth]="1.8" color="#eb6834" /> Mejores jugadores</h3>
+          <button type="button" class="tv-ranking__cerrar" (click)="cerrarRanking()" aria-label="Cerrar">
+            <tv-icon name="cerrar" [size]="15" [strokeWidth]="2.5" />
+          </button>
+        </div>
+
+        @if (cargandoRanking()) {
+          <div class="tv-estado">
+            <div class="tv-spinner"></div>
+            <p>Cargando ranking...</p>
+          </div>
+        } @else if (ranking() && ranking()!.length === 0) {
+          <div class="tv-estado">
+            <p>Todavía nadie ha jugado. Sé el primero en aparecer aquí.</p>
+          </div>
+        } @else {
+          <ol class="tv-ranking__lista">
+            @for (item of ranking(); track item.usuario_id) {
+              <li class="tv-ranking__item"
+                  [class.tv-ranking__item--yo]="item.usuario_id === miUsuarioId"
+                  [class.tv-ranking__item--oro]="item.posicion === 1"
+                  [class.tv-ranking__item--plata]="item.posicion === 2"
+                  [class.tv-ranking__item--bronce]="item.posicion === 3">
+                <span class="tv-ranking__posicion">{{ item.posicion }}</span>
+
+                <span class="tv-ranking__avatar">
+                  @if (item.avatar_url) {
+                    <img [src]="item.avatar_url" alt="">
+                  } @else {
+                    {{ item.nombre.charAt(0) }}
+                  }
+                </span>
+
+                <span class="tv-ranking__info">
+                  <span class="tv-ranking__nombre">{{ item.nombre }}</span>
+                  <span class="tv-ranking__meta">{{ item.partidas_jugadas }} partidas · {{ item.partidas_ganadas }} ganadas</span>
+                </span>
+
+                <span class="tv-ranking__puntaje">{{ item.puntaje_total }}</span>
+              </li>
+            }
+          </ol>
+        }
+
+        <button type="button" class="tv-btn tv-btn--outline tv-ranking__volver" (click)="cerrarRanking()">Volver</button>
+      </div>
+    }
+
+    @if (fase() === 'premios') {
+      <div class="tv-premios">
+        <div class="tv-ranking__header">
+          <h3><tv-icon name="regalo" [size]="18" [strokeWidth]="1.8" color="#e87ba4" /> Canjea tus puntos</h3>
+          <button type="button" class="tv-ranking__cerrar" (click)="cerrarPremios()" aria-label="Cerrar">
+            <tv-icon name="cerrar" [size]="15" [strokeWidth]="2.5" />
+          </button>
+        </div>
+
+        @if (cargandoPremios()) {
+          <div class="tv-estado">
+            <div class="tv-spinner"></div>
+            <p>Cargando premios...</p>
+          </div>
+        } @else {
+
+          @if (saldo(); as s) {
+            <div class="tv-premios__saldo">
+              <span class="tv-premios__saldo-label">Tu saldo disponible</span>
+              <span class="tv-premios__saldo-valor"><tv-icon name="chispa" [size]="16" color="#eda100" /> {{ s.saldo_disponible }} pts</span>
+              <span class="tv-premios__saldo-meta">{{ s.puntaje_total }} pts ganados en total · {{ s.puntos_gastados }} ya canjeados</span>
+            </div>
+          }
+
+          @if (mensajeCanje()) {
+            <p class="tv-premios__mensaje">{{ mensajeCanje() }}</p>
+          }
+
+          <div class="tv-premios__grid">
+            @for (premio of premios(); track premio.id) {
+              <div class="tv-premio-card" [class.tv-premio-card--bloqueado]="(saldo()?.saldo_disponible ?? 0) < premio.costo_puntos">
+                <div class="tv-premio-card__icono">
+                  @if (premio.imagen_url) {
+                    <img [src]="premio.imagen_url" alt="">
+                  } @else {
+                    <tv-icon name="regalo" [size]="26" [strokeWidth]="1.6" color="#e87ba4" [badge]="true" [badgeSize]="56" />
+                  }
+                </div>
+
+                <h4 class="tv-premio-card__nombre">{{ premio.nombre }}</h4>
+                @if (premio.descripcion) {
+                  <p class="tv-premio-card__descripcion">{{ premio.descripcion }}</p>
+                }
+
+                <span class="tv-premio-card__costo"><tv-icon name="chispa" [size]="14" color="#eda100" /> {{ premio.costo_puntos }} pts</span>
+
+                @if (premio.stock !== null) {
+                  <span class="tv-premio-card__stock">{{ premio.stock }} disponibles</span>
+                }
+
+                @if (premioAConfirmar() === premio.id) {
+                  <div class="tv-premio-card__confirmar">
+                    <p>¿Canjear por {{ premio.costo_puntos }} pts?</p>
+                    <div class="tv-premio-card__confirmar-acciones">
+                      <button type="button" class="tv-btn tv-btn--primary" [disabled]="canjeando() === premio.id" (click)="confirmarCanje(premio)">
+                        @if (canjeando() === premio.id) { Canjeando... } @else { Sí, canjear }
+                      </button>
+                      <button type="button" class="tv-btn tv-btn--outline" (click)="cancelarConfirmacionCanje()">Cancelar</button>
+                    </div>
+                  </div>
+                } @else {
+                  <button
+                    type="button"
+                    class="tv-btn tv-btn--primary tv-premio-card__boton"
+                    [disabled]="(saldo()?.saldo_disponible ?? 0) < premio.costo_puntos"
+                    (click)="pedirConfirmacionCanje(premio.id)">
+                    {{ (saldo()?.saldo_disponible ?? 0) < premio.costo_puntos ? 'Puntos insuficientes' : 'Canjear' }}
+                  </button>
+                }
+              </div>
+            } @empty {
+              <p class="tv-estado">Todavía no hay premios disponibles para canjear.</p>
+            }
+          </div>
+
+          @if (misCanjes() && misCanjes()!.length) {
+            <div class="tv-premios__historial">
+              <h4><tv-icon name="ticket" [size]="16" [strokeWidth]="1.8" color="#4a3aa7" /> Mis canjes</h4>
+              <ul class="tv-premios__historial-lista">
+                @for (canje of misCanjes(); track canje.id) {
+                  <li class="tv-premios__historial-item">
+                    <span class="tv-premios__historial-codigo">{{ canje.codigo }}</span>
+                    <span class="tv-premios__historial-nombre">{{ canje.premio_nombre }}</span>
+                    <span class="tv-premios__historial-estado"
+                          [class.tv-premios__historial-estado--pendiente]="canje.estado === 'pendiente'"
+                          [class.tv-premios__historial-estado--entregado]="canje.estado === 'entregado'"
+                          [class.tv-premios__historial-estado--cancelado]="canje.estado === 'cancelado'">
+                      {{ canje.estado }}
+                    </span>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        }
+
+        <button type="button" class="tv-btn tv-btn--outline tv-ranking__volver" (click)="cerrarPremios()">Volver</button>
+      </div>
+    }
+
+    @if (fase() === 'duelo-menu') {
+      <div class="tv-duelo">
+        <div class="tv-ranking__header">
+          <h3><tv-icon name="espadas" [size]="18" [strokeWidth]="1.8" color="#e34948" /> Duelo 1v1</h3>
+          <button type="button" class="tv-ranking__cerrar" (click)="cerrarDuelo()" aria-label="Cerrar">
+            <tv-icon name="cerrar" [size]="15" [strokeWidth]="2.5" />
+          </button>
+        </div>
+
+        <div class="tv-duelo__tabs">
+          <button type="button" class="tv-duelo__tab" [class.tv-duelo__tab--activo]="dueloModo() === 'crear'" (click)="seleccionarModoDuelo('crear')">Crear sala</button>
+          <button type="button" class="tv-duelo__tab" [class.tv-duelo__tab--activo]="dueloModo() === 'unirse'" (click)="seleccionarModoDuelo('unirse')">Unirme con código</button>
+        </div>
+
+        @if (dueloError()) {
+          <p class="tv-error">{{ dueloError() }}</p>
+        }
+
+        @if (dueloModo() === 'crear') {
+          <p class="tv-duelo__ayuda">Elige una categoría y comparte el código con quien quieras retar.</p>
+
+          <div class="tv-duelo__categorias">
+            @for (categoria of categorias(); track categoria.id) {
+              <button
+                type="button"
+                class="tv-duelo__categoria"
+                [class.tv-duelo__categoria--activa]="dueloCategoriaId() === categoria.id"
+                (click)="seleccionarCategoriaDuelo(categoria.id)">
+                <tv-icon [name]="iconoCategoria(categoria.nombre)" [size]="18" [strokeWidth]="2" [color]="categoria.color ?? colorCategoria(categoria.nombre)" />
+                {{ categoria.nombre }}
+              </button>
+            }
+          </div>
+
+          <button type="button" class="tv-btn tv-btn--primary tv-duelo__accion" [disabled]="!dueloCategoriaId() || dueloCreando()" (click)="crearSalaDuelo()">
+            @if (dueloCreando()) { Creando sala... } @else { Crear sala de duelo }
+          </button>
+        } @else {
+          <p class="tv-duelo__ayuda">Pide a tu rival el código de su sala e ingrésalo aquí.</p>
+
+          <input
+            type="text"
+            class="tv-duelo__input-codigo"
+            placeholder="Ej: A1B2C3"
+            maxlength="10"
+            [value]="dueloCodigoInput()"
+            (input)="onCodigoDueloInput($event)">
+
+          <button type="button" class="tv-btn tv-btn--primary tv-duelo__accion" [disabled]="!dueloCodigoInput().trim() || dueloUniendo()" (click)="unirseSalaDuelo()">
+            @if (dueloUniendo()) { Uniéndome... } @else { Unirme al duelo }
+          </button>
+        }
+      </div>
+    }
+
+    @if (fase() === 'duelo-esperando') {
+      <div class="tv-duelo tv-duelo--esperando">
+        <div class="tv-spinner"></div>
+        <h3>Esperando a tu rival...</h3>
+        <p>Comparte este código para que se una a tu sala:</p>
+
+        <div class="tv-duelo__codigo">
+          <span>{{ duelo()?.codigo_sala }}</span>
+          <button type="button" class="tv-duelo__copiar" (click)="copiarCodigoSala()" title="Copiar código">
+            <tv-icon name="copiar" [size]="16" />
+          </button>
+        </div>
+
+        <button type="button" class="tv-btn tv-btn--outline tv-ranking__volver" (click)="cerrarDuelo()">Cancelar</button>
+      </div>
+    }
+
+    @if (fase() === 'duelo-jugando') {
+      @if (duelo(); as d) {
+        <div class="tv-duelo-juego">
+          <div class="tv-duelo-juego__marcador">
+            <div class="tv-duelo-juego__jugador">
+              <span class="tv-duelo-juego__nombre">Tú</span>
+              <span class="tv-duelo-juego__puntaje">{{ d.mi_puntaje }}</span>
+              <span class="tv-duelo-juego__progreso">{{ d.mi_pregunta_indice }}/{{ d.total_preguntas }}</span>
+            </div>
+            <tv-icon name="espadas" [size]="20" color="#e34948" />
+            <div class="tv-duelo-juego__jugador tv-duelo-juego__jugador--rival">
+              <span class="tv-duelo-juego__nombre">{{ d.rival?.nombre ?? 'Rival' }}</span>
+              <span class="tv-duelo-juego__puntaje">{{ d.rival?.puntaje ?? 0 }}</span>
+              <span class="tv-duelo-juego__progreso">{{ d.rival?.pregunta_indice ?? 0 }}/{{ d.total_preguntas }}</span>
+            </div>
+          </div>
+
+          @if (d.pregunta_actual; as pregunta) {
+            <div class="tv-juego__temporizador" [class.tv-juego__temporizador--urgente]="dueloTiempoRestante() <= 5">
+              <div class="tv-juego__temporizador-barra" [style.width.%]="(dueloTiempoRestante() / pregunta.tiempo_limite_segundos) * 100"></div>
+            </div>
+
+            <div class="tv-juego__tarjeta">
+              @if (pregunta.imagen_url) {
+                <img [src]="pregunta.imagen_url" alt="" class="tv-juego__imagen">
+              }
+              <h3 class="tv-juego__enunciado">{{ pregunta.enunciado }}</h3>
+
+              <div class="tv-juego__opciones">
+                @for (opcion of pregunta.opciones; track opcion.id; let i = $index) {
+                  <button
+                    type="button"
+                    class="tv-opcion"
+                    [class.tv-opcion--seleccionada]="dueloOpcionSeleccionada() === opcion.id"
+                    [class.tv-opcion--correcta]="dueloOpcionSeleccionada() === opcion.id && dueloFeedback() === 'correcta'"
+                    [class.tv-opcion--incorrecta]="dueloOpcionSeleccionada() === opcion.id && dueloFeedback() === 'incorrecta'"
+                    [disabled]="dueloOpcionSeleccionada() !== null"
+                    (click)="responderDuelo(opcion.id)">
+                    <span class="tv-opcion__letra">{{ LETRAS[i] }}</span>
+                    <span class="tv-opcion__texto">{{ opcion.texto }}</span>
+                    @if (dueloOpcionSeleccionada() === opcion.id) {
+                      <span class="tv-opcion__marca">
+                        <tv-icon [name]="dueloFeedback() === 'correcta' ? 'check' : 'cruz'" [size]="17" [strokeWidth]="3" />
+                      </span>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+          } @else {
+            <div class="tv-estado">
+              <div class="tv-spinner"></div>
+              <p>¡Ya respondiste todo! Esperando a que tu rival termine...</p>
+            </div>
+          }
+
+          @if (dueloError()) {
+            <p class="tv-error">{{ dueloError() }}</p>
+          }
+        </div>
+      }
+    }
+
+    @if (fase() === 'duelo-resultado') {
+      @if (duelo(); as d) {
+        <div class="tv-resultado" [class.tv-resultado--ganador]="d.resultado === 'ganaste'">
+          <div class="tv-resultado__marca">
+            <tv-icon
+              [name]="d.resultado === 'ganaste' ? 'trofeo' : (d.resultado === 'empate' ? 'espadas' : 'corazon-vacio')"
+              [size]="26" [strokeWidth]="1.6"
+              [color]="d.resultado === 'ganaste' ? '#eb6834' : (d.resultado === 'empate' ? '#4a3aa7' : '#e34948')"
+              [badge]="true" [badgeSize]="60" />
+          </div>
+
+          @if (d.resultado === 'ganaste') {
+            <h3>¡Ganaste el duelo!</h3>
+            <p class="tv-resultado__texto">Superaste a {{ d.rival?.nombre }} en puntaje.</p>
+          } @else if (d.resultado === 'empate') {
+            <h3>¡Empate!</h3>
+            <p class="tv-resultado__texto">Tú y {{ d.rival?.nombre }} terminaron con el mismo puntaje.</p>
+          } @else {
+            <h3>Perdiste el duelo</h3>
+            <p class="tv-resultado__texto">{{ d.rival?.nombre }} sumó más puntos esta vez.</p>
+          }
+
+          <div class="tv-duelo-resultado__marcador">
+            <div class="tv-duelo-juego__jugador">
+              <span class="tv-duelo-juego__nombre">Tú</span>
+              <span class="tv-resultado__puntaje-valor">{{ d.mi_puntaje }}</span>
+            </div>
+            <span class="tv-duelo-resultado__vs">vs</span>
+            <div class="tv-duelo-juego__jugador">
+              <span class="tv-duelo-juego__nombre">{{ d.rival?.nombre ?? 'Rival' }}</span>
+              <span class="tv-resultado__puntaje-valor">{{ d.rival?.puntaje ?? 0 }}</span>
+            </div>
+          </div>
+
+          <div class="tv-resultado__acciones">
+            <button type="button" class="tv-btn tv-btn--primary" (click)="verDuelo()">Nuevo duelo</button>
+            <button type="button" class="tv-btn tv-btn--outline" (click)="jugarDeNuevo()">Volver a la ruleta</button>
+            <button type="button" class="tv-btn tv-btn--outline" (click)="verRanking()">Ver ranking</button>
+          </div>
+        </div>
+      }
+    }
+
+  </div>
+</section>

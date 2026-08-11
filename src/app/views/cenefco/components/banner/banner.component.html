@@ -1,0 +1,35 @@
+<owl-carousel-o class="slider-header-carousel" [options]="carouselOptions">
+  @for (banner of banners; track banner.id) {
+  <ng-template carouselSlide>
+      <div class="hero1-section-area">
+        <img [src]="banner.imagen_url | imageUrl" [alt]="banner.titulo || ''" class="header-img1">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="hero-heading-area heading1">
+                <h5>{{ ui.subtitulo }}</h5>
+                  @if (banner.titulo) {
+                    <h1 class="main-heading">{{ banner.titulo }}</h1>
+                  }
+                  @if (banner.descripcion) {
+                    <p class="pera">{{ banner.descripcion }}</p>
+                  }
+                <div class="btn-area">
+                  @if (banner.enlace_url) {
+                    <a [href]="banner.enlace_url" class="header-btn1">
+                      {{ ui.btnVerMas }} <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                  }
+                  <a [routerLink]="ui.rutaContacto" class="header-btn2">
+                    {{ ui.btnContacto }} <i class="fa-solid fa-arrow-right"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </ng-template>
+  }
+</owl-carousel-o>

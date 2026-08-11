@@ -1,0 +1,43 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tourney:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+
+   --color-brand-primary: #2520C1;
+   --color-brand-primary-light: #4B45E8;
+   --color-brand-primary-dark: #181491;
+
+   --color-brand-accent: #FFFFFF;
+   --color-brand-accent-light: #FFFFFF;
+   --color-brand-accent-dark: #F0F0F0;
+
+   --color-brand-secondary: #169401;
+
+   --color-success: #22C55E;
+   --color-success-light: #DCFCE7;
+   --color-warning: #F59E0B;
+   --color-warning-light: #FEF3C7;
+   --color-danger: #DC2626;
+   --color-danger-light: #FEE2E2;
+   --color-info: #0EA5E9;
+   --color-info-light: #E0F2FE;
+
+   --color-dark: #1A1A1A;
+   --color-muted: #6B7280;
+   --color-light: #F5F5F5;
+   --color-white: #FFFFFF;
+   --color-black: #000000;
+   --color-border: #E5E7EB;
+   --color-border-dark: #D1D5DB;
+
+   --font-primary: "DM Sans", sans-serif;
+   --font-display: "Tourney", sans-serif;
+
+
+   --color-primary: var(--color-brand-primary);
+   --color-secondary: var(--color-brand-secondary);
+
+   --color-primary-light: var(--color-brand-primary-light);
+   --color-accent: var(--color-brand-accent);
+}

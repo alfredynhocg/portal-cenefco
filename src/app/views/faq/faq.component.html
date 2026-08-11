@@ -1,0 +1,85 @@
+﻿
+<section class="fq-hero">
+  <div class="fq-hero-overlay"></div>
+  <div class="container">
+    <div class="fq-hero-body">
+      <div class="fq-hero-badge">
+        <i class="fa-regular fa-circle-question"></i> PREGUNTAS FRECUENTES
+      </div>
+      <h1 class="fq-hero-title">¿Tienes <span>preguntas?</span></h1>
+      <p class="fq-hero-sub">Encontramos respuestas a las dudas más comunes sobre nuestros programas</p>
+    </div>
+  </div>
+</section>
+
+<app-breadcrumb title="Preguntas Frecuentes" subTitle="Inicio" />
+
+<section class="fq-section">
+  <div class="container">
+
+    @if (cargando) {
+      <div class="fq-tabs mb-4">
+        @for (s of [1,2,3,4]; track s) {
+          <div style="width:110px;height:36px;border-radius:30px;background:#eef0f2;animation:fq-pulse 1.4s ease-in-out infinite;"></div>
+        }
+      </div>
+      @for (s of [1,2,3,4,5,6]; track s) {
+        <div class="fq-skel-item">
+          <div class="fq-skel-line"></div>
+          <div class="fq-skel-line short"></div>
+        </div>
+      }
+
+    } @else if (preguntas.length === 0) {
+      <div class="text-center py-5 text-muted">
+        <i class="fa-regular fa-circle-question" style="font-size:48px;color:#dde4e8;display:block;margin-bottom:16px;"></i>
+        <p>No hay preguntas frecuentes disponibles.</p>
+      </div>
+
+    } @else {
+
+      <div class="fq-tabs">
+        <button class="fq-tab" [class.active]="categoriaActiva === null" (click)="filtrarPor(null)">
+          Todas
+        </button>
+        @for (cat of categorias; track cat) {
+          <button class="fq-tab" [class.active]="categoriaActiva === cat" (click)="filtrarPor(cat)">
+            {{ catLabel(cat) }}
+          </button>
+        }
+      </div>
+
+      @for (grupo of grupos; track grupo.cat) {
+        <div class="fq-group">
+          @if (!categoriaActiva) {
+            <div class="fq-group-title">
+              <i class="fa-solid fa-tag"></i> {{ catLabel(grupo.cat) }}
+            </div>
+          }
+          @for (pregunta of grupo.items; track pregunta.id) {
+            <div class="fq-item" [class.open]="isOpen(pregunta.id)">
+              <button class="fq-question" (click)="toggle(pregunta.id)" [attr.aria-expanded]="isOpen(pregunta.id)">
+                <span class="fq-q-text">{{ pregunta.pregunta }}</span>
+                <span class="fq-q-icon">
+                  <i class="fa-solid fa-plus"></i>
+                </span>
+              </button>
+              <div class="fq-answer">
+                <p>{{ pregunta.respuesta }}</p>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="fq-cta">
+        <div class="fq-cta-title">¿No encontraste lo que buscabas?</div>
+        <p class="fq-cta-sub">Contáctanos directamente y te responderemos a la brevedad posible.</p>
+        <a routerLink="/contactos" class="fq-cta-btn">
+          <i class="fa-solid fa-envelope"></i> Escribirnos
+        </a>
+      </div>
+    }
+
+  </div>
+</section>

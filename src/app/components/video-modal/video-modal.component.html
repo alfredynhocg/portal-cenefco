@@ -1,0 +1,33 @@
+﻿
+<div class="vm-overlay" [class.visible]="visible" (click)="cerrar()"></div>
+
+<div class="vm-modal" [class.visible]="visible" role="dialog" aria-modal="true">
+
+  <div class="vm-header">
+    <div class="vm-title">
+      <i class="fa-brands fa-tiktok"></i>
+      <span>{{ cursoNombre || 'Video del Curso' }}</span>
+    </div>
+    <button type="button" class="vm-close" (click)="cerrar()" aria-label="Cerrar">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <div class="vm-body" *ngIf="visible && videoId">
+    <div class="vm-embed-wrap">
+      <blockquote
+        class="tiktok-embed"
+        [attr.cite]="'https://www.tiktok.com/@cenefco/video/' + videoId"
+        [attr.data-video-id]="videoId"
+        style="max-width:605px; min-width:min(325px, 100%);">
+        <section></section>
+      </blockquote>
+    </div>
+  </div>
+
+  <div class="vm-no-video" *ngIf="visible && !videoId">
+    <i class="fa-brands fa-tiktok"></i>
+    <p>No se encontró el video.</p>
+  </div>
+
+</div>

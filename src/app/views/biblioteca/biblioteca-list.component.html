@@ -1,0 +1,264 @@
+<section class="bl-hero">
+    <img class="bl-hero-bg" src="assets/img/all-images/header_default_cenefco.jpg" alt="" aria-hidden="true"
+         onerror="this.src='assets/img/all-images/header_default_cenefco.jpg';">
+    <div class="bl-hero-overlay"></div>
+    <div class="container bl-hero-body">
+        <div class="bl-hero-badge">
+            <i class="fa-solid fa-book-open-reader"></i> Repositorio Digital
+        </div>
+        <h1 class="bl-hero-title">Biblioteca <span>CENEFCO</span></h1>
+        <p class="bl-hero-sub">Accede al repositorio de tesis, monografías, revistas y publicaciones científicas de nuestra institución.</p>
+        @if (!cargando) {
+            <div class="bl-hero-stats">
+                @for (tipo of CONSTANTS.tipos; track tipo.key) {
+                    @if (tipo.key !== 'todos') {
+                        <div class="bl-hero-stat">
+                            <strong>{{ countTipo(tipo.key) }}</strong>
+                            <span>{{ tipo.label }}</span>
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+</section>
+
+<section class="bl-section">
+    <div class="container">
+        <div class="bl-layout">
+            <aside class="bl-sidebar">
+                <div class="bl-panel">
+                    <div class="bl-panel-head">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Buscar</span>
+                    </div>
+                    <div class="bl-panel-body">
+                        <div class="bl-search-wrap">
+                            <input
+                                class="bl-search-input"
+                                type="text"
+                                [(ngModel)]="busqueda"
+                                (ngModelChange)="onBusqueda()"
+                                placeholder="Título, autor, palabras clave…"
+                                autocomplete="off"
+                            />
+                            @if (busqueda) {
+                                <button class="bl-search-clear" (click)="limpiarBusqueda()">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            } @else {
+                                <i class="fa-solid fa-magnifying-glass bl-search-icon"></i>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bl-panel">
+                    <div class="bl-panel-head">
+                        <i class="fa-solid fa-filter"></i>
+                        <span>Tipo</span>
+                    </div>
+                    <div class="bl-panel-body">
+                        <div class="bl-tipo-list">
+                            @for (tipo of CONSTANTS.tipos; track tipo.key) {
+                                <button
+                                    class="bl-tipo-btn"
+                                    [class.active]="tipoActivo === tipo.key"
+                                    (click)="filtrarTipo(tipo.key)"
+                                >
+                                    <span class="bl-tipo-icon"><i [class]="tipo.icon"></i></span>
+                                    <span class="bl-tipo-label">{{ tipo.label }}</span>
+                                    @if (!cargando) {
+                                        <span class="bl-tipo-count">{{ countTipo(tipo.key) }}</span>
+                                    }
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bl-panel">
+                    <div class="bl-panel-head">
+                        <i class="fa-solid fa-sliders"></i>
+                        <span>Filtros</span>
+                    </div>
+                    <div class="bl-panel-body">
+                        <div class="bl-select-group">
+                            <div class="bl-select-wrap">
+                                <i class="fa-solid fa-calendar"></i>
+                                <select class="bl-select" [(ngModel)]="anioFiltro" (ngModelChange)="pageIndex = 1">
+                                    <option value="">Todos los años</option>
+                                    @for (anio of aniosDisponibles; track anio) {
+                                        <option [value]="anio">{{ anio }}</option>
+                                    }
+                                </select>
+                            </div>
+                            @if (areasDisponibles.length > 0) {
+                                <div class="bl-select-wrap">
+                                    <i class="fa-solid fa-tag"></i>
+                                    <select class="bl-select" [(ngModel)]="areaFiltro" (ngModelChange)="pageIndex = 1">
+                                        <option value="">Todas las áreas</option>
+                                        @for (area of areasDisponibles; track area) {
+                                            <option [value]="area">{{ area }}</option>
+                                        }
+                                    </select>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @if (hasFiltrosActivos) {
+                    <button class="bl-clear-btn" (click)="limpiarFiltros()">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        Limpiar todos los filtros
+                    </button>
+                }
+            </aside>
+
+            <div class="bl-main">
+                <div class="bl-topbar">
+                    <span class="bl-count">
+                        <strong>{{ publicacionesFiltradas.length }}</strong>
+                        {{ publicacionesFiltradas.length === 1 ? 'publicación' : 'publicaciones' }}
+                    </span>
+                    @if (hasFiltrosActivos) {
+                        <div class="bl-active-filters">
+                            @if (tipoActivo !== 'todos') {
+                                <button class="bl-filter-chip" (click)="filtrarTipo('todos')">
+                                    {{ getTipoLabel(tipoActivo) }} <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            }
+                            @if (anioFiltro) {
+                                <button class="bl-filter-chip" (click)="anioFiltro = ''; pageIndex = 1">
+                                    {{ anioFiltro }} <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            }
+                            @if (busqueda) {
+                                <button class="bl-filter-chip" (click)="limpiarBusqueda()">
+                                    "{{ busqueda }}" <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="bl-grid">
+                    @if (cargando) {
+                        @for (s of skeletons; track $index) {
+                            <div class="bl-skel">
+                                <div class="bl-skel-top"></div>
+                                <div class="bl-skel-icon"></div>
+                                <div class="bl-skel-body">
+                                    <div class="bl-skel-line w90"></div>
+                                    <div class="bl-skel-line w70"></div>
+                                    <div class="bl-skel-line w50"></div>
+                                </div>
+                            </div>
+                        }
+                    }
+
+                    @else if (publicacionesPagina.length === 0) {
+                        <div class="bl-empty">
+                            <div class="bl-empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                            <h4>{{ CONSTANTS.search.noResults }}</h4>
+                            <p>{{ CONSTANTS.search.noResultsHint }}</p>
+                            <button class="bl-empty-btn" (click)="limpiarFiltros()">
+                                <i class="fa-solid fa-rotate-left"></i> Limpiar filtros
+                            </button>
+                        </div>
+                    }
+
+                    @else {
+                        @for (pub of publicacionesPagina; track pub.id) {
+                            <div class="bl-card">
+                                <div class="bl-card-header">
+                                    <span class="bl-card-tipo-pill" [class]="getTipoPillClass(pub.tipo)">
+                                        <i [class]="getTipoIcon(pub.tipo)"></i>
+                                        {{ getTipoLabel(pub.tipo) }}
+                                    </span>
+                                    @if (pub.anio) {
+                                        <span class="bl-card-anio">{{ pub.anio }}</span>
+                                    }
+                                </div>
+
+                                <div class="bl-card-icon-wrap" [class]="getTipoIconClass(pub.tipo)">
+                                    <i [class]="getTipoIcon(pub.tipo)"></i>
+                                </div>
+
+                                <div class="bl-card-body">
+                                    <p class="bl-card-title">{{ pub.titulo }}</p>
+                                    @if (pub.autor) {
+                                        <div class="bl-card-author">
+                                            <i class="fa-solid fa-user-pen"></i>
+                                            {{ pub.autor }}
+                                        </div>
+                                    }
+
+                                    @if (pub.resumen) {
+                                        <p class="bl-card-resumen">{{ pub.resumen }}</p>
+                                    }
+
+                                    @if (pub.area || pub.volumen || pub.issn) {
+                                        <div class="bl-card-divider"></div>
+                                        <div class="bl-card-meta">
+                                            @if (pub.area) {
+                                                <span class="bl-meta-item">
+                                                    <i class="fa-solid fa-tag"></i> {{ pub.area }}
+                                                </span>
+                                            }
+                                            @if (pub.volumen) {
+                                                <span class="bl-meta-item">
+                                                    <i class="fa-solid fa-layer-group"></i>
+                                                    Vol.{{ pub.volumen }}{{ pub.numero ? ' Nº' + pub.numero : '' }}
+                                                </span>
+                                            }
+                                            @if (pub.issn) {
+                                                <span class="bl-meta-item">
+                                                    <i class="fa-solid fa-barcode"></i> ISSN {{ pub.issn }}
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+
+                                    <div class="bl-card-actions">
+                                        @if (pub.archivo_url) {
+                                            <a [href]="pub.archivo_url" target="_blank" rel="noopener noreferrer"
+                                               class="bl-btn-dl">
+                                                <i class="fa-solid fa-file-pdf"></i> Descargar PDF
+                                            </a>
+                                        } @else {
+                                            <span class="bl-btn-dl" style="opacity:.45;cursor:default;">
+                                                <i class="fa-solid fa-file-pdf"></i> Sin archivo
+                                            </span>
+                                        }
+                                        <a [routerLink]="['/biblioteca', pub.tipo, pub.slug]" class="bl-btn-link" title="Ver detalle">
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        }
+                    }
+                </div>
+
+                @if (!cargando && totalPages > 1) {
+                    <div class="bl-pagination">
+                        <button class="bl-page-btn" (click)="irPagina(pageIndex - 1)" [disabled]="pageIndex === 1">
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        @for (p of pages; track p) {
+                            <button class="bl-page-btn" [class.active]="p === pageIndex" (click)="irPagina(p)">
+                                {{ p }}
+                            </button>
+                        }
+                        <button class="bl-page-btn" (click)="irPagina(pageIndex + 1)" [disabled]="pageIndex === totalPages">
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

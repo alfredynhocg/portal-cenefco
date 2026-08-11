@@ -1,0 +1,97 @@
+﻿<div [class]="containerClass">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="footer-logo-content sp4">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="logo-content">
+                                <img [src]="logo" alt="">
+                                <p>Conectando mentes, fortalenciendo la Educación</p>
+                                <ul>
+                                    @if (redesSociales().length === 0) {
+                                        <li><a href="#" (click)="$event.preventDefault()"><i class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href="#" (click)="$event.preventDefault()"><i class="fa-brands fa-instagram"></i></a></li>
+                                        <li><a href="#" (click)="$event.preventDefault()"><i class="fa-brands fa-linkedin-in"></i></a></li>
+                                        <li><a href="#" (click)="$event.preventDefault()"><i class="fa-brands fa-youtube"></i></a></li>
+                                    }
+                                    @for (red of redesSociales(); track red.id) {
+                                        <li>
+                                            <a [href]="red.url" target="_blank" rel="noopener noreferrer" [attr.aria-label]="red.nombre_display || red.red">
+                                                <i [class]="red.icono_clase || 'fa-solid fa-link'"></i>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-1 d-lg-block d-none"></div>
+
+                        <div class="col-lg-4 col-md-6">
+                            <div class="space30 d-block d-md-none"></div>
+                            <div class="service-heading">
+                                <h2>Navegación</h2>
+                                <ul>
+                                    @if (footerItems.length === 0) {
+                                        <li><a routerLink="/">Inicio</a></li>
+                                        <li><a routerLink="/cursos">Oferta Académica</a></li>
+                                        <li><a routerLink="/noticias">Noticias</a></li>
+                                        <li><a routerLink="/contactos">Contacto</a></li>
+                                    }
+                                    @for (item of footerItems; track item.id) {
+                                        <li>
+                                            @if (isExternal(item.url)) {
+                                                <a [href]="item.url" [target]="item.abrir_nueva_ventana ? '_blank' : '_self'">
+                                                    {{ item.etiqueta }}
+                                                </a>
+                                            } @else {
+                                                <a [routerLink]="item.url || '/'">{{ item.etiqueta }}</a>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6">
+                            <div class="space30 d-md-block d-lg-none"></div>
+                            <div class="service-heading contact">
+                                <h2>Contacto</h2>
+                                <ul>
+                                    @if (telefonoTexto) {
+                                        <li>
+                                            <a [href]="telefonoHref">
+                                                <span class="icons"><i class="fa-solid fa-phone"></i></span>
+                                                <span>{{ telefonoTexto }}</span>
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (emailTexto) {
+                                        <li>
+                                            <a [href]="emailHref">
+                                                <span class="icons"><i class="fa-solid fa-envelope"></i></span>
+                                                <span>{{ emailTexto }}</span>
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (direccionTexto) {
+                                        <li>
+                                            <a href="#" (click)="$event.preventDefault()">
+                                                <span class="icons"><i class="fa-solid fa-location-dot"></i></span>
+                                                <span>{{ direccionTexto }}</span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <p>© Copyright {{ currentYear }} - CENEFCO. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

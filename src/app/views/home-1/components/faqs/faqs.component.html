@@ -1,0 +1,90 @@
+<section class="cf-section sp1">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5">
+                <div class="cf-badge" data-aos="fade-right" data-aos-duration="500">
+                    <i class="fa-solid fa-circle-question"></i> FAQ's
+                </div>
+
+                <h2 class="cf-title" data-aos="fade-right" data-aos-duration="700">
+                    Preguntas Frecuentes
+                </h2>
+
+                <p class="cf-desc" data-aos="fade-right" data-aos-duration="900">
+                    Hemos reunido las preguntas más comunes para ayudarte a resolver
+                    tus dudas sobre nuestros programas, inscripciones y servicios.
+                </p>
+
+                @if (!loading && faqs.length > 0) {
+                    <div class="cf-count" data-aos="fade-right" data-aos-duration="1000">
+                        <i class="fa-solid fa-circle-check"></i>
+                        {{ faqs.length }} preguntas respondidas
+                    </div>
+                }
+
+                @if (!loading && faqs.length > 0) {
+                    <div class="cf-cats" data-aos="fade-right" data-aos-duration="1050">
+                        @for (faq of faqs; track faq.id) {
+                            @if (faq.categoria) {
+                                <span class="cf-cat-chip">
+                                    <i class="fa-solid {{ categoriaIcon(faq.categoria) }}"></i>
+                                    {{ categoriaLabel(faq.categoria) }}
+                                </span>
+                            }
+                        }
+                    </div>
+                }
+
+                <div data-aos="fade-right" data-aos-duration="1100">
+                    <a routerLink="/preguntas-frecuentes" class="cf-btn">
+                        Ver todas las preguntas <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                @if (loading) {
+                    @for (s of skeletons; track s) {
+                        <div class="cf-skeleton"></div>
+                    }
+                }
+                @if (!loading && (error || faqs.length === 0)) {
+                    <div class="cf-empty">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <p>No hay preguntas disponibles en este momento.</p>
+                    </div>
+                }
+                @if (!loading && faqs.length > 0) {
+                    <div ngbAccordion [closeOthers]="true" class="cf-accordion">
+                        @for (faq of faqs; track faq.id; let first = $first; let i = $index) {
+                            <div ngbAccordionItem [collapsed]="!first" class="cf-item"
+                                 data-aos="fade-left" [attr.data-aos-duration]="700 + i * 60">
+                                <h2 ngbAccordionHeader>
+                                    <button ngbAccordionButton class="cf-item-btn" type="button">
+                                        <span class="cf-item-icon">
+                                            <i class="fa-solid {{ categoriaIcon(faq.categoria) }}"></i>
+                                        </span>
+                                        <span class="cf-item-question">{{ faq.pregunta }}</span>
+                                        <span class="cf-item-chevron">
+                                            <i class="fa-solid fa-chevron-down"></i>
+                                        </span>
+                                    </button>
+                                </h2>
+                                <div ngbAccordionCollapse>
+                                    <div ngbAccordionBody class="cf-item-body">
+                                        <ng-template>
+                                            @if (faq.categoria) {
+                                                <span class="cf-cat-tag">{{ categoriaLabel(faq.categoria) }}</span>
+                                            }
+                                            <p class="cf-answer">{{ faq.respuesta }}</p>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</section>

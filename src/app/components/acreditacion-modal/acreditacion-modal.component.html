@@ -1,0 +1,52 @@
+
+<div class="am-overlay" [class.visible]="visible" (click)="cerrar()"></div>
+
+<div class="am-modal" [class.visible]="visible" role="dialog" aria-modal="true">
+
+  <div class="am-header">
+    <div class="am-title">
+      <i class="fa-solid fa-award"></i>
+      <span>{{ acreditacion?.nombre || 'Acreditación' }}</span>
+    </div>
+    <button type="button" class="am-close" (click)="cerrar()" aria-label="Cerrar">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <div class="am-body" *ngIf="acreditacion as a">
+
+    <div class="am-logo-row">
+      <div class="am-logo-wrap">
+        <img *ngIf="a.logo_url; else logoFallback" [src]="a.logo_url | imageUrl" [alt]="a.logo_alt || a.nombre">
+        <ng-template #logoFallback>
+          <i class="fa-solid fa-award"></i>
+        </ng-template>
+      </div>
+      <div class="am-logo-info">
+        <p class="am-entidad">{{ a.entidad_otorgante }}</p>
+        <span class="am-tipo" *ngIf="a.tipo">{{ a.tipo }}</span>
+      </div>
+    </div>
+
+    <p class="am-descripcion" *ngIf="a.descripcion">{{ a.descripcion }}</p>
+
+    <div class="am-fechas" *ngIf="a.fecha_obtencion || a.fecha_vencimiento">
+      <div class="am-fecha-item" *ngIf="a.fecha_obtencion">
+        <i class="fa-solid fa-calendar-check"></i>
+        <div>
+          <span class="am-fecha-label">Obtenida</span>
+          <span class="am-fecha-valor">{{ a.fecha_obtencion | date:'d MMMM, yyyy' }}</span>
+        </div>
+      </div>
+      <div class="am-fecha-item" *ngIf="a.fecha_vencimiento">
+        <i class="fa-solid fa-calendar-xmark"></i>
+        <div>
+          <span class="am-fecha-label">Vigente hasta</span>
+          <span class="am-fecha-valor">{{ a.fecha_vencimiento | date:'d MMMM, yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

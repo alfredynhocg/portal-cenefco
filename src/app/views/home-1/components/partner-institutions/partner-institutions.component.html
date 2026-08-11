@@ -1,0 +1,42 @@
+<div class="slider-section-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 m-auto">
+                <div class="header-slider text-center">
+                    <h3>Convenios e Instituciones Aliadas</h3>
+                </div>
+            </div>
+        </div>
+        <ng-template #convenioLogo let-convenio>
+            <a class="img1" [attr.data-nombre]="convenio.nombre" [routerLink]="['/convenios', convenio.id]">
+                @if (convenio.logo_url) {
+                    <img [src]="convenio.logo_url" [alt]="convenio.nombre">
+                } @else {
+                    <div class="img1-placeholder"><i class="fa-solid fa-building-columns"></i></div>
+                }
+            </a>
+        </ng-template>
+
+        <div class="row">
+            <div class="col-lg-12">
+                @if (convenios.length > 0) {
+                    @defer (on idle) {
+                        <owl-carousel-o class="slider-images" [options]="carouselOptions">
+                            @for (convenio of convenios; track convenio.id) {
+                                <ng-template carouselSlide>
+                                    <ng-container [ngTemplateOutlet]="convenioLogo" [ngTemplateOutletContext]="{ $implicit: convenio }" />
+                                </ng-template>
+                            }
+                        </owl-carousel-o>
+                    } @placeholder {
+                        <div class="d-flex flex-wrap justify-content-center gap-4">
+                            @for (convenio of convenios; track convenio.id) {
+                                <ng-container [ngTemplateOutlet]="convenioLogo" [ngTemplateOutletContext]="{ $implicit: convenio }" />
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

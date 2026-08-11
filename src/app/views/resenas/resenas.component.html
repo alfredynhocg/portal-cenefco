@@ -1,0 +1,141 @@
+﻿<section class="rs-hero">
+  <div class="rs-hero-overlay"></div>
+  <div class="container">
+    <div class="rs-hero-body">
+      <div class="rs-hero-badge">
+        <i class="fa-solid fa-star"></i> RESEÑAS DE ESTUDIANTES
+      </div>
+      <h1 class="rs-hero-title">Lo que dicen nuestros <span>egresados</span></h1>
+      <p class="rs-hero-sub">Experiencias reales de quienes ya formaron parte de nuestros programas</p>
+    </div>
+  </div>
+</section>
+
+<app-breadcrumb title="Reseñas" subTitle="Inicio" />
+
+@if (!cargando && total > 0) {
+  <div class="rs-stats">
+    <div class="container">
+      <div class="rs-stats-inner">
+        <div class="rs-stat">
+          <div class="rs-stat-num">{{ total }}</div>
+          <div class="rs-stat-label">Reseñas<br>verificadas</div>
+        </div>
+        <div class="rs-stat-divider"></div>
+        <div class="rs-stat">
+          <div class="rs-stat-num">{{ promedioCalif }}</div>
+          <div class="rs-stat-label">Calificación<br>promedio</div>
+        </div>
+        <div class="rs-stat-divider"></div>
+        <div class="rs-stat">
+          <div class="rs-stars-big">
+            @for (s of [1,2,3,4,5]; track s) {
+              <i class="fa-solid fa-star"></i>
+            }
+          </div>
+          <div class="rs-stat-label">Excelencia<br>académica</div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<section class="rs-section">
+  <div class="container">
+    @if (cargando) {
+      <div class="row g-4">
+        @for (s of [1,2,3,4,5,6,7,8,9]; track s) {
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="rs-skel">
+              <div class="d-flex gap-3 mb-3">
+                <div class="rs-skel-line" style="width:54px;height:54px;border-radius:50%;flex-shrink:0;"></div>
+                <div style="flex:1">
+                  <div class="rs-skel-line" style="height:14px;width:60%;margin-bottom:8px;"></div>
+                  <div class="rs-skel-line" style="height:11px;width:40%;"></div>
+                </div>
+              </div>
+              <div class="rs-skel-line" style="height:12px;width:80px;margin-bottom:14px;"></div>
+              <div class="rs-skel-line" style="height:12px;margin-bottom:8px;"></div>
+              <div class="rs-skel-line" style="height:12px;margin-bottom:8px;"></div>
+              <div class="rs-skel-line" style="height:12px;width:70%;"></div>
+            </div>
+          </div>
+        }
+      </div>
+
+    } @else if (resenas.length === 0) {
+      <div class="text-center py-5">
+        <i class="fa-regular fa-star" style="font-size:52px;color:#dde4e8;display:block;margin-bottom:18px;"></i>
+        <p class="text-muted">Aún no hay reseñas disponibles. ¡Sé el primero en compartir tu experiencia!</p>
+      </div>
+
+    } @else {
+      <div class="row g-4">
+        @for (resena of resenas; track resena.id) {
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="rs-card" style="position:relative;">
+              <div class="rs-quote-icon">"</div>
+
+              <div class="rs-card-header">
+                @if (getFotoUrl(resena.foto_url); as foto) {
+                  <img [src]="foto" [alt]="resena.nombre" class="rs-avatar">
+                } @else {
+                  <div class="rs-avatar-placeholder">{{ getIniciales(resena.nombre) }}</div>
+                }
+                <div class="rs-meta">
+                  <div class="rs-name">{{ resena.nombre }}</div>
+                  @if (resena.cargo_actual) {
+                    <div class="rs-cargo">{{ resena.cargo_actual }}</div>
+                  }
+                  @if (resena.verificado) {
+                    <span class="rs-verificado">
+                      <i class="fa-solid fa-circle-check"></i> Verificado
+                    </span>
+                  }
+                </div>
+              </div>
+
+              <div class="rs-stars">
+                @for (s of starsArray(resena.calificacion); track $index) {
+                  <i class="fa-solid fa-star" [class.filled]="s.filled" [class.empty]="!s.filled"></i>
+                }
+              </div>
+
+              @if (resena.titulo_resena) {
+                <div class="rs-titulo">{{ resena.titulo_resena }}</div>
+              }
+              <p class="rs-texto">{{ resena.resena }}</p>
+
+              <div class="rs-footer">
+                @if (resena.nombre_programa) {
+                  <span class="rs-programa">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    {{ resena.nombre_programa }}
+                  </span>
+                }
+                <span class="rs-fecha">{{ formatDate(resena.created_at) }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (totalPages > 1) {
+        <div class="rs-pagination">
+          <button class="rs-page-btn" [disabled]="pageIndex === 1" (click)="goToPage(pageIndex - 1)">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          @for (p of pages; track p) {
+            <button class="rs-page-btn" [class.active]="p === pageIndex" (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          }
+          <button class="rs-page-btn" [disabled]="pageIndex === totalPages" (click)="goToPage(pageIndex + 1)">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      }
+    }
+
+  </div>
+</section>

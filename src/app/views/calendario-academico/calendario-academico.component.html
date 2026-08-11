@@ -1,0 +1,129 @@
+<div class="hero1-section-area about-bg-area">
+    <img [src]="CONSTANTS.imagenes.header" alt="" class="header-img1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 m-auto">
+                <div class="hero-heading-area heading1 text-center">
+                    <h1>{{ CONSTANTS.breadcrumb.title }}</h1>
+                    <app-breadcrumb [title]="CONSTANTS.breadcrumb.title" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="blog1-section-area sp1">
+    <div class="container">
+        @if (cargando) {
+            <div class="text-center" style="padding: 60px 0; color: #888;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size:24px;"></i>
+                <p style="margin-top:12px;">{{ CONSTANTS.lista.loading }}</p>
+            </div>
+        } @else {
+
+            <div class="calendario-toolbar d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+                <select (change)="onFiltroTipo($event)">
+                    <option value="">Todos los tipos</option>
+                    @for (t of tipos; track t.value) { <option [value]="t.value">{{ t.label }}</option> }
+                </select>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="pagination-btn" (click)="mesAnterior()">
+                        <i class="fa-solid fa-chevron-left" style="font-size:12px;"></i>
+                    </button>
+                    <span class="mes-nav-title">{{ tituloMes }}</span>
+                    <button type="button" class="pagination-btn" (click)="mesSiguiente()">
+                        <i class="fa-solid fa-chevron-right" style="font-size:12px;"></i>
+                    </button>
+                    <button type="button" class="btn-hoy" (click)="irAHoy()">Hoy</button>
+                </div>
+            </div>
+
+            @if (estadosMes.total > 0) {
+                <p class="resumen-mes">
+                    <b>{{ estadosMes.total }}</b> evento{{ estadosMes.total !== 1 ? 's' : '' }} en {{ tituloMes }}
+                </p>
+            }
+
+            <div class="calendario-wrap">
+                <div class="calendario-grid-header">
+                    @for (dia of diasSem; track dia) { <div>{{ dia }}</div> }
+                </div>
+                <div class="calendario-grid">
+                    @for (dia of diasGrid; track dia.fecha.toISOString()) {
+                        @let evs = eventosEnCelda(dia.fecha);
+                        <div
+                            class="calendario-celda"
+                            [class.otro-mes]="dia.otroMes"
+                            [class.seleccionado]="esDiaSeleccionado(dia.fecha)"
+                            (click)="seleccionarDia(dia)">
+
+                            <span class="dia-numero" [class.hoy]="dia.esHoy" [class.otro-mes-txt]="dia.otroMes">
+                                {{ dia.fecha.getDate() }}
+                            </span>
+
+                            @for (ev of evs.slice(0, 3); track ev.id) {
+                                @let pos = posEvento(dia.fecha, ev);
+                                <div
+                                    class="evento-bar"
+                                    [class]="barClasses(pos)"
+                                    [class.pasado]="esPasado(ev)"
+                                    [style.background-color]="eventoColor(ev)"
+                                    [title]="ev.titulo + (ev.nombre_programa ? ' · ' + ev.nombre_programa : '')">
+                                    @if (pos === 'unico' || pos === 'inicio') {
+                                        {{ ev.titulo }}
+                                    }
+                                </div>
+                            }
+                            @if (evs.length > 3) {
+                                <div class="mas-eventos">+{{ evs.length - 3 }} más</div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="leyenda">
+                @for (t of tipos; track t.value) {
+                    <span class="leyenda-item">
+                        <span class="leyenda-dot" [style.background-color]="t.color"></span>{{ t.label }}
+                    </span>
+                }
+            </div>
+
+            @if (diaSeleccionado) {
+                <div class="dia-detalle">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h5 class="mb-0" style="text-transform:capitalize;">{{ formatDiaSel(diaSeleccionado) }}</h5>
+                        <button type="button" class="btn-hoy" (click)="cerrarDetalle()">Cerrar</button>
+                    </div>
+
+                    @if (eventosDelDia.length === 0) {
+                        <p style="color:#999; font-style:italic; margin:0;">{{ CONSTANTS.lista.diaVacio }}</p>
+                    } @else {
+                        @for (ev of eventosDelDia; track ev.id) {
+                            <div class="dia-evento-item">
+                                <span style="width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:5px;" [style.background-color]="eventoColor(ev)"></span>
+                                <div>
+                                    <p style="font-weight:600; margin-bottom:6px;">
+                                        {{ ev.titulo }}
+                                        @if (ev.destacado) { <span style="color:#f5a623;">★</span> }
+                                    </p>
+                                    @if (ev.descripcion) {
+                                        <p style="font-size:13px; color:#777; margin-bottom:8px;">{{ ev.descripcion }}</p>
+                                    }
+                                    <span class="tipo-badge" [style.background]="eventoColor(ev)">{{ tipoLabel(ev.tipo) }}</span>
+                                    @if (ev.nombre_programa) {
+                                        <span style="font-size:12px; color:#999; margin-left:10px;">
+                                            <i class="fa-solid fa-graduation-cap"></i> {{ ev.nombre_programa }}
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>

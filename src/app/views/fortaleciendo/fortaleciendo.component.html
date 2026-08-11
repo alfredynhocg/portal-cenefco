@@ -1,0 +1,99 @@
+<section class="ft">
+  <div class="ft-top">
+
+    <div class="ft-col-izq">
+      <p class="ft-con-brand"><span class="ft-con">CON</span> <span class="ft-brand">CENEFCO</span></p>
+      <div class="ft-no-row">
+        <span class="ft-no">NO</span>
+        <span class="ft-no-side">
+          <span class="ft-solo">SOLO TE</span>
+          <span class="ft-certif">CERTIFICAS</span>
+        </span>
+      </div>
+      <div class="ft-img-certs">
+        <img src="assets/img/web/certificados.webp" alt="Certificados CENEFCO"
+             onerror="this.style.display='none';this.parentElement.classList.add('ft-img--empty')">
+        <div class="ft-img-placeholder"><i class="fa-solid fa-image"></i><span>Imagen de certificados</span></div>
+      </div>
+      <div class="ft-descuentos">
+        <p class="ft-obt">OBTIENES</p>
+        <p class="ft-desc">DESCUENTOS</p>
+      </div>
+    </div>
+
+    <div class="ft-col-der">
+      <div class="ft-img-grupal">
+        <img src="assets/img/web/certificaciones.webp" alt="Forma parte de nuestra familia CENEFCO"
+             onerror="this.style.display='none';this.parentElement.classList.add('ft-img--empty')">
+        <div class="ft-img-placeholder"><i class="fa-solid fa-image"></i><span>Foto grupal</span></div>
+      </div>
+      <div class="ft-beneficios">
+        <p class="ft-tienes">TIENES MÁS</p>
+        <p class="ft-ben">BENEFICIOS</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="ft-convenios-ghost">CONVENIOS</div>
+
+  <div class="ft-mid">
+
+    <div class="ft-mid-izq">
+      <span class="ft-conv-vert">CONVENIOS</span>
+      <div class="ft-slider">
+        <div class="ft-slider-track" [style.transform]="'translateX(-' + (sliderIndex() * 100) + '%)'">
+          @for (img of sliderImgs; track img) {
+            <div class="ft-slide"><img [src]="img" alt="Convenio CENEFCO"></div>
+          }
+        </div>
+      </div>
+      <div class="ft-slider-dots">
+        @for (img of sliderImgs; track img; let i = $index) {
+          <span class="ft-sdot" [class.ft-sdot--on]="i === sliderIndex()"></span>
+        }
+      </div>
+    </div>
+
+    <div class="ft-mid-der">
+      <p class="ft-aliados-pre">CON NUESTROS</p>
+      <p class="ft-aliados">ALIADOS</p>
+    </div>
+
+  </div>
+
+  <div class="ft-bottom">
+    <div class="ft-bottom-izq">
+      <p class="ft-plus"><span class="ft-plus-sym">+</span> CURSOS</p>
+      <p class="ft-especializados">ESPECIALIZADOS</p>
+      <p class="ft-con2">CON</p>
+      <p class="ft-certificacion">CERTIFICACIÓN</p>
+      <div class="ft-btn-wrap">
+        <a routerLink="/cursos" class="ft-btn">
+          <img src="/assets/img/web/birrete1.png" alt="" class="ft-btn-icon">
+          <span>MÁS INFORMACIÓN</span>
+          <img src="/assets/img/web/birrete2.png" alt="" class="ft-btn-icon">
+        </a>
+      </div>
+    </div>
+    <div class="ft-bottom-der">
+      <div class="ft-logos-grid">
+        <img src="assets/img/web/convenios_web/logo1.webp" alt="Convenio 1">
+        <img src="assets/img/web/convenios_web/logo2.webp" alt="Convenio 2">
+        <img src="assets/img/web/convenios_web/logo3.webp" alt="Convenio 3">
+        <img src="assets/img/web/convenios_web/logo4.webp" alt="Convenio 4">
+        <img src="assets/img/web/convenios_web/logo5.webp" alt="Convenio 5">
+      </div>
+    </div>
+  </div>
+
+  <div class="ft-birretes">
+    <img src="/assets/img/web/birretes/b1.png" alt="">
+    <img src="/assets/img/web/birretes/b2.png" alt="">
+    <img src="/assets/img/web/birretes/b3.png" alt="">
+    <img src="/assets/img/web/birretes/b4.png" alt="">
+    <img src="/assets/img/web/birretes/b5.png" alt="">
+    <img src="/assets/img/web/birretes/b6.png" alt="">
+  </div>
+
+</section>

@@ -1,0 +1,90 @@
+<section class="tb-section">
+  <div class="tb-container">
+    <div class="tb-grid">
+
+      <div class="tb-copy">
+        <div class="tb-badge">
+          <i class="fa-solid fa-dice"></i>
+          Juego interactivo
+        </div>
+        <h2 class="tb-title">
+          Pon a prueba lo que sabes en <span>Trivia CENEFCO</span>
+        </h2>
+        <p class="tb-text">
+          Gira la ruleta, elige tu categoría y responde preguntas contrarreloj.
+          Suma puntos, sube en el ranking y canjéalos por premios reales.
+        </p>
+
+        <div class="tb-features">
+          <span class="tb-feature">
+            <i class="fa-solid fa-layer-group"></i>
+            {{ categorias().length > 0 ? categorias().length + ' categorías' : 'Varias categorías' }}
+          </span>
+          <span class="tb-feature"><i class="fa-solid fa-clock"></i> Contrarreloj</span>
+          <span class="tb-feature"><i class="fa-solid fa-gift"></i> Premios canjeables</span>
+          <span class="tb-feature"><i class="fa-solid fa-trophy"></i> Ranking en vivo</span>
+        </div>
+
+        @if (topJugador(); as top) {
+          <div class="tb-top-jugador">
+            <span class="tb-top-jugador__avatar">
+              @if (top.avatar_url) {
+                <img [src]="top.avatar_url" alt="">
+              } @else {
+                {{ top.nombre.charAt(0) }}
+              }
+            </span>
+            <span class="tb-top-jugador__texto">
+              <i class="fa-solid fa-crown"></i>
+              <strong>{{ top.nombre }}</strong> lidera el ranking con {{ top.puntaje_total }} pts
+            </span>
+          </div>
+        }
+
+        <a routerLink="/trivia" class="tb-cta">
+          Jugar ahora
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="tb-visual">
+        <div class="tb-glow"></div>
+        <div class="tb-wheel" [style.background]="gradienteRueda()">
+          @for (categoria of categorias(); track categoria.id; let i = $index) {
+            <div class="tb-wheel__etiqueta" [style.transform]="'rotate(' + anguloEtiqueta(i) + 'deg)'">
+              <span>{{ categoria.nombre }}</span>
+            </div>
+          }
+          <div class="tb-wheel-center">
+            <img src="assets/img/logo/logo-sm.png" alt="CENEFCO">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    @if (premios().length > 0) {
+      <div class="tb-premios">
+        <p class="tb-premios__titulo"><i class="fa-solid fa-gift"></i> Algunos premios que puedes ganar</p>
+        <div class="tb-premios__grid">
+          @for (premio of premios(); track premio.id) {
+            <div class="tb-premio">
+              <div class="tb-premio__icono">
+                @if (premio.imagen_url) {
+                  <img [src]="premio.imagen_url | imageUrl" [alt]="premio.nombre">
+                } @else {
+                  <i class="fa-solid fa-gift"></i>
+                }
+              </div>
+              <div class="tb-premio__info">
+                <span class="tb-premio__nombre">{{ premio.nombre }}</span>
+                <span class="tb-premio__costo">{{ premio.costo_puntos }} pts</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+</section>

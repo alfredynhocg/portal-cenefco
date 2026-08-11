@@ -1,0 +1,479 @@
+<section class="cn-hero" [style.background-image]="config()?.hero_banner_url ? 'url(' + config()!.hero_banner_url + ')' : null">
+  <div class="cn-hero-overlay"></div>
+  <div class="cn-hero-noise"></div>
+  <div class="container">
+
+    <div class="cn-breadcrumb">
+      <a routerLink="/" class="cn-bc-link"><i class="fa-solid fa-house"></i> Home</a>
+      <i class="fa-solid fa-chevron-right cn-bc-sep"></i>
+      <span class="cn-bc-current">Nosotros</span>
+    </div>
+
+    <div class="cn-hero-inner">
+      <div class="cn-hero-left">
+        <div class="cn-hero-stripe"></div>
+        <p class="cn-hero-eyebrow">Centro de Formación Continua · Bolivia</p>
+        <h1 class="cn-hero-title">
+          Formamos<br>
+          profesionales<br>
+          <em class="cn-hero-em">de excelencia</em>
+        </h1>
+        @if (config()?.slogan) {
+          <p class="cn-hero-sub">{{ config()!.slogan }}</p>
+        } @else {
+          <p class="cn-hero-sub">Comprometidos con el desarrollo académico y profesional de quienes construyen el futuro del país.</p>
+        }
+      </div>
+
+      <div class="cn-hero-right">
+        <div class="cn-stat-list">
+          <div class="cn-stat">
+            <div class="cn-stat-icon"><i class="fa-solid fa-trophy"></i></div>
+            <div class="cn-stat-num">20<sup>+</sup></div>
+            <div class="cn-stat-label">Años de trayectoria</div>
+          </div>
+          <div class="cn-stat">
+            <div class="cn-stat-icon"><i class="fa-solid fa-user-graduate"></i></div>
+            <div class="cn-stat-num">5k<sup>+</sup></div>
+            <div class="cn-stat-label">Profesionales formados</div>
+          </div>
+          <div class="cn-stat">
+            <div class="cn-stat-icon"><i class="fa-solid fa-book-open"></i></div>
+            <div class="cn-stat-num">60<sup>+</sup></div>
+            <div class="cn-stat-label">Programas activos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+@if (config()?.quienes_somos) {
+  <section class="cn-qs">
+    <div class="container">
+      <div class="cn-qs-inner">
+        <div class="cn-qs-aside">
+          <p class="cn-section-label">Nuestra institución</p>
+          <h2 class="cn-qs-title">¿Quiénes<br>somos?</h2>
+          <div class="cn-qs-rule"></div>
+        </div>
+        <div class="cn-qs-body">
+          <p>{{ config()!.quienes_somos }}</p>
+          @if (config()?.imagen_institucional_url) {
+            <img [src]="config()!.imagen_institucional_url" alt="CENEFCO" class="cn-qs-img" />
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+}
+
+@if (config()?.mision || config()?.vision) {
+  <section class="cn-mv">
+    <div class="container">
+      <div class="cn-mv-header">
+        <p class="cn-section-label">Propósito institucional</p>
+        <h2 class="cn-mv-title">Misión &amp; Visión</h2>
+      </div>
+      <div class="cn-mv-split">
+        @if (config()?.mision) {
+          <div class="cn-mv-panel cn-mv-panel--teal">
+            <div class="cn-mv-glow"></div>
+            <div class="cn-mv-tag cn-mv-tag--teal">
+              <span class="cn-mv-dot"></span> Misión
+            </div>
+            <h3 class="cn-mv-panel-title">Lo que hacemos hoy</h3>
+            <p class="cn-mv-panel-text">{{ config()!.mision }}</p>
+          </div>
+        }
+        @if (config()?.vision) {
+          <div class="cn-mv-panel cn-mv-panel--orange">
+            <div class="cn-mv-glow"></div>
+            <div class="cn-mv-tag cn-mv-tag--orange">
+              <span class="cn-mv-dot"></span> Visión
+            </div>
+            <h3 class="cn-mv-panel-title">Lo que construimos mañana</h3>
+            <p class="cn-mv-panel-text">{{ config()!.vision }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+}
+
+@if (valoresList().length > 0) {
+  <section class="cn-vals">
+    <div class="container">
+      <div class="cn-vals-header">
+        <p class="cn-section-label">Lo que nos guía</p>
+        <h2 class="cn-vals-title">Nuestros <span class="cn-vals-em">Valores</span></h2>
+        <p class="cn-vals-sub">Los principios que definen cada decisión y cada programa que ofrecemos.</p>
+      </div>
+      <div class="cn-vals-grid">
+        @for (val of valoresList(); track $index) {
+          <div class="cn-val-card" [class.cn-val-card--accent]="$index % 2 === 0">
+            <div class="cn-val-top">
+              <div class="cn-val-icon-wrap">
+                <i [class]="iconFor(val.titulo, $index)"></i>
+              </div>
+              <span class="cn-val-num">{{ ($index + 1).toString().padStart(2, '0') }}</span>
+            </div>
+            <div class="cn-val-body">
+              @if (val.titulo) { <h3 class="cn-val-title">{{ val.titulo }}</h3> }
+              @if (val.descripcion) { <p class="cn-val-desc">{{ val.descripcion }}</p> }
+              @if (!val.titulo && !val.descripcion) { <h3 class="cn-val-title">{{ val.raw }}</h3> }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+}
+
+<app-hitos-institucionales/>
+
+<app-acreditaciones/>
+
+<app-faqs id="faqs"/>
+
+<app-contact id="contacto"/>
+
+<style>
+  .cn-hero {
+    background-color: #0a2433;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+    padding-top: 40px;
+    padding-bottom: 88px;
+  }
+  .cn-hero-overlay {
+    position: absolute; inset: 0;
+    background: rgba(8, 28, 40, 0.88);
+    z-index: 1;
+  }
+  .cn-hero-noise {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 55% 70% at 85% 50%, rgba(18,138,162,0.2) 0%, transparent 65%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .cn-hero .container {
+    position: relative;
+    z-index: 3;
+  }
+
+  .cn-breadcrumb {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-bottom: 48px;
+    font-family: var(--ztc-family-ff-body);
+  }
+  .cn-bc-link {
+    font-size: 13px; font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: color .2s;
+  }
+  .cn-bc-link:hover { color: #fff; }
+  .cn-bc-sep { font-size: 9px; color: rgba(255,255,255,0.3); margin: 0 2px; }
+  .cn-bc-current { font-size: 13px; font-weight: 700; color: #fff; }
+
+  .cn-hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 48px;
+    align-items: center;
+  }
+  .cn-hero-stripe {
+    width: 4px; height: 52px;
+    background: var(--ztc-bg-bg-3);
+    border-radius: 2px; margin-bottom: 24px;
+  }
+  .cn-hero-eyebrow {
+    font-family: var(--ztc-family-ff-body);
+    font-size: 10px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55) !important;
+    margin-bottom: 18px;
+  }
+  .cn-hero-title {
+    font-family: var(--ztc-family-ff-heading);
+    font-size: clamp(40px, 5vw, 66px);
+    font-weight: 800; color: #ffffff !important;
+    line-height: 1.02; letter-spacing: -1.5px;
+  }
+  .cn-hero-em {
+    font-style: normal;
+    color: #3ecde8 !important;
+  }
+  .cn-hero-sub {
+    font-family: var(--ztc-family-ff-body);
+    font-size: 17px; color: rgba(255,255,255,0.75) !important;
+    margin-top: 22px; max-width: 440px; line-height: 1.72;
+  }
+
+  /* Panel cifras */
+  .cn-hero-right {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 48px 36px;
+  }
+  .cn-stat-list { display: flex; flex-direction: column; gap: 28px; }
+  .cn-stat { border-left: 3px solid var(--ztc-bg-bg-3); padding-left: 20px; }
+  .cn-stat-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(252,137,0,0.15);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 10px;
+  }
+  .cn-stat-icon i {
+    font-size: 16px;
+    color: var(--ztc-bg-bg-3);
+  }
+  .cn-stat-num {
+    font-family: var(--ztc-family-ff-heading);
+    font-size: 46px; font-weight: 800;
+    color: #ffffff !important; line-height: 1; letter-spacing: -2px;
+  }
+  .cn-stat-num sup { font-size: 20px; vertical-align: super; letter-spacing: 0; }
+  .cn-stat-label {
+    font-family: var(--ztc-family-ff-body);
+    font-size: 11px; font-weight: 600; letter-spacing: 2px;
+    text-transform: uppercase; color: rgba(255,255,255,0.6) !important;
+    margin-top: 5px;
+  }
+
+  /* ── Labels compartidos ── */
+  .cn-section-label {
+    font-family: var(--ztc-family-ff-body);
+    font-size: 10px; font-weight: 800; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--ztc-bg-bg-3);
+    display: block; margin-bottom: 14px;
+  }
+  .cn-section-label--light { color: rgba(255,255,255,0.45); }
+
+  /* ── QUIÉNES SOMOS ── */
+  .cn-qs { background: var(--ztc-text-text-1); padding: 104px 0; }
+  .cn-qs-inner {
+    display: grid; grid-template-columns: 1fr 2fr;
+    gap: 80px; align-items: start;
+  }
+  .cn-qs-aside { position: sticky; top: 80px; }
+  .cn-qs-title {
+    font-family: var(--ztc-family-ff-heading);
+    font-size: clamp(28px, 3vw, 42px); font-weight: 800;
+    color: #0a2433; line-height: 1.08; letter-spacing: -0.5px;
+  }
+  .cn-qs-rule {
+    width: 40px; height: 3px;
+    background: var(--ztc-bg-bg-4); border-radius: 2px; margin-top: 22px;
+  }
+  .cn-qs-body p {
+    font-family: var(--ztc-family-ff-body);
+    font-size: 17px; line-height: 1.85;
+    color: var(--ztc-text-text-4); max-width: 62ch;
+  }
+  .cn-qs-img {
+    margin-top: 32px; width: 100%; max-height: 300px;
+    object-fit: cover; border-radius: 12px;
+    border: 1px solid rgba(18,138,162,0.1);
+  }
+
+  .cn-mv { background: var(--ztc-bg-bg-1); padding: 104px 0; }
+  .cn-mv-header { margin-bottom: 48px; }
+  .cn-mv-title {
+    font-family: var(--ztc-family-ff-heading);
+    font-size: clamp(26px, 3vw, 40px); font-weight: 800;
+    color: #0a2433; letter-spacing: -0.5px;
+  }
+  .cn-mv-split {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 2px; border: 1px solid #dce8ec; overflow: hidden;
+  }
+  .cn-mv-panel {
+    background: var(--ztc-text-text-1); padding: 52px 48px;
+    position: relative; overflow: hidden;
+  }
+  .cn-mv-glow {
+    position: absolute; bottom: -40px; right: -40px;
+    width: 180px; height: 180px; border-radius: 50%;
+    pointer-events: none;
+  }
+  .cn-mv-panel--teal .cn-mv-glow  { background: radial-gradient(circle, rgba(18,138,162,0.1) 0%, transparent 70%); }
+  .cn-mv-panel--orange .cn-mv-glow { background: radial-gradient(circle, rgba(252,137,0,0.1) 0%, transparent 70%); }
+  .cn-mv-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--ztc-family-ff-body);
+    font-size: 10px; font-weight: 800; letter-spacing: 2.5px;
+    text-transform: uppercase; margin-bottom: 22px;
+  }
+  .cn-mv-tag--teal   { color: var(--ztc-bg-bg-4); }
+  .cn-mv-tag--orange { color: var(--ztc-bg-bg-3); }
+  .cn-mv-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .cn-mv-tag--teal   .cn-mv-dot { background: var(--ztc-bg-bg-4); }
+  .cn-mv-tag--orange .cn-mv-dot { background: var(--ztc-bg-bg-3); }
+  .cn-mv-panel-title {
+    font-family: var(--ztc-family-ff-heading);
+    font-size: clamp(20px, 2.2vw, 28px); font-weight: 800;
+    color: #0a2433; line-height: 1.1; margin-bottom: 16px; letter-spacing: -0.3px;
+  }
+  .cn-mv-panel-text {
+    font-family: var(--ztc-family-ff-body);
+    font-size: 15px; line-height: 1.82;
+    color: var(--ztc-text-text-4);
+  }
+
+  /* ── VALORES ── */
+  .cn-vals {
+    background: var(--ztc-bg-bg-1);
+    padding: 104px 0;
+  }
+  .cn-vals-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 64px;
+    align-items: end;
+    margin-bottom: 64px;
+  }
+  .cn-vals-header .cn-section-label {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+  }
+  .cn-vals-title {
+    font-family: var(--ztc-family-ff-heading);
+    font-size: clamp(30px, 3.5vw, 48px); font-weight: 800;
+    color: #0a2433; letter-spacing: -1px; line-height: 1.05;
+    grid-column: 1;
+    margin: 0;
+  }
+  .cn-vals-em { color: var(--ztc-bg-bg-4); }
+  .cn-vals-sub {
+    font-family: var(--ztc-family-ff-body);
+    font-size: 16px; line-height: 1.7;
+    color: var(--ztc-text-text-4);
+    grid-column: 2; align-self: end;
+    padding-bottom: 4px;
+    margin: 0;
+  }
+  .cn-vals-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .cn-val-card {
+    background: #fff;
+    border: 1px solid var(--ztc-border-border-1);
+    border-radius: 16px;
+    padding: 36px 32px;
+    display: flex; flex-direction: column; gap: 20px;
+    transition: transform .25s, box-shadow .25s, border-color .25s;
+    position: relative; overflow: hidden;
+  }
+  .cn-val-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 4px;
+    background: var(--ztc-bg-bg-4);
+    opacity: 0;
+    transition: opacity .25s;
+  }
+  .cn-val-card--accent::before { background: var(--ztc-bg-bg-3); }
+  .cn-val-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 40px rgba(18,138,162,0.12);
+    border-color: var(--ztc-bg-bg-4);
+  }
+  .cn-val-card--accent:hover {
+    box-shadow: 0 16px 40px rgba(252,137,0,0.12);
+    border-color: var(--ztc-bg-bg-3);
+  }
+  .cn-val-card:hover::before { opacity: 1; }
+  .cn-val-top {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .cn-val-icon-wrap {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: var(--ztc-bg-bg-2);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: background .25s, transform .25s;
+  }
+  .cn-val-icon-wrap i {
+    font-size: 22px;
+    color: var(--ztc-bg-bg-4);
+    transition: color .25s;
+  }
+  .cn-val-card--accent .cn-val-icon-wrap { background: #fff3e0; }
+  .cn-val-card--accent .cn-val-icon-wrap i { color: var(--ztc-bg-bg-3); }
+  .cn-val-card:hover .cn-val-icon-wrap {
+    background: var(--ztc-bg-bg-4);
+    transform: scale(1.08) rotate(-4deg);
+  }
+  .cn-val-card:hover .cn-val-icon-wrap i { color: #fff; }
+  .cn-val-card--accent:hover .cn-val-icon-wrap { background: var(--ztc-bg-bg-3); }
+  .cn-val-num {
+    font-family: var(--ztc-family-ff-heading);
+    font-size: 42px; font-weight: 900;
+    color: var(--ztc-bg-bg-4); opacity: 0.08;
+    letter-spacing: -2px; line-height: 1;
+    user-select: none;
+  }
+  .cn-val-card--accent .cn-val-num { color: var(--ztc-bg-bg-3); }
+  .cn-val-body { display: flex; flex-direction: column; gap: 8px; }
+  .cn-val-title {
+    font-family: var(--ztc-family-ff-heading);
+    font-size: 18px; font-weight: 700;
+    color: #0a2433; margin: 0;
+  }
+  .cn-val-desc {
+    font-family: var(--ztc-family-ff-body);
+    font-size: 14px; line-height: 1.75;
+    color: var(--ztc-text-text-4);
+    margin: 0;
+  }
+
+  /* ── Responsive 1024px (tablet landscape) ── */
+  @media (max-width: 1024px) {
+    .cn-vals-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ── Responsive 900px (tablet) ── */
+  @media (max-width: 900px) {
+    .cn-hero { padding-top: 32px; padding-bottom: 64px; }
+    .cn-hero-inner { grid-template-columns: 1fr; }
+    .cn-hero-right { display: none; }
+    .cn-qs { padding: 72px 0; }
+    .cn-qs-inner { grid-template-columns: 1fr; gap: 36px; }
+    .cn-qs-aside { position: static; }
+    .cn-mv { padding: 72px 0; }
+    .cn-mv-split { grid-template-columns: 1fr; }
+    .cn-mv-panel { padding: 40px 28px; }
+    .cn-vals { padding: 72px 0; }
+    .cn-vals-header { gap: 8px 40px; }
+  }
+
+  /* ── Responsive 600px (móvil) ── */
+  @media (max-width: 600px) {
+    .cn-hero { padding-top: 24px; padding-bottom: 48px; }
+    .cn-breadcrumb { margin-bottom: 32px; }
+    .cn-hero-title { letter-spacing: -1px; }
+    .cn-qs { padding: 56px 0; }
+    .cn-mv  { padding: 56px 0; }
+    .cn-vals { padding: 56px 0; }
+    .cn-vals-header { grid-template-columns: 1fr; gap: 10px; }
+    .cn-vals-header .cn-section-label { grid-column: 1; }
+    .cn-vals-title { grid-column: 1; }
+    .cn-vals-sub { grid-column: 1; padding-bottom: 0; }
+    .cn-vals-header { margin-bottom: 40px; }
+    .cn-vals-grid { grid-template-columns: 1fr; }
+    .cn-val-card { padding: 28px 24px; }
+    .cn-mv-panel { padding: 32px 20px; }
+    .cn-qs-inner { gap: 24px; }
+  }
+</style>

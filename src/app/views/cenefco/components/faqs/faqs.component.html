@@ -1,0 +1,54 @@
+<div class="faq1-section-area sp1">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-5">
+                <div class="faq-header-area heading2">
+                    <h5 data-aos="fade-left" data-aos-duration="800">{{ ui.subtitulo }}</h5>
+                    <h2 class="tg-element-title">{{ ui.titulo }}</h2>
+                    <p data-aos="fade-left" data-aos-duration="1000">{{ ui.descripcion }}</p>
+                    <div class="btn-area" data-aos="fade-left" data-aos-duration="1200">
+                        <a [href]="ui.whatsappUrl" target="_blank" rel="noopener noreferrer" class="header-btn1">
+                            <i class="fa-brands fa-whatsapp me-2"></i>{{ ui.btnMasPreguntas }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-1"></div>
+            <div class="col-lg-6">
+                <div class="faq-auhtoir-area1">
+                    @if (faqs().length > 0) {
+                        <div class="accordion accordion-flush" ngbAccordion [closeOthers]="true">
+                            @for (faq of faqs(); track faq.id; let first = $first; let last = $last) {
+                                <div ngbAccordionItem [collapsed]="!first" class="accordion-item"
+                                     data-aos="fade-left" data-aos-duration="800">
+                                    <h2 class="accordion-header" ngbAccordionHeader>
+                                        <button ngbAccordionButton class="accordion-button" type="button">
+                                            {{ faq.pregunta }}
+                                        </button>
+                                    </h2>
+                                    <div ngbAccordionCollapse>
+                                        <div class="accordion-body" ngbAccordionBody>
+                                            <ng-template>{{ faq.respuesta }}</ng-template>
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (!last) {
+                                    <div class="space20"></div>
+                                }
+                            }
+                        </div>
+                    } @else {
+                        <div class="accordion accordion-flush" ngbAccordion [closeOthers]="true">
+                            @for (i of [1,2,3,4]; track i; let last = $last) {
+                                <div class="accordion-item" style="opacity:0.4;">
+                                    <div style="height:56px; background:#f3f4f6; border-radius:4px;"></div>
+                                </div>
+                                @if (!last) { <div class="space20"></div> }
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

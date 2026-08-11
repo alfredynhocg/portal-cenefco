@@ -1,0 +1,90 @@
+<section class="cg-section sp2">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-7 text-center">
+                <div class="cg-badge" data-aos="fade-up" data-aos-duration="500">
+                    <i class="fa-solid fa-images"></i> {{ galeriaFotos.breadcrumb.title }}
+                </div>
+                <h2 class="cg-title" data-aos="fade-up" data-aos-duration="700">
+                    {{ galeriaFotos.breadcrumb.subTitle }}
+                </h2>
+                <p class="cg-subtitle" data-aos="fade-up" data-aos-duration="900">
+                    {{ galeriaFotos.breadcrumb.detailFallback }}
+                </p>
+            </div>
+        </div>
+
+        <ng-template #fotoCard let-foto let-i="i">
+            <div class="cg-card" (click)="openLightbox(foto, i)">
+                <div class="cg-card-img">
+                    <img [src]="foto.foto || fallbackImgs[i % 4]" [alt]="foto.titulo_foto">
+                    <div class="cg-card-overlay">
+                        <div class="cg-card-zoom">
+                            <i class="fa-solid fa-magnifying-glass-plus"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="cg-card-body">
+                    <p class="cg-card-title">{{ foto.titulo_foto }}</p>
+                    <span class="cg-card-date">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        {{ foto.fecha_foto ? (foto.fecha_foto | slice:0:7) : 'CENEFCO' }}
+                    </span>
+                </div>
+            </div>
+        </ng-template>
+
+        @if (loaded && fotos.length > 0) {
+            @defer (on idle) {
+                <owl-carousel-o [options]="carouselOptions" class="cg-carousel">
+                    @for (foto of fotos; track foto.id_foto; let i = $index) {
+                        <ng-template carouselSlide>
+                            <ng-container [ngTemplateOutlet]="fotoCard" [ngTemplateOutletContext]="{ $implicit: foto, i: i }" />
+                        </ng-template>
+                    }
+                </owl-carousel-o>
+            } @placeholder {
+                <div class="row g-4">
+                    @for (foto of fotos; track foto.id_foto; let i = $index) {
+                        <div class="col-lg-3 col-md-6">
+                            <ng-container [ngTemplateOutlet]="fotoCard" [ngTemplateOutletContext]="{ $implicit: foto, i: i }" />
+                        </div>
+                    }
+                </div>
+            }
+        }
+
+        <div class="cg-cta" data-aos="fade-up" data-aos-duration="700">
+            <a routerLink="/galeria" class="cg-cta-btn">
+                Ver galería completa <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+@if (lightboxFoto) {
+    <div class="lb-backdrop" (click)="closeLightbox()">
+        <div class="lb-box" (click)="$event.stopPropagation()">
+            <button class="lb-close" (click)="closeLightbox()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <button class="lb-arrow lb-prev" (click)="prevFoto()">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <div class="lb-img-wrap">
+                <img [src]="lightboxFoto.foto || fallbackImgs[lightboxIndex % 4]"
+                     [alt]="lightboxFoto.titulo_foto">
+            </div>
+            <button class="lb-arrow lb-next" (click)="nextFoto()">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+            <div class="lb-caption">
+                <p class="lb-title">{{ lightboxFoto.titulo_foto }}</p>
+                @if (lightboxFoto.descripcion_foto) {
+                    <p class="lb-desc">{{ lightboxFoto.descripcion_foto }}</p>
+                }
+                <span class="lb-counter">{{ lightboxIndex + 1 }} / {{ fotos.length }}</span>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,116 @@
+@if (visible && config?.activo) {
+  <div class="cert-modal-overlay" (click)="cerrar()">
+    <div class="cert-modal-box" (click)="$event.stopPropagation()">
+
+      @if (paso() === 'seleccion') {
+        <div class="cert-modal-header">
+          <h2 class="cert-modal-title">{{ config?.config?.titulo || '¡Obtén tus certificados!' }}</h2>
+          @if (config?.config?.descripcion) {
+            <p class="cert-modal-desc">{{ config?.config?.descripcion }}</p>
+          }
+        </div>
+
+        <div class="cert-items-list">
+          @if (itemGratuito) {
+            <div class="cert-item cert-item--free">
+              <div class="cert-item-check cert-item-check--locked">&#10003;</div>
+              <div class="cert-item-info">
+                <span class="cert-item-name">{{ itemGratuito.nombre_cert }}</span>
+                <span class="cert-badge cert-badge--free">GRATIS</span>
+              </div>
+            </div>
+          }
+
+          @for (item of itemsPago; track item.id) {
+            <div class="cert-item" [class.cert-item--selected]="isSelectedPago(item.id)"
+                 (click)="togglePago(item.id)">
+              <div class="cert-item-check" [class.cert-item-check--active]="isSelectedPago(item.id)">
+                @if (isSelectedPago(item.id)) { &#10003; }
+              </div>
+              <div class="cert-item-info">
+                <span class="cert-item-name">{{ item.nombre_cert }}</span>
+                <span class="cert-badge cert-badge--paid">Bs. {{ item.precio | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (errorMsg()) {
+          <p class="cert-error">{{ errorMsg() }}</p>
+        }
+
+        <div class="cert-modal-actions">
+          <button class="cert-btn cert-btn--secondary" (click)="cerrar()">Cerrar</button>
+          <button class="cert-btn cert-btn--primary"
+                  [disabled]="submitting()"
+                  (click)="confirmarSeleccion()">
+            @if (submitting()) { Procesando... } @else {
+              @if (hayPagoSeleccionado) { Continuar con pago } @else { Obtener gratuito }
+            }
+          </button>
+        </div>
+      }
+
+      @if (paso() === 'comprobante') {
+        <div class="cert-modal-header">
+          <h2 class="cert-modal-title">Comprobante de pago</h2>
+          <p class="cert-modal-desc">Sube una foto o PDF de tu comprobante de pago para que el administrador lo revise.</p>
+        </div>
+
+        <div class="cert-comprobante-area">
+          <label class="cert-upload-btn">
+            <input type="file" accept="image/*,.pdf" (change)="onFileChange($event)" hidden />
+            @if (uploadingFile()) {
+              Subiendo...
+            } @else if (comprobanteUrl()) {
+              &#10003; Archivo subido
+            } @else {
+              Seleccionar archivo
+            }
+          </label>
+          @if (comprobanteUrl()) {
+            <p class="cert-upload-ok">Comprobante listo para enviar.</p>
+          }
+        </div>
+
+        @if (errorMsg()) {
+          <p class="cert-error">{{ errorMsg() }}</p>
+        }
+
+        <div class="cert-modal-actions">
+          <button class="cert-btn cert-btn--ghost" (click)="pagarDespues()" [disabled]="submitting()">
+            Pagar después
+          </button>
+          <button class="cert-btn cert-btn--primary"
+                  [disabled]="submitting() || !comprobanteUrl()"
+                  (click)="pagarAhora()">
+            @if (submitting()) { Enviando... } @else { Enviar comprobante }
+          </button>
+        </div>
+      }
+
+      @if (paso() === 'listo') {
+        <div class="cert-done">
+          <div class="cert-done-icon">&#10003;</div>
+          <h2 class="cert-modal-title">¡Listo!</h2>
+          <p class="cert-modal-desc">
+            @if (hayPagoSeleccionado) {
+              Tu solicitud fue registrada. El administrador revisará tu comprobante y recibirás tu certificado pronto.
+            } @else if (certificadoDescargaUrl()) {
+              Tu certificado gratuito ya está listo.
+            } @else {
+              Tu solicitud fue registrada. El certificado se generará en breve.
+            }
+          </p>
+          @if (certificadoDescargaUrl()) {
+            <a [href]="certificadoDescargaUrl()" target="_blank" rel="noopener" class="cert-btn cert-btn--primary" style="text-decoration:none;">
+              Descargar certificado
+            </a>
+          }
+          <button class="cert-btn cert-btn--secondary" (click)="cerrar()">Cerrar</button>
+        </div>
+      }
+
+    </div>
+  </div>
+}

@@ -1,0 +1,79 @@
+<div class="cv-hero">
+    <img src="assets/img/bg/header-img1.jpg" alt="" class="cv-hero-bg">
+    <div class="cv-hero-overlay"></div>
+    <div class="cv-hero-pattern"></div>
+    <div class="cv-hero-body">
+        <div class="container">
+            <div class="cv-hero-badge">
+                <i class="fa-solid fa-handshake"></i> Instituciones aliadas
+            </div>
+            <h1 class="cv-hero-title">Nuestros <span>Convenios</span></h1>
+            <p class="cv-hero-sub">Instituciones con las que el CENEFCO trabaja en conjunto para fortalecer la formación continua.</p>
+            <app-breadcrumb title="Convenios" />
+        </div>
+    </div>
+</div>
+
+<section class="cv-section">
+    <div class="container">
+        <div class="cv-section-head">
+            <p class="cv-section-label">Alianzas estratégicas</p>
+            <h2 class="cv-section-title">Instituciones <span style="color:#FC8900;">con convenio</span></h2>
+            <p class="cv-section-sub">Organizaciones nacionales e internacionales que forman parte de nuestra red de cooperación académica.</p>
+        </div>
+
+        @if (cargando) {
+            <div class="cv-grid">
+                @for (_ of [1,2,3,4,5,6,7,8]; track $index) {
+                    <div class="cv-skel">
+                        <div class="cv-skel-img"></div>
+                        <div class="cv-skel-body">
+                            <div class="cv-skel-line"></div>
+                            <div class="cv-skel-line short"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!cargando && convenios.length > 0) {
+            <div class="cv-grid">
+                @for (c of convenios; track c.id) {
+                    <a class="cv-card" [routerLink]="['/convenios', c.id]">
+                        <div class="cv-card-img-wrap">
+                            @if (c.logo_url) {
+                                <img [src]="c.logo_url" [alt]="c.nombre">
+                            } @else {
+                                <div class="cv-card-placeholder">
+                                    <i class="fa-solid fa-building-columns"></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="cv-card-body">
+                            <p class="cv-card-name">{{ c.nombre }}</p>
+                            @if (c.institucion) {
+                                <p class="cv-card-inst">{{ c.institucion }}</p>
+                            }
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+
+        @if (!cargando && convenios.length === 0) {
+            <div class="cv-empty">
+                <i class="fa-solid fa-handshake-slash"></i>
+                <p>No hay convenios registrados en este momento.</p>
+            </div>
+        }
+
+        <div class="cv-cta">
+            <h3 class="cv-cta-title">¿Tu institución quiere ser parte del CENEFCO?</h3>
+            <p class="cv-cta-sub">Contactanos para conocer las posibilidades de convenio y colaboración académica.</p>
+            <a routerLink="/contactos" class="cv-cta-btn">
+                <i class="fa-solid fa-envelope"></i> Contactar
+            </a>
+        </div>
+
+    </div>
+</section>

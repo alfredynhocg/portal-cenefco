@@ -1,0 +1,27 @@
+export interface ArticuloEtiqueta {
+  id:     number;
+  nombre: string;
+  slug:   string;
+  color:  string | null;
+}
+
+export interface Articulo {
+  id_art:               number;
+  titulo:               string;
+  slug:                 string | null;
+  entradilla:           string | null;
+  contenido?:           string | null;
+  imagen_principal_url: string | null;
+  imagen_alt:           string | null;
+  destacada:            boolean;
+  fecha_publicacion:    string | null;
+  estado_web:           string;
+  meta_titulo?:         string | null;
+  meta_descripcion?:    string | null;
+  etiquetas:            ArticuloEtiqueta[];
+}
+
+export interface ArticuloListResponse {
+  data:  Articulo[];
+  total: number;
+}

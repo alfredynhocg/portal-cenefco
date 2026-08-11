@@ -1,0 +1,82 @@
+<section class="cbl-section sp2">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-7 text-center">
+                <div class="cbl-badge" data-aos="fade-up" data-aos-duration="500">
+                    <i class="fa-solid fa-newspaper"></i> Publicaciones
+                </div>
+                <h2 class="cbl-title" data-aos="fade-up" data-aos-duration="700">
+                    Boletines Institucionales
+                </h2>
+                <p class="cbl-subtitle" data-aos="fade-up" data-aos-duration="900">
+                    Mantente informado con nuestras publicaciones institucionales,
+                    novedades académicas y logros del CENEFCO.
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            @if (loading) {
+                @for (s of [1,2,3]; track s) {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="cbl-card">
+                            <div class="cbl-skeleton-img"></div>
+                            <div class="cbl-skeleton-body">
+                                <div class="cbl-skeleton-line"></div>
+                                <div class="cbl-skeleton-line"></div>
+                                <div class="cbl-skeleton-line short"></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (!loading) {
+                @for (boletin of (boletines.length > 0 ? boletines : fallbackBoletines); track $index; let i = $index) {
+                    <div class="col-lg-4 col-md-6"
+                         data-aos="fade-up" [attr.data-aos-duration]="600 + i * 150">
+                        <div class="cbl-card">
+                            <div class="cbl-card-img">
+                                <img [src]="boletin.imagen_url || fallbackImgs[i % 3]"
+                                     [alt]="boletin.titulo_boletin">
+                                <div class="cbl-card-overlay"></div>
+                                <span class="cbl-num-badge">
+                                    <i class="fa-solid fa-bookmark"></i>
+                                    N° {{ boletin.num_boletin }}
+                                </span>
+                                @if (boletin.fecha_reg) {
+                                    <span class="cbl-date-chip">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                        {{ boletin.fecha_reg | slice:0:10 }}
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="cbl-card-body">
+                                <a [routerLink]="boletin.slug ? ['/boletines', boletin.slug] : ['/boletines']" class="cbl-card-title">
+                                    {{ boletin.titulo_boletin }}
+                                </a>
+                                <p class="cbl-card-desc">
+                                    {{ boletin.descripcion_boletin || 'Publicación institucional con novedades y logros académicos del CENEFCO.' }}
+                                </p>
+                                <div class="cbl-card-divider"></div>
+                                <div class="cbl-card-footer">
+                                    <a [routerLink]="boletin.slug ? ['/boletines', boletin.slug] : ['/boletines']" class="cbl-card-btn">
+                                        Ver más <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="cbl-cta" data-aos="fade-up" data-aos-duration="700">
+            <a routerLink="/boletines" class="cbl-cta-btn">
+                Ver todos los boletines <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>

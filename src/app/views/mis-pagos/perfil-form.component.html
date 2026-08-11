@@ -1,0 +1,63 @@
+<div class="mp-perfil-form">
+
+  @if (error()) {
+    <div class="mp-alert mp-alert--error">{{ error() }}</div>
+  }
+
+  @if (exito()) {
+    <div class="mp-alert mp-alert--exito">Tus datos se actualizaron correctamente.</div>
+  }
+
+  <h4 class="mp-perfil-form__title">Editar mis datos</h4>
+
+  <form (ngSubmit)="guardar()" #f="ngForm">
+    <div class="mp-perfil-form__grid">
+      <div class="mp-field">
+        <label class="mp-label" for="perfil-nombre">Nombre *</label>
+        <input id="perfil-nombre" class="mp-input" type="text" name="nombre" [(ngModel)]="nombre" required maxlength="100">
+      </div>
+      <div class="mp-field">
+        <label class="mp-label" for="perfil-apellido">Apellido</label>
+        <input id="perfil-apellido" class="mp-input" type="text" name="apellido" [(ngModel)]="apellido" maxlength="100">
+      </div>
+
+      <div class="mp-field">
+        <label class="mp-label" for="perfil-ci">Carnet de identidad</label>
+        <input id="perfil-ci" class="mp-input" type="text" name="ci" [(ngModel)]="ci" placeholder="Ej: 1234567" maxlength="30">
+      </div>
+      <div class="mp-field">
+        <label class="mp-label" for="perfil-telefono">Teléfono / celular</label>
+        <input id="perfil-telefono" class="mp-input" type="tel" name="telefono" [(ngModel)]="telefono" placeholder="Ej: 70012345" maxlength="20">
+      </div>
+    </div>
+
+    <label class="mp-checkbox">
+      <input type="checkbox" name="cambiarPassword" [(ngModel)]="cambiarPassword">
+      Quiero cambiar mi contraseña
+    </label>
+
+    @if (cambiarPassword) {
+      <div class="mp-perfil-form__grid mp-perfil-form__grid--password">
+        <div class="mp-field mp-field--full">
+          <label class="mp-label" for="perfil-current-password">Contraseña actual *</label>
+          <input id="perfil-current-password" class="mp-input" type="password" name="currentPassword" [(ngModel)]="currentPassword" required>
+        </div>
+        <div class="mp-field">
+          <label class="mp-label" for="perfil-password">Nueva contraseña *</label>
+          <input id="perfil-password" class="mp-input" type="password" name="password" [(ngModel)]="password" required minlength="8">
+        </div>
+        <div class="mp-field">
+          <label class="mp-label" for="perfil-password-confirm">Confirmar nueva contraseña *</label>
+          <input id="perfil-password-confirm" class="mp-input" type="password" name="passwordConfirmation" [(ngModel)]="passwordConfirmation" required>
+        </div>
+      </div>
+    }
+
+    <div class="mp-perfil-form__actions">
+      <button type="submit" class="mp-btn-buscar" [disabled]="f.invalid || guardando()">
+        @if (guardando()) { <span class="mp-spinner"></span> Guardando... } @else { Guardar cambios }
+      </button>
+      <button type="button" class="mp-btn-limpiar" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+</div>

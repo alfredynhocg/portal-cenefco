@@ -1,0 +1,105 @@
+<section class="gf-hero">
+  <div class="gf-hero-overlay"></div>
+  <div class="container">
+    <div class="gf-hero-body">
+      <div class="gf-hero-badge">
+        <i class="fa-solid fa-camera"></i> GALERÍA DE FOTOS
+      </div>
+      <h1 class="gf-hero-title">{{ textos.breadcrumb.title }}</h1>
+      <p class="gf-hero-sub">{{ textos.breadcrumb.subTitle }}</p>
+    </div>
+  </div>
+</section>
+
+<app-breadcrumb [title]="textos.breadcrumb.title" subTitle="Inicio" />
+
+<section class="gf-section">
+  <div class="container">
+    @if (cargando) {
+      <div class="row g-4">
+        @for (s of [1,2,3,4,5,6,7,8,9,10,11,12]; track s) {
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="gf-skel">
+              <div class="gf-skel-img"></div>
+              <div class="gf-skel-body">
+                <div class="gf-skel-line"></div>
+                <div class="gf-skel-line short"></div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (items.length === 0) {
+      <div class="gf-empty">
+        <i class="fa-regular fa-images"></i>
+        <p>{{ textos.lista.noData }}</p>
+      </div>
+    } @else {
+      <p class="gf-summary">
+        {{ textos.lista.pagination.prefix }} {{ pageIndex }} {{ textos.lista.pagination.separator }} {{ totalPages }}
+        — {{ total }}{{ textos.lista.pagination.suffix }}
+      </p>
+
+      <div class="row g-4">
+        @for (foto of items; track foto.id_foto; let i = $index) {
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="gf-card" (click)="abrirLightbox(foto, i)">
+              <div class="gf-thumb">
+                <img [src]="foto.foto" [alt]="foto.titulo_foto" loading="lazy">
+                <div class="gf-thumb-overlay"></div>
+                <div class="gf-zoom"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+              </div>
+              <div class="gf-body">
+                <div class="gf-title">{{ foto.titulo_foto }}</div>
+                @if (foto.fecha_foto) {
+                  <div class="gf-fecha"><i class="fa-regular fa-calendar"></i>{{ foto.fecha_foto | date:'dd/MM/yyyy' }}</div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (totalPages > 1) {
+        <div class="gf-pagination">
+          <button class="gf-page-btn" [disabled]="pageIndex === 1" (click)="goToPage(pageIndex - 1)">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          @for (p of pages; track p) {
+            <button class="gf-page-btn" [class.active]="p === pageIndex" (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          }
+          <button class="gf-page-btn" [disabled]="pageIndex === totalPages" (click)="goToPage(pageIndex + 1)">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      }
+    }
+  </div>
+</section>
+
+@if (fotoActiva) {
+  <div class="gf-modal-overlay" (click)="cerrarLightbox()">
+    <div class="gf-modal-box" (click)="$event.stopPropagation()">
+      <button class="gf-modal-close" (click)="cerrarLightbox()" aria-label="Cerrar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <img [src]="fotoActiva.foto" [alt]="fotoActiva.titulo_foto" class="gf-modal-img">
+      <div class="gf-modal-info">
+        <div class="gf-modal-title">{{ fotoActiva.titulo_foto }}</div>
+        @if (fotoActiva.descripcion_foto) {
+          <div class="gf-modal-desc">{{ fotoActiva.descripcion_foto }}</div>
+        }
+      </div>
+    </div>
+    @if (items.length > 1) {
+      <button class="gf-arrow gf-arrow-prev" (click)="fotoAnterior(); $event.stopPropagation()" aria-label="Anterior">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button class="gf-arrow gf-arrow-next" (click)="fotoSiguiente(); $event.stopPropagation()" aria-label="Siguiente">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    }
+  </div>
+}

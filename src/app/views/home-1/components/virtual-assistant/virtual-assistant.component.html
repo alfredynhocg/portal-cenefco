@@ -1,0 +1,178 @@
+<div class="work1-section-area sp1 chatbot-section">
+
+    <div class="chatbot-bg-blob chatbot-bg-blob--1"></div>
+    <div class="chatbot-bg-blob chatbot-bg-blob--2"></div>
+
+    <div class="container" style="position:relative;">
+        <div class="row align-items-center g-4">
+
+            <div class="col-lg-3 col-md-12">
+                <div class="work-header-area heading2">
+                    <h5 data-aos="fade-right" data-aos-duration="600">Asistente Virtual</h5>
+                    <h2 class="tg-element-title" data-aos="fade-right" data-aos-duration="800">
+                        Tu guía para elegir el programa ideal
+                    </h2>
+                    <p data-aos="fade-right" data-aos-duration="1000">
+                        Nuestro chatbot responde tus dudas al instante — precios, inscripciones,
+                        horarios y más, disponible las 24 hs por WhatsApp.
+                    </p>
+                    <div class="chatbot-cta-badges" data-aos="fade-right" data-aos-duration="1100">
+                        <span class="chatbot-badge chatbot-badge--wa">
+                            <i class="fa-brands fa-whatsapp"></i> WhatsApp
+                        </span>
+                        <span class="chatbot-badge chatbot-badge--time">
+                            <i class="fa-solid fa-clock"></i> 24 / 7
+                        </span>
+                        <span class="chatbot-badge chatbot-badge--free">
+                            <i class="fa-solid fa-bolt"></i> Respuesta inmediata
+                        </span>
+                    </div>
+                    <div data-aos="fade-right" data-aos-duration="1200" style="margin-top:28px;">
+                        <a routerLink="/preguntas-frecuentes" class="header-btn1">
+                            Ver preguntas frecuentes <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-8 col-sm-10 mx-auto mx-lg-0">
+                <div class="chatbot-center-col" data-aos="fade-up" data-aos-duration="900">
+                    <div class="wa-phone-wrap">
+
+                        <div class="wa-float-badge wa-float-badge--top">
+                            <i class="fa-solid fa-shield-halved"></i> Bot verificado
+                        </div>
+
+                        <div class="wa-phone">
+                            <div class="wa-phone-vol"></div>
+
+                            <div class="wa-screen">
+
+                                <div class="wa-top-chrome">
+                                    <div class="wa-dynamic-island">
+                                        <div class="wa-di-camera"></div>
+                                        <div class="wa-di-pill"></div>
+                                    </div>
+                                    <div class="wa-status-bar">
+                                        <span class="wa-status-time">9:41</span>
+                                        <div class="wa-status-icons">
+                                            <i class="fa-solid fa-signal"></i>
+                                            <i class="fa-solid fa-wifi"></i>
+                                            <div class="wa-battery">
+                                                <div class="wa-battery-body">
+                                                    <div class="wa-battery-fill"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="wa-topbar">
+                                    <div class="wa-back"><i class="fa-solid fa-arrow-left"></i></div>
+                                    <div class="wa-avatar">
+                                        <img src="assets/img/logo/icono-curso-b.png" alt="CENEFCO Bot">
+                                    </div>
+                                    <div class="wa-contact-info">
+                                        <div class="wa-contact-name">Asistente CENEFCO</div>
+                                        <div class="wa-contact-status">en línea</div>
+                                    </div>
+                                    <div class="wa-topbar-actions">
+                                        <i class="fa-solid fa-video"></i>
+                                        <i class="fa-solid fa-phone"></i>
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </div>
+                                </div>
+
+                                <div class="wa-transition-wrap">
+                                    <div class="wa-gif-screen" [class.fading]="gifFading" [class.hidden]="!showGif">
+                                        <img src="assets/img/logo/cenefco-bot.gif" alt="Asistente CENEFCO">
+                                        <span class="wa-gif-screen-label">Iniciando asistente...</span>
+                                        <div class="wa-gif-progress">
+                                            <div class="wa-gif-progress-bar" [class.running]="showGif"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="wa-body" [class.visible]="!showGif">
+                                        <div class="wa-messages">
+                                            <div class="wa-date-chip">
+                                                <span>HOY</span>
+                                            </div>
+                                            @for (msg of visibleMsgs; track msg.time + msg.text) {
+                                                <div class="wa-msg" [class.left]="!msg.right" [class.right]="msg.right">
+                                                    {{ msg.text }}
+                                                    <div class="wa-msg-meta">
+                                                        <span class="wa-msg-time">{{ msg.time }}</span>
+                                                        @if (msg.right) {
+                                                            <span class="wa-msg-ticks">
+                                                                <i class="fa-solid fa-check-double"></i>
+                                                            </span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                            @if (showTyping) {
+                                                <div class="wa-typing">
+                                                    <div class="wa-typing-dots">
+                                                        <span></span><span></span><span></span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="wa-inputbar">
+                                    <div class="wa-inputbar-field">
+                                        <span class="wa-inputbar-emoji">😊</span>
+                                        <span>Escribe un mensaje</span>
+                                    </div>
+                                    <span class="wa-inputbar-attach">
+                                        <i class="fa-solid fa-paperclip"></i>
+                                    </span>
+                                    <div class="wa-inputbar-send">
+                                        <i class="fa-solid fa-microphone"></i>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="wa-float-badge wa-float-badge--bot">
+                            <i class="fa-brands fa-whatsapp"></i> Disponible ahora
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 col-md-12">
+                <div class="chatbot-cards-header" data-aos="fade-up" data-aos-duration="700">
+                    <span class="chatbot-cards-label">¿Qué puede hacer por vos?</span>
+                </div>
+                <div class="chatbot-cards-grid">
+                    @for (tab of tabs; track tab.id; let i = $index) {
+                        <div class="chatbot-card"
+                             [style.--card-color]="tab.color"
+                             data-aos="fade-up"
+                             [attr.data-aos-duration]="tab.duration">
+                            <div class="chatbot-card-top">
+                                <div class="chatbot-card-icon"
+                                     [style.background]="tab.color + '18'"
+                                     [style.color]="tab.color">
+                                    <i [class]="tab.icon"></i>
+                                </div>
+                                <div class="chatbot-card-num" [style.color]="tab.color + '55'">
+                                    0{{ i + 1 }}
+                                </div>
+                            </div>
+                            <div class="chatbot-card-title">{{ tab.title }}</div>
+                            <p class="chatbot-card-desc">{{ tab.description }}</p>
+                            <div class="chatbot-card-line" [style.background]="tab.color"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

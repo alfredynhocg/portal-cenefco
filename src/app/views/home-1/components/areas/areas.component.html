@@ -1,0 +1,98 @@
+<section class="ha-section">
+    <div class="container">
+        <div class="ha-header">
+            <div class="ha-header-left">
+                <div class="ha-badge" data-aos="fade-right" data-aos-duration="500">
+                    <i class="fa-solid fa-layer-group"></i> Áreas de Formación
+                </div>
+                <h2 class="ha-title" data-aos="fade-right" data-aos-duration="700">
+                    Encontrá tu área de <span>especialización</span>
+                </h2>
+                <p class="ha-subtitle" data-aos="fade-right" data-aos-duration="900">
+                    Explorá nuestras áreas temáticas y descubrí los programas
+                    diseñados para potenciar tu desarrollo profesional.
+                </p>
+            </div>
+            <div class="ha-header-cta" data-aos="fade-left" data-aos-duration="700">
+                <a routerLink="/areas">
+                    Ver todas las áreas <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+
+        @if (cargando) {
+            <div class="ha-scroll-wrap">
+                @for (s of [1,2,3,4]; track s) {
+                    <div class="ha-skeleton">
+                        <div class="ha-skel-top"></div>
+                        <div class="ha-skel-body">
+                            <div class="ha-skel-line"></div>
+                            <div class="ha-skel-line short"></div>
+                            <div class="ha-skel-line"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        } @else if (areas.length > 0) {
+            <div class="ha-carousel-wrap">
+                <button class="ha-nav ha-nav-prev" (click)="scrollPrev()" aria-label="Anterior">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <div class="ha-scroll-track" #scrollTrack (scroll)="onScroll()" (touchstart)="onTouchStart()">
+                    @for (area of areas; track area.id; let i = $index) {
+                        <a [routerLink]="['/', area.slug]" class="ha-card">
+
+                            <div class="ha-card-top" [style.background]="colorArea(area)">
+                                <span class="ha-card-num">{{ (i + 1).toString().padStart(2, '0') }}</span>
+
+                                @if (area.logo_url | imageUrl; as logoSrc) {
+                                    <div class="ha-card-logo-wrap">
+                                        <img [src]="logoSrc" [alt]="area.logo_alt || area.titulo" class="ha-card-logo">
+                                    </div>
+                                } @else {
+                                    <div class="ha-card-icon-wrap">
+                                        <i class="fa-solid fa-layer-group"></i>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="ha-card-body">
+                                <p class="ha-card-title">{{ area.titulo }}</p>
+                                @if (area.descripcion) {
+                                    <p class="ha-card-desc">{{ area.descripcion }}</p>
+                                }
+                            </div>
+
+                            <div class="ha-card-footer">
+                                <span class="ha-card-count">
+                                    <i class="fa-solid fa-book-open"></i>
+                                    <strong>{{ area.total_cursos ?? 0 }}</strong>
+                                    programa{{ (area.total_cursos ?? 0) !== 1 ? 's' : '' }}
+                                </span>
+                                <span class="ha-card-link">
+                                    Explorar <i class="fa-solid fa-arrow-right"></i>
+                                </span>
+                            </div>
+
+                        </a>
+                    }
+                </div>
+                <button class="ha-nav ha-nav-next" (click)="scrollNext()" aria-label="Siguiente">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <div class="ha-dots">
+                @for (area of areas; track area.id; let i = $index) {
+                    <button
+                        class="ha-dot"
+                        [class.ha-dot-active]="dotActivo() === i"
+                        (click)="irADot(i)"
+                        [attr.aria-label]="'Ir a ' + area.titulo">
+                    </button>
+                }
+            </div>
+        }
+
+    </div>
+</section>

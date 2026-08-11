@@ -1,0 +1,114 @@
+<div class="nn-hero">
+    <img src="assets/img/all-images/header_default_cenefco.jpg" alt="" class="nn-hero-bg">
+    <div class="nn-hero-overlay"></div>
+    <div class="nn-hero-body">
+        <div class="container">
+            <div class="nn-hero-badge">
+                <i class="fa-solid fa-pen-nib"></i> Contenido institucional
+            </div>
+            <h1 class="nn-hero-title">Últimos <span>Artículos</span></h1>
+            <app-breadcrumb title="Artículos" />
+        </div>
+    </div>
+</div>
+
+<section class="nn-section">
+    <div class="container">
+
+        @if (cargando) {
+            <div class="row g-4">
+                @for (s of [1,2,3,4,5,6,7,8,9]; track s) {
+                    <div class="col-lg-4 col-md-6">
+                        <div class="nn-skeleton">
+                            <div class="nn-skel-img"></div>
+                            <div class="nn-skel-body">
+                                <div class="nn-skel-line"></div>
+                                <div class="nn-skel-line"></div>
+                                <div class="nn-skel-line short"></div>
+                                <div class="nn-skel-line xs"></div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!cargando && articulos.length > 0) {
+            <div class="row g-4">
+                @for (articulo of articulos; track articulo.id_art; let i = $index) {
+                    <div class="col-lg-4 col-md-6"
+                         data-aos="fade-up" [attr.data-aos-duration]="500 + (i % 3) * 100">
+                        <div class="nn-card" [class.nn-card-featured]="i === 0 && pageIndex === 1">
+                            <div class="nn-card-img">
+                                <img [src]="(articulo.imagen_principal_url | imageUrl) || 'assets/img/all-images/blog-img1.png'"
+                                     [alt]="articulo.imagen_alt || articulo.titulo">
+                                <div class="nn-card-overlay"></div>
+
+                                @if (articulo.destacada) {
+                                    <span class="nn-card-tag">
+                                        <i class="fa-solid fa-star"></i> Destacado
+                                    </span>
+                                } @else if (getPrimeraEtiqueta(articulo)) {
+                                    <span class="nn-card-tag">
+                                        <i class="fa-solid fa-tag"></i> {{ getPrimeraEtiqueta(articulo) }}
+                                    </span>
+                                }
+
+                                @if (articulo.fecha_publicacion) {
+                                    <span class="nn-card-date">
+                                        <i class="fa-solid fa-calendar-days"></i>
+                                        {{ articulo.fecha_publicacion | date:'d MMM yyyy' }}
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="nn-card-body">
+                                <a [routerLink]="['/noticias', articulo.slug]" class="nn-card-title">
+                                    {{ articulo.titulo }}
+                                </a>
+                                <p class="nn-card-desc">
+                                    {{ articulo.entradilla || 'Conocé más sobre este artículo institucional del CENEFCO.' }}
+                                </p>
+                                <div class="nn-card-footer">
+                                    <span class="nn-card-meta">
+                                        <i class="fa-solid fa-pen-nib"></i> Artículo
+                                    </span>
+                                    <a [routerLink]="['/noticias', articulo.slug]" class="nn-card-btn">
+                                        Leer más <i class="fa-solid fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!cargando && articulos.length === 0) {
+            <div class="nn-empty">
+                <i class="fa-solid fa-pen-nib"></i>
+                <p>No hay artículos publicados en este momento.</p>
+            </div>
+        }
+
+        @if (!cargando && totalPages > 1) {
+            <div class="nn-pagination">
+                <button class="nn-page-btn" (click)="goToPage(pageIndex - 1)" [disabled]="pageIndex === 1">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                @for (p of pages; track p) {
+                    <button class="nn-page-btn" [class.active]="p === pageIndex" (click)="goToPage(p)">
+                        {{ p }}
+                    </button>
+                }
+                <button class="nn-page-btn" (click)="goToPage(pageIndex + 1)" [disabled]="pageIndex === totalPages">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <p class="nn-page-info">
+                Página {{ pageIndex }} de {{ totalPages }} — {{ total }} artículo{{ total !== 1 ? 's' : '' }}
+            </p>
+        }
+    </div>
+</section>

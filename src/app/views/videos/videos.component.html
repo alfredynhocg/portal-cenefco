@@ -1,0 +1,108 @@
+<section class="vg-hero">
+  <div class="vg-hero-overlay"></div>
+  <div class="container">
+    <div class="vg-hero-body">
+      <div class="vg-hero-badge">
+        <i class="fa-solid fa-play"></i> GALERÍA DE VIDEOS
+      </div>
+      <h1 class="vg-hero-title">Nuestra <span>Galería</span> de Videos</h1>
+      <p class="vg-hero-sub">Conoce nuestros programas, eventos y contenido académico</p>
+    </div>
+  </div>
+</section>
+
+<app-breadcrumb title="Videos" subTitle="Inicio" />
+
+<section class="vg-section">
+  <div class="container">
+    @if (cargando) {
+      <div class="row g-4">
+        @for (s of [1,2,3,4,5,6,7,8,9,10,11,12]; track s) {
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="vg-skel">
+              <div class="vg-skel-img"></div>
+              <div class="vg-skel-body">
+                <div class="vg-skel-line"></div>
+                <div class="vg-skel-line short"></div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (items.length === 0) {
+      <div class="vg-empty">
+        <i class="fa-regular fa-circle-play"></i>
+        <p>No hay videos disponibles por el momento.</p>
+      </div>
+    } @else {
+      <div class="row g-4">
+        @for (video of items; track video.id) {
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="vg-card" (click)="abrirVideo(video)">
+              <div class="vg-thumb">
+                <img [src]="getThumbnail(video)" [alt]="video.titulo" loading="lazy">
+                <div class="vg-thumb-overlay"></div>
+                <div class="vg-play"><i class="fa-solid fa-play"></i></div>
+                @if (video.tipo) {
+                  <span class="vg-badge-tipo">{{ tipoLabel(video.tipo) }}</span>
+                }
+                @if (video.duracion) {
+                  <span class="vg-badge-dur">
+                    <i class="fa-regular fa-clock"></i>{{ video.duracion }}
+                  </span>
+                }
+              </div>
+              <div class="vg-body">
+                <div class="vg-title">{{ video.titulo }}</div>
+                @if (video.descripcion) {
+                  <p class="vg-desc">{{ video.descripcion }}</p>
+                }
+                <div class="vg-footer">
+                  <span class="vg-plat">
+                    <i [class]="getPlatIcon(video.plataforma)"></i>
+                    {{ getPlatLabel(video.plataforma) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (totalPages > 1) {
+        <div class="vg-pagination">
+          <button class="vg-page-btn" [disabled]="pageIndex === 1" (click)="goToPage(pageIndex - 1)">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          @for (p of pages; track p) {
+            <button class="vg-page-btn" [class.active]="p === pageIndex" (click)="goToPage(p)">
+              {{ p }}
+            </button>
+          }
+          <button class="vg-page-btn" [disabled]="pageIndex === totalPages" (click)="goToPage(pageIndex + 1)">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      }
+    }
+  </div>
+</section>
+
+@if (videoActivo && embedUrl) {
+  <div class="vg-modal-overlay" (click)="cerrarVideo()">
+    <div class="vg-modal-box" (click)="$event.stopPropagation()">
+      <button class="vg-modal-close" (click)="cerrarVideo()" aria-label="Cerrar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="vg-modal-ratio">
+        <iframe [src]="embedUrl" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+      </div>
+      <div class="vg-modal-info">
+        <div class="vg-modal-title">{{ videoActivo.titulo }}</div>
+        @if (videoActivo.descripcion) {
+          <div class="vg-modal-desc">{{ videoActivo.descripcion }}</div>
+        }
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,82 @@
+<div class="ad-hero">
+    <img [src]="CONSTANTS.imagenes.header" alt="" class="ad-hero-bg">
+    <div class="ad-hero-overlay"></div>
+    <div class="ad-hero-body">
+        <div class="container">
+            <h1 class="ad-hero-title">{{ articulo?.titulo ?? CONSTANTS.breadcrumb.subTitleFallback }}</h1>
+            <app-breadcrumb [subTitle]="articulo?.titulo ?? ''" [title]="CONSTANTS.breadcrumb.title" />
+        </div>
+    </div>
+</div>
+
+<section class="ad-section">
+    <div class="container">
+
+        @if (cargando) {
+            <div class="ad-article">
+                <div class="ad-body">
+                    <p class="ad-loading">{{ CONSTANTS.detalles.loading }}</p>
+                </div>
+            </div>
+        }
+
+        @if (!cargando && !articulo) {
+            <div class="ad-article">
+                <div class="ad-body ad-notfound">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <p>{{ CONSTANTS.detalles.notFound }}</p>
+                    <a routerLink="/articulos" class="ad-back">
+                        <i class="fa-solid fa-arrow-left"></i> {{ CONSTANTS.detalles.btnBack }}
+                    </a>
+                </div>
+            </div>
+        }
+
+        @if (articulo) {
+            <article class="ad-article">
+
+                @if (articulo.imagen_principal_url | imageUrl; as imgSrc) {
+                    <div class="ad-cover">
+                        <img [src]="imgSrc" [alt]="articulo.imagen_alt || articulo.titulo">
+                    </div>
+                }
+
+                <div class="ad-body">
+
+                    <div class="ad-meta">
+                        @if (articulo.fecha_publicacion) {
+                            <span class="ad-meta-item">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                {{ articulo.fecha_publicacion | date:'d MMMM, yyyy' }}
+                            </span>
+                        }
+                        @if (articulo.destacada) {
+                            <span class="ad-tag ad-tag--destacado">
+                                <i class="fa-solid fa-star"></i> {{ CONSTANTS.detalles.destacado }}
+                            </span>
+                        }
+                        @for (etq of articulo.etiquetas; track etq.id) {
+                            <span class="ad-tag"><i class="fa-solid fa-tag"></i> {{ etq.nombre }}</span>
+                        }
+                    </div>
+
+                    <h2 class="ad-title">{{ articulo.titulo }}</h2>
+
+                    @if (articulo.entradilla) {
+                        <p class="ad-entradilla">{{ articulo.entradilla }}</p>
+                    }
+
+                    @if (articulo.contenido) {
+                        <div class="ad-content" [innerHTML]="articulo.contenido"></div>
+                    }
+
+                    <a routerLink="/articulos" class="ad-back">
+                        <i class="fa-solid fa-arrow-left"></i> {{ CONSTANTS.detalles.btnBack }}
+                    </a>
+
+                </div>
+            </article>
+        }
+
+    </div>
+</section>

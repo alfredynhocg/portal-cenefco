@@ -1,0 +1,114 @@
+<div class="hero1-section-area about-bg-area">
+    <img [src]="CONSTANTS.imagenes.header" alt="" class="header-img1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 m-auto">
+                <div class="hero-heading-area heading1 text-center">
+                    <h1>{{ comunicado?.titulo ?? CONSTANTS.breadcrumb.subTitleFallback }}</h1>
+                    <app-breadcrumb [subTitle]="comunicado?.titulo ?? ''" [title]="CONSTANTS.breadcrumb.title" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="blog-leftside-section-area sp8">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 m-auto">
+                @if (cargando) {
+                <div class="text-center" style="padding: 60px 0;">
+                    <p>{{ CONSTANTS.detalles.loading }}</p>
+                </div>
+                }
+
+                @if (!cargando && !comunicado) {
+                <div class="text-center" style="padding: 60px 0;">
+                    <p>{{ CONSTANTS.detalles.notFound }}</p>
+                    <a routerLink="/comunicados" class="header-btn1" style="margin-top:16px;display:inline-block;">
+                        {{ CONSTANTS.detalles.btnBack }} <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                }
+
+                @if (comunicado) {
+                <div class="blog-leftside-area heading2 blog-singleside">
+
+                    @if (comunicado.imagen_url | imageUrl; as imgSrc) {
+                    <div class="blog-left-heading heading2">
+                        <div class="img1" style="height:360px;overflow:hidden;border-radius:4px;">
+                            <img [src]="imgSrc" [alt]="comunicado.titulo"
+                                style="width:100%;height:100%;object-fit:cover;">
+                        </div>
+                    </div>
+                    <div class="space32"></div>
+                    }
+
+                    <div class="left-heading2 heading2">
+                        <h2>{{ comunicado.titulo }}</h2>
+                    </div>
+                    <div class="space24"></div>
+
+                    <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:24px;">
+                        @if (comunicado.fecha_publicacion) {
+                        <span style="display:flex;align-items:center;gap:6px;font-size:15px;color:#555;">
+                            <i class="fa-solid fa-calendar-days" style="color:var(--ztc-text-text-2)"></i>
+                            {{ comunicado.fecha_publicacion | date:'d MMMM, yyyy' }}
+                        </span>
+                        }
+                        @if (comunicado.destacado) {
+                        <span style="display:flex;align-items:center;gap:6px;font-size:15px;color:#555;">
+                            <i class="fa-solid fa-star" style="color:var(--ztc-text-text-2)"></i>
+                            {{ CONSTANTS.detalles.destacado }}
+                        </span>
+                        }
+                    </div>
+
+                    @if (comunicado.resumen) {
+                    <div class="left-heading2 heading2">
+                        <p><strong>{{ comunicado.resumen }}</strong></p>
+                    </div>
+                    <div class="space24"></div>
+                    }
+
+                    @if (comunicado.cuerpo) {
+                    <div class="left-heading2 heading2" [innerHTML]="comunicado.cuerpo"></div>
+                    }
+
+                    @if (comunicado.archivo_url) {
+                    <div class="space32"></div>
+                    <a [href]="comunicado.archivo_url | imageUrl" target="_blank" class="header-btn1"
+                        style="display:inline-flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-file-arrow-down"></i> {{ CONSTANTS.detalles.btnDownload }}
+                    </a>
+                    }
+
+                    <div class="space48"></div>
+
+                    <div class="tags-share-area">
+                        <div class="share">
+                            <h4>{{ CONSTANTS.detalles.shareTitle }}</h4>
+                            <ul>
+                                <li><a [href]="shareUrls.linkedin" target="_blank" rel="noopener noreferrer"><i
+                                            class="fa-brands fa-linkedin-in"></i></a></li>
+                                <li><a [href]="shareUrls.whatsapp" target="_blank" rel="noopener noreferrer"><i
+                                            class="fa-brands fa-whatsapp"></i></a></li>
+                                <li><a [href]="shareUrls.twitter" target="_blank" rel="noopener noreferrer"><i
+                                            class="fa-brands fa-x-twitter"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="space32"></div>
+                    <a routerLink="/comunicados" class="header-btn1"
+                        style="display:inline-flex;align-items:center;gap:8px;">
+                        <i class="fa-solid fa-arrow-left"></i> {{ CONSTANTS.detalles.btnBack }}
+                    </a>
+                    <div class="space80"></div>
+
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

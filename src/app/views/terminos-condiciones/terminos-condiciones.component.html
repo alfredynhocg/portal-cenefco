@@ -1,0 +1,31 @@
+<div class="hero1-section-area about-bg-area">
+    <img [src]="CONSTANTS.imagenes.header" alt="" class="header-img1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 m-auto">
+                <div class="hero-heading-area heading1 text-center">
+                    <h1>{{ CONSTANTS.breadcrumb.title }}</h1>
+                    <app-breadcrumb [title]="CONSTANTS.breadcrumb.title" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sp8">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 m-auto">
+                <p class="text-muted mb-4">Última actualización: {{ CONSTANTS.ultimaActualizacion }}</p>
+                <p class="mb-5">{{ CONSTANTS.intro }}</p>
+
+                @for (seccion of CONSTANTS.secciones; track $index) {
+                <div class="mb-4">
+                    <h4 class="fw-semibold mb-2">{{ seccion.titulo }}</h4>
+                    <p>{{ seccion.contenido }}</p>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

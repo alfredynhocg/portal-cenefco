@@ -1,0 +1,50 @@
+@use '../../../../assets/scss/utils/cenefco-vars' as *;
+
+.contact-submit-boxarea {
+    .header-btn1 {
+        border: none;
+        cursor: pointer;
+    }
+
+    .header-btn1:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 28px 0 20px;
+
+    &::before,
+    &::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: rgba($primary, 0.15);
+    }
+
+    span {
+        font-size: 13px;
+        color: $text-muted;
+        white-space: nowrap;
+    }
+}
+
+.auth-switch-text {
+    margin: 24px 0 0;
+    font-size: 14px;
+    color: $text-muted;
+
+    a {
+        color: $primary;
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover {
+            color: $accent;
+        }
+    }
+}

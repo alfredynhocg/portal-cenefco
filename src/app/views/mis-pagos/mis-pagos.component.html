@@ -1,0 +1,274 @@
+﻿<div class="hero1-section-area about-bg-area">
+    <img src="assets/img/bg/header-img1.jpg" alt="" class="header-img1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 m-auto">
+                <div class="hero-heading-area heading1 text-center">
+                    <h1>Mi Cuenta</h1>
+                    <app-breadcrumb title="Mi Cuenta" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="mp-section">
+  <div class="mp-container">
+
+    <div class="mp-header">
+      <p class="mp-header__sub">Consulta el estado de tus inscripciones y cuotas ingresando tu número de CI.</p>
+    </div>
+
+    @if (isLoggedIn && cuenta(); as miCuenta) {
+      @if (!editandoPerfil()) {
+        <div class="mp-estudiante">
+          @if (miCuenta.avatarUrl) {
+            <img [src]="miCuenta.avatarUrl" alt="" class="mp-estudiante__avatar mp-estudiante__avatar--img">
+          } @else {
+            <div class="mp-estudiante__avatar">{{ miCuenta.nombre.charAt(0) }}</div>
+          }
+          <div class="mp-estudiante__info">
+            <div class="mp-estudiante__nombre">{{ miCuenta.nombre }} {{ miCuenta.apellido }}</div>
+            <div class="mp-estudiante__meta">
+              {{ miCuenta.email }}
+              @if (miCuenta.rolNombre) { · {{ miCuenta.rolNombre }} }
+              @if (!miCuenta.emailVerificado) { · <span class="mp-email-sin-verificar">Correo sin verificar</span> }
+            </div>
+            <div class="mp-estudiante__meta">
+              @if (miCuenta.ci) { CI: {{ miCuenta.ci }} }
+              @if (miCuenta.telefono) { · Tel: {{ miCuenta.telefono }} }
+            </div>
+            @if (miCuenta.createdAt) {
+              <div class="mp-estudiante__meta">
+                Miembro desde {{ miCuenta.createdAt | date:'dd/MM/yyyy' }}
+              </div>
+            }
+          </div>
+          <div class="mp-estudiante__acciones">
+            <button type="button" class="mp-btn-limpiar mp-btn-limpiar--sm" (click)="editandoPerfil.set(true)">
+              Editar mis datos
+            </button>
+            <button type="button" class="mp-btn-limpiar mp-btn-limpiar--sm mp-btn-limpiar--danger" (click)="cerrarSesion()">
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+      } @else {
+        <app-perfil-form
+          [cuenta]="miCuenta"
+          (actualizado)="onPerfilActualizado($event)"
+          (cancelado)="editandoPerfil.set(false)">
+        </app-perfil-form>
+      }
+    }
+
+    <div class="mp-search-card">
+      <form (ngSubmit)="buscar()" #f="ngForm" class="mp-search-form">
+        <div class="mp-search-fields">
+          <div class="mp-field">
+            <label class="mp-label" for="ci">Número de CI *</label>
+            <input
+              id="ci"
+              class="mp-input"
+              type="text"
+              placeholder="Ej: 12345678"
+              [(ngModel)]="ci"
+              name="ci"
+              required
+              maxlength="20"
+            />
+          </div>
+          <div class="mp-field">
+            <label class="mp-label" for="email">Email *</label>
+            <input
+              id="email"
+              class="mp-input"
+              type="email"
+              placeholder="tu@email.com"
+              [(ngModel)]="email"
+              name="email"
+              required
+              maxlength="200"
+            />
+          </div>
+          <div class="mp-field mp-field--sm">
+            <label class="mp-label" for="expedido">Expedido <span class="mp-optional">(opcional)</span></label>
+            <input
+              id="expedido"
+              class="mp-input"
+              type="text"
+              placeholder="LP, CB, SC..."
+              [(ngModel)]="expedido"
+              name="expedido"
+              maxlength="5"
+            />
+          </div>
+          <div class="mp-field mp-field--btn">
+            <button type="submit" class="mp-btn-buscar" [disabled]="cargando() || !ci.trim() || !email.trim()">
+              @if (cargando()) {
+                <span class="mp-spinner"></span> Buscando...
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Consultar
+              }
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    @if (error()) {
+      <div class="mp-alert mp-alert--error">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        {{ error() }}
+      </div>
+    }
+
+    @if (buscado() && !error() && inscripciones().length === 0) {
+      <div class="mp-empty">
+        <div class="mp-empty__icon">📋</div>
+        <h3>No se encontraron inscripciones</h3>
+        <p>No hay inscripciones activas para el CI <strong>{{ ci }}</strong>.
+          Si crees que es un error, contáctanos.</p>
+        <button class="mp-btn-limpiar" (click)="limpiar()">Buscar otro CI</button>
+      </div>
+    }
+
+    @if (buscado() && !error() && inscripciones().length > 0) {
+
+      @if (estudiante(); as est) {
+        <div class="mp-estudiante">
+          <div class="mp-estudiante__avatar">{{ est.nombre.charAt(0) }}</div>
+          <div class="mp-estudiante__info">
+            <div class="mp-estudiante__nombre">{{ est.nombre }}</div>
+            <div class="mp-estudiante__meta">
+              CI: {{ est.ci }}{{ est.expedido ? ' ' + est.expedido : '' }}
+              @if (est.email) { · {{ est.email }} }
+              @if (est.celular) { · {{ est.celular }} }
+            </div>
+          </div>
+          <button class="mp-btn-limpiar mp-btn-limpiar--sm" (click)="limpiar()">
+            Cambiar CI
+          </button>
+        </div>
+      }
+
+      <div class="mp-resumen-global">
+        <div class="mp-resumen-card">
+          <span class="mp-resumen-card__num">{{ inscripciones().length }}</span>
+          <span class="mp-resumen-card__label">Inscripciones</span>
+        </div>
+        <div class="mp-resumen-card mp-resumen-card--pagado">
+          <span class="mp-resumen-card__num">{{ contarEstado('pagado') }}</span>
+          <span class="mp-resumen-card__label">Pagadas</span>
+        </div>
+        <div class="mp-resumen-card mp-resumen-card--pendiente">
+          <span class="mp-resumen-card__num">{{ contarEstado('pendiente') }}</span>
+          <span class="mp-resumen-card__label">Pendientes</span>
+        </div>
+      </div>
+
+      <div class="mp-lista">
+        @for (ins of inscripciones(); track ins.id_ins) {
+          <div class="mp-card" [class.mp-card--open]="estaAbierto(ins.id_ins)">
+
+            <button class="mp-card__header" (click)="toggleAcordeon(ins.id_ins)">
+              <div class="mp-card__info">
+                <div class="mp-card__programa">{{ ins.nombre_programa ?? 'Programa sin nombre' }}</div>
+                <div class="mp-card__meta">
+                  @if (ins.periodo) { {{ ins.periodo }} }
+                  @if (ins.gestion) { · {{ ins.gestion }} }
+                  @if (ins.fecha_inicio) { · Inicio: {{ ins.fecha_inicio | date:'dd/MM/yyyy' }} }
+                </div>
+              </div>
+              <div class="mp-card__derecha">
+                <span [class]="badgeClass(ins.estado_pago)">{{ badgeLabel(ins.estado_pago) }}</span>
+                <span class="mp-card__chevron" [class.mp-card__chevron--open]="estaAbierto(ins.id_ins)">▾</span>
+              </div>
+            </button>
+
+            <div class="mp-progress">
+              <div class="mp-progress__bar" [style.width.%]="porcentaje(ins)"
+                [class.mp-progress__bar--pagado]="ins.estado_pago === 'pagado'"
+                [class.mp-progress__bar--parcial]="ins.estado_pago === 'parcial'"
+                [class.mp-progress__bar--pendiente]="ins.estado_pago === 'pendiente'">
+              </div>
+            </div>
+
+            <div class="mp-card__totales">
+              <span class="mp-total">
+                Pagado: <strong>Bs. {{ ins.total_pagado | number:'1.2-2' }}</strong>
+              </span>
+              @if (ins.saldo > 0) {
+                <span class="mp-saldo">
+                  Pendiente: <strong>Bs. {{ ins.saldo | number:'1.2-2' }}</strong>
+                </span>
+              }
+              @if (ins.total_plan > 0) {
+                <span class="mp-total-plan">
+                  Total plan: Bs. {{ ins.total_plan | number:'1.2-2' }}
+                </span>
+              }
+            </div>
+
+            @if (estaAbierto(ins.id_ins)) {
+              <div class="mp-card__body">
+
+                @if (ins.cuotas.length > 0) {
+                  <h4 class="mp-cuotas-title">Detalle de cuotas</h4>
+                  <div class="mp-cuotas">
+                    @for (cuota of ins.cuotas; track cuota.id_fechapago) {
+                      <div class="mp-cuota" [class.mp-cuota--pagada]="cuota.pagado" [class.mp-cuota--pendiente]="!cuota.pagado">
+                        <div class="mp-cuota__nro">
+                          @if (cuota.pagado) {
+                            <span class="mp-cuota__check">✓</span>
+                          } @else {
+                            <span class="mp-cuota__dot"></span>
+                          }
+                          Cuota {{ cuota.nro_pago ?? '—' }}
+                        </div>
+                        <div class="mp-cuota__monto">Bs. {{ cuota.monto_a_pagar | number:'1.2-2' }}</div>
+                        @if (cuota.pagado) {
+                          <div class="mp-cuota__detalle">
+                            <span class="mp-metodo">{{ metodoPagoLabel(cuota.metodo_pago) }}</span>
+                            @if (cuota.fecha_pago) {
+                              <span class="mp-fecha">{{ cuota.fecha_pago | date:'dd/MM/yyyy' }}</span>
+                            }
+                          </div>
+                        } @else {
+                          <div class="mp-cuota__detalle mp-cuota__detalle--pendiente">Pendiente</div>
+                        }
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="mp-sin-cuotas">Sin plan de pagos asignado. Bs. {{ ins.total_pagado | number:'1.2-2' }} pagado en total.</p>
+                }
+
+                @if (ins.saldo > 0) {
+                  <div class="mp-cta-pago">
+                    <p>Tienes <strong>Bs. {{ ins.saldo | number:'1.2-2' }}</strong> pendiente.</p>
+                    <a [routerLink]="['/mi-cuenta', ins.id_ins]" [queryParams]="{ ci: ci, email: email, expedido: expedido || null }" class="mp-btn-pagar">
+                      Pagar cuotas en línea
+                    </a>
+                  </div>
+                }
+
+                <div style="margin-top: 12px; text-align: right;">
+                  <a [routerLink]="['/mi-cuenta', ins.id_ins]" [queryParams]="{ ci: ci, email: email, expedido: expedido || null }"
+                     class="mp-card-detail__link">
+                    Ver detalle completo →
+                  </a>
+                </div>
+
+              </div>
+            }
+
+          </div>
+        }
+      </div>
+
+    }
+
+  </div>
+</section>

@@ -1,0 +1,85 @@
+<header>
+    <div class="header-area {{headerClass}} header header-sticky d-none d-lg-block" stickyScroll id="header">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="header-elements">
+                        <div class="site-logo">
+                            <a routerLink="/"><img [src]="logo" alt="CENEFCO"></a>
+                        </div>
+                        <div class="main-menu">
+                            <ul>
+                                @for (item of menuItems; track item.id) {
+                                    @if (item.children && item.children.length > 0) {
+                                        <li>
+                                            <a href="#" (click)="$event.preventDefault()">
+                                                {{ item.etiqueta }} <i class="fa-solid fa-angle-down"></i>
+                                            </a>
+                                            <ul class="dropdown-padding">
+                                                @for (child of item.children; track child.id) {
+                                                    <li>
+                                                        @if (isExternal(child.url)) {
+                                                            <a [href]="child.url" [target]="child.abrir_nueva_ventana ? '_blank' : '_self'">
+                                                                {{ child.etiqueta }}
+                                                            </a>
+                                                        } @else {
+                                                            <a [routerLink]="child.url || '/'" [target]="child.abrir_nueva_ventana ? '_blank' : '_self'">
+                                                                {{ child.etiqueta }}
+                                                            </a>
+                                                        }
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </li>
+                                    } @else {
+                                        <li>
+                                            @if (isExternal(item.url)) {
+                                                <a [href]="item.url" [target]="item.abrir_nueva_ventana ? '_blank' : '_self'">
+                                                    {{ item.etiqueta }}
+                                                </a>
+                                            } @else {
+                                                <a [routerLink]="item.url || '/'">
+                                                    {{ item.etiqueta }}
+                                                </a>
+                                            }
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="btn-area">
+                            @if (PAGOS_HABILITADOS) {
+                                <a routerLink="/carrito" class="header-carrito-btn" title="Carrito de compras">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                    @if (carrito.cantidad() > 0) {
+                                        <span class="header-carrito-badge">{{ carrito.cantidad() }}</span>
+                                    }
+                                </a>
+                                <a routerLink="/mi-cuenta" class="header-mis-pagos-btn">
+                                    Mis Pagos
+                                </a>
+                            }
+                            @if (isLoggedIn()) {
+                                <a routerLink="/mi-cuenta" class="header-mis-pagos-btn">
+                                    <i class="fa-solid fa-user"></i> Mi cuenta
+                                </a>
+                            } @else {
+                                <a routerLink="/login" class="header-mis-pagos-btn">
+                                    <i class="fa-solid fa-user"></i> Iniciar sesión
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<app-mobile-menu
+    [btnClass]="btnClass"
+    [mobileHeaderClass]="mobileHeaderClass"
+    [mobileLogo]="mobileLogo"
+    [mobileSidebarClass]="mobileSidebarClass"
+    [menuItems]="menuItems"
+/>

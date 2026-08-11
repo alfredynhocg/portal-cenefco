@@ -1,0 +1,340 @@
+<ng-container *ngIf="curso">
+  <div class="cd-hero">
+    <img [src]="curso.foto || curso.imagen_banner_url || 'assets/img/all-images/header_default_cenefco.jpg'"
+         [alt]="curso.nombre_programa" class="cd-hero-bg">
+    <div class="cd-hero-overlay"></div>
+    <div class="cd-hero-body">
+      <div class="container">
+        <div class="cd-hero-badges">
+          <span *ngIf="curso.tipo_nombre" class="cd-badge cd-badge-orange">
+            <i class="fa-solid fa-graduation-cap"></i> {{ curso.tipo_nombre }}
+          </span>
+          <span *ngIf="curso.categoria_nombre" class="cd-badge cd-badge-glass">
+            <i class="fa-solid fa-layer-group"></i> {{ curso.categoria_nombre }}
+          </span>
+        </div>
+        <h1 class="cd-hero-title">{{ curso.nombre_programa }}</h1>
+        <div class="cd-hero-meta">
+          <span class="cd-hero-meta-item" *ngIf="curso.inicio_actividades">
+            <i class="fa-solid fa-calendar-days"></i> Inicio: {{ curso.inicio_actividades }}
+          </span>
+          <span class="cd-hero-meta-item" *ngIf="curso.creditaje">
+            <i class="fa-solid fa-award"></i> {{ curso.creditaje }} créditos
+          </span>
+        </div>
+        <div style="margin-top: 16px;">
+          <app-breadcrumb [subTitle]="curso.nombre_programa" title="Cursos" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @if (fechaLimiteInscripcion) {
+    <div class="cd-inscripcion-banner">
+      <div class="container">
+        <div class="cd-ib-inner">
+          <span class="cd-ib-icon">
+            <i class="fa-solid fa-bell cd-ib-bell"></i>
+          </span>
+          <span class="cd-ib-label">Registro hasta:</span>
+          <span class="cd-ib-fecha">{{ fechaLimiteInscripcion }}</span>
+          <span class="cd-ib-dias"
+            [class.orange]="colorDias === 'orange'"
+            [class.red]="colorDias === 'red'">
+            <i class="fa-solid fa-clock"></i> {{ labelDias }}
+          </span>
+          <a class="cd-ib-btn" href="#" (click)="$event.preventDefault(); abrirModal()">
+            <i class="fa-solid fa-pen-to-square"></i> Registrarme
+          </a>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="cd-layout">
+    <div class="container">
+      <div class="row g-4 align-items-start">
+
+        <div class="col-lg-8">
+          <div class="cd-main">
+
+            <div class="cd-main-img" data-aos="fade-up" data-aos-duration="600">
+              <img [src]="curso.foto || curso.imagen_banner_url || 'assets/img/all-images/blog-img23.png'"
+                   [alt]="curso.nombre_programa">
+            </div>
+
+            <div class="cd-card" *ngIf="curso.descripcion" data-aos="fade-up" data-aos-duration="650">
+              <div class="cd-card-header">
+                <div class="cd-card-icon"><i class="fa-solid fa-align-left"></i></div>
+                <h3 class="cd-card-title">Descripción del Curso</h3>
+              </div>
+              <div class="cd-card-text" [innerHTML]="curso.descripcion"></div>
+            </div>
+
+            <div class="cd-card" *ngIf="curso.objetivo" data-aos="fade-up" data-aos-duration="700">
+              <div class="cd-card-header">
+                <div class="cd-card-icon"><i class="fa-solid fa-bullseye"></i></div>
+                <h3 class="cd-card-title">Objetivo General</h3>
+              </div>
+              <div class="cd-card-text" [innerHTML]="curso.objetivo"></div>
+            </div>
+
+            <div class="cd-card" *ngIf="curso.dirigido" data-aos="fade-up" data-aos-duration="750">
+              <div class="cd-card-header">
+                <div class="cd-card-icon"><i class="fa-solid fa-users"></i></div>
+                <h3 class="cd-card-title">Dirigido a</h3>
+              </div>
+              <div class="cd-card-text" [innerHTML]="curso.dirigido"></div>
+            </div>
+
+            <div class="cd-card" *ngIf="curso.requisitos" data-aos="fade-up" data-aos-duration="800">
+              <div class="cd-card-header">
+                <div class="cd-card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+                <h3 class="cd-card-title">Requisitos de Ingreso</h3>
+              </div>
+              <div class="cd-card-text" [innerHTML]="curso.requisitos"></div>
+            </div>
+
+            <div class="cd-card" *ngIf="curso.imagenes && curso.imagenes.length > 0" data-aos="fade-up" data-aos-duration="820">
+              <div class="cd-card-header">
+                <div class="cd-card-icon"><i class="fa-solid fa-images"></i></div>
+                <h3 class="cd-card-title">Galería de Imágenes</h3>
+              </div>
+
+              <div class="cd-galeria-carousel-wrap">
+                <button
+                  type="button"
+                  class="cd-galeria-nav cd-galeria-nav-prev"
+                  *ngIf="curso.imagenes.length > 1"
+                  (click)="galeriaScrollPrev()"
+                  aria-label="Anterior">
+                  <i class="fa-solid fa-chevron-left"></i>
+                </button>
+
+                <div
+                  class="cd-galeria-scroll-track"
+                  #galeriaTrack
+                  (scroll)="galeriaOnScroll()"
+                  (touchstart)="galeriaOnTouchStart()">
+                  <button
+                    *ngFor="let img of curso.imagenes; let i = index"
+                    type="button"
+                    class="cd-galeria-slide"
+                    (click)="abrirGaleriaModal(i)">
+                    <img [src]="img" [alt]="curso.nombre_programa + ' - imagen ' + (i + 1)">
+                  </button>
+                </div>
+
+                <button
+                  type="button"
+                  class="cd-galeria-nav cd-galeria-nav-next"
+                  *ngIf="curso.imagenes.length > 1"
+                  (click)="galeriaScrollNext()"
+                  aria-label="Siguiente">
+                  <i class="fa-solid fa-chevron-right"></i>
+                </button>
+              </div>
+
+              <div class="cd-galeria-dots" *ngIf="curso.imagenes.length > 1">
+                <button
+                  *ngFor="let img of curso.imagenes; let i = index"
+                  type="button"
+                  class="cd-galeria-dot"
+                  [class.active]="galeriaDotActivo() === i"
+                  [attr.aria-label]="'Ir a imagen ' + (i + 1)"
+                  (click)="galeriaIrADot(i)">
+                </button>
+              </div>
+            </div>
+
+            <div class="cd-card" data-aos="fade-up" data-aos-duration="850">
+              <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+                <div *ngIf="curso.categoria_nombre">
+                  <span class="cd-cat-tag">
+                    <i class="fa-solid fa-tag"></i> {{ curso.categoria_nombre }}
+                  </span>
+                </div>
+                <div class="cd-share">
+                  <span class="cd-share-label">Compartir:</span>
+                  <div class="cd-share-btns">
+                    <a [href]="shareUrl('facebook')" target="_blank" rel="noopener" class="cd-share-btn cd-share-fb">
+                      <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a [href]="shareUrl('whatsapp')" target="_blank" rel="noopener" class="cd-share-btn cd-share-wa">
+                      <i class="fa-brands fa-whatsapp"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <app-curso-resenas [programaId]="curso.id_programa"></app-curso-resenas>
+
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="cd-sidebar">
+
+            <div class="cd-inscripcion-card" data-aos="fade-left" data-aos-duration="700">
+              <div class="cd-inscripcion-header">
+                <div [ngClass]="{
+                  'cd-inscripcion-estado': true,
+                  'abiertas': inscripcionEstado === 'abiertas',
+                  'proximas':  inscripcionEstado === 'proximas',
+                  'cerradas':  inscripcionEstado === 'cerradas'
+                }">
+                  <i class="fa-solid"
+                     [class.fa-circle-check]="inscripcionEstado === 'abiertas'"
+                     [class.fa-clock]="inscripcionEstado === 'proximas'"
+                     [class.fa-circle-xmark]="inscripcionEstado === 'cerradas'">
+                  </i>
+                  <span *ngIf="inscripcionEstado === 'abiertas'">Registro Abierto</span>
+                  <span *ngIf="inscripcionEstado === 'proximas'">Próximamente</span>
+                  <span *ngIf="inscripcionEstado === 'cerradas'">Registro Cerrado</span>
+                </div>
+              </div>
+              <div class="cd-inscripcion-btns">
+                @if (PAGOS_HABILITADOS && tienePrecio && inscripcionEstado !== 'cerradas') {
+                  @if (!enCarrito) {
+                    <button type="button" class="cd-btn-primary" (click)="agregarAlCarrito()">
+                      <i class="fa-solid fa-cart-plus"></i> Agregar al carrito
+                    </button>
+                  } @else {
+                    <a routerLink="/carrito" class="cd-btn-primary cd-btn-en-carrito">
+                      <i class="fa-solid fa-check"></i> Ver carrito
+                    </a>
+                  }
+                  <button type="button" class="cd-btn-accent" (click)="abrirPagoModal()">
+                    <i class="fa-solid fa-bolt"></i> Pagar ahora
+                  </button>
+                }
+                <button type="button" class="cd-btn-secondary" (click)="abrirModal()">
+                  <i class="fa-solid fa-file-signature"></i> Inscribirme
+                </button>
+                <a routerLink="/contactos" class="cd-btn-secondary">
+                  <i class="fa-solid fa-phone-volume"></i> Solicitar información
+                </a>
+              </div>
+            </div>
+
+            <div class="cd-info-card" data-aos="fade-left" data-aos-duration="750">
+              <div class="cd-info-card-header">
+                <i class="fa-solid fa-circle-info"></i> Información del Curso
+              </div>
+              <div class="cd-info-list">
+                <div class="cd-info-item" *ngIf="curso.inicio_actividades">
+                  <div class="cd-info-item-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                  <div class="cd-info-item-body">
+                    <p class="cd-info-item-label">Inicio de actividades</p>
+                    <p class="cd-info-item-value">{{ curso.inicio_actividades }}</p>
+                  </div>
+                </div>
+                <div class="cd-info-item" *ngIf="curso.finalizacion_actividades">
+                  <div class="cd-info-item-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                  <div class="cd-info-item-body">
+                    <p class="cd-info-item-label">Finalización</p>
+                    <p class="cd-info-item-value">{{ curso.finalizacion_actividades }}</p>
+                  </div>
+                </div>
+                <div class="cd-info-item" *ngIf="curso.inicio_inscripciones">
+                  <div class="cd-info-item-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                  <div class="cd-info-item-body">
+                    <p class="cd-info-item-label">Inscripciones desde</p>
+                    <p class="cd-info-item-value">{{ curso.inicio_inscripciones }}</p>
+                  </div>
+                </div>
+                <div class="cd-info-item" *ngIf="curso.creditaje">
+                  <div class="cd-info-item-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                  <div class="cd-info-item-body">
+                    <p class="cd-info-item-label">Creditaje</p>
+                    <p class="cd-info-item-value">{{ curso.creditaje }}</p>
+                  </div>
+                </div>
+                <div class="cd-info-item" *ngIf="curso.categoria_nombre">
+                  <div class="cd-info-item-icon"><i class="fa-solid fa-layer-group"></i></div>
+                  <div class="cd-info-item-body">
+                    <p class="cd-info-item-label">Categoría</p>
+                    <p class="cd-info-item-value">{{ curso.categoria_nombre }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cd-action-card" *ngIf="curso.documento1" data-aos="fade-left" data-aos-duration="800">
+              <div class="cd-action-icon" style="background:rgba(239,68,68,0.10); color:#dc2626;">
+                <i class="fa-solid fa-file-pdf"></i>
+              </div>
+              <div class="cd-action-body">
+                <p class="cd-action-title">{{ curso.titulo_documento1 || 'Material del Curso' }}</p>
+                <p class="cd-action-subtitle">Programa completo en PDF</p>
+              </div>
+              <a [href]="curso.documento1" target="_blank" class="cd-action-btn">
+                <i class="fa-solid fa-download"></i> PDF
+              </a>
+            </div>
+
+            <div class="cd-action-card" *ngIf="curso.url_video" data-aos="fade-left" data-aos-duration="830">
+              <div class="cd-action-icon" style="background:rgba(252,137,0,0.10); color:#FC8900;">
+                <i class="fa-solid fa-circle-play"></i>
+              </div>
+              <div class="cd-action-body">
+                <p class="cd-action-title">Video del Curso</p>
+                <p class="cd-action-subtitle">Presentación en video</p>
+              </div>
+              <button type="button" class="cd-action-btn" (click)="abrirVideoModal()">
+                <i class="fa-solid fa-play"></i> Ver
+              </button>
+            </div>
+
+            <div class="cd-action-card" data-aos="fade-left" data-aos-duration="890">
+              <div class="cd-action-icon" style="background:rgba(252,137,0,0.10); color:#FC8900;">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
+              <div class="cd-action-body">
+                <p class="cd-action-title">Lista de participantes</p>
+                <p class="cd-action-subtitle">Estudiantes aprobados</p>
+              </div>
+              <a [routerLink]="['/cursos', curso.slug + '-participantes']" class="cd-action-btn">
+                <i class="fa-solid fa-arrow-right"></i> Ver
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</ng-container>
+
+<app-video-modal
+  [(visible)]="videoModalVisible"
+  [cursoNombre]="curso?.nombre_programa ?? ''"
+  [urlVideo]="curso?.url_video ?? null"
+></app-video-modal>
+
+<app-galeria-modal
+  [(visible)]="galeriaModalVisible"
+  [cursoNombre]="curso?.nombre_programa ?? ''"
+  [imagenes]="curso?.imagenes || []"
+  [indiceInicial]="galeriaIndiceInicial"
+></app-galeria-modal>
+
+<app-formulario-modal
+  [(visible)]="modalVisible"
+  [formulario]="formulario()"
+  [cargandoError]="formularioError()"
+  [programaId]="curso?.id_programa ?? null"
+  [cursoNombre]="curso?.nombre_programa ?? ''"
+  [urlWhatsapp]="curso?.url_whatsapp ?? null"
+></app-formulario-modal>
+
+@if (pagoModalVisible && curso) {
+  <app-pago-modal
+    [curso]="curso"
+    [visible]="pagoModalVisible"
+    (cerrar)="cerrarPagoModal()"
+  ></app-pago-modal>
+}
